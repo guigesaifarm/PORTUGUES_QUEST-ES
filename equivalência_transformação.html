@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interativo: Articulação do Texto e Coesão</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Aumenta a base de todas as fontes do site */
+    html {
+        font-size: 19px; /* O padrão é 16px. Aumente para 18px ou 20px */
+    }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-sm">
+                    <i class="fa-solid fa-[#fa-book-open] text-xl"></i>
+                    <i class="fa-solid fa-pen-nib text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 leading-tight">Quiz de Língua Portuguesa</h1>
+                    <p class="text-xs text-slate-500">Articulação do Texto: Pronomes, Referenciação e Nexos</p>
+                </div>
+            </div>
+
+            <!-- Mode Selector & Stats -->
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex bg-slate-100 p-1 rounded-lg text-xs font-semibold">
+                    <button id="btnModeStudy" onclick="setMode('study')" class="px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm">
+                        <i class="fa-solid fa-[#fa-graduation-cap] mr-1"></i> Modo Estudo
+                    </button>
+                    <button id="btnModeExam" onclick="setMode('exam')" class="px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900">
+                        <i class="fa-solid fa-stopwatch mr-1"></i> Modo Simulado
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 bg-brand-50 text-brand-700 px-3 py-1.5 rounded-lg border border-brand-100 text-sm font-semibold">
+                    <i class="fa-solid fa-trophy text-brand-500"></i>
+                    <span id="scoreDisplay">0 / 20</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- Sidebar Navigation Grid (Desktop) -->
+        <aside class="lg:col-span-1 order-2 lg:order-1 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col h-fit">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Navegador</h2>
+                <span id="progressPercent" class="text-xs font-semibold text-brand-600">0% concluído</span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4">
+                <div id="progressBar" class="bg-brand-600 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Question Grid Buttons -->
+            <div id="questionGrid" class="grid grid-cols-5 gap-2 mb-4">
+                <!-- Javascript will insert 20 question buttons here -->
+            </div>
+
+            <!-- Legend -->
+            <div class="text-xs text-slate-500 border-t border-slate-100 pt-3 space-y-1.5">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-slate-200 inline-block"></span>
+                    <span>Não respondida</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-brand-600 inline-block"></span>
+                    <span>Respondida</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span>
+                    <span>Marcada p/ revisão</span>
+                </div>
+            </div>
+
+            <button onclick="finishQuiz()" class="mt-5 w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded-lg transition shadow">
+                <i class="fa-solid fa-flag-checkered mr-2"></i> Finalizar Quiz
+            </button>
+        </aside>
+
+        <!-- Question Section -->
+        <section class="lg:col-span-3 order-1 lg:order-2 flex flex-col justify-between">
+            
+            <!-- Quiz Screen -->
+            <div id="quizCard" class="bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm mb-4 min-h-[420px] flex flex-col justify-between">
+                <div>
+                    <!-- Header Question Info -->
+                    <div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100">
+                        <div class="flex items-center gap-2">
+                            <span id="questionCategory" class="px-2.5 py-1 bg-brand-50 text-brand-700 text-xs font-semibold rounded-md border border-brand-100">
+                                Categoria
+                            </span>
+                            <span id="questionNumberBadge" class="text-xs font-semibold text-slate-400">
+                                Questão 1 de 20
+                            </span>
+                        </div>
+                        <button id="btnBookmark" onclick="toggleBookmark()" class="text-slate-400 hover:text-amber-500 text-sm font-medium transition flex items-center gap-1.5">
+                            <i class="fa-regular fa-bookmark"></i>
+                            <span class="hidden sm:inline">Revisar</span>
+                        </button>
+                    </div>
+
+                    <!-- Question Text -->
+                    <div class="mb-6">
+                        <h3 id="questionTitle" class="text-base sm:text-lg font-semibold text-slate-900 leading-relaxed">
+                            Carregando questão...
+                        </h3>
+                    </div>
+
+                    <!-- Answer Options -->
+                    <div id="optionsContainer" class="space-y-3">
+                        <!-- Dynamic options generated by JS -->
+                    </div>
+
+                    <!-- Explanation/Rationale Box (Study Mode) -->
+                    <div id="explanationBox" class="hidden mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm">
+                        <div class="flex items-center gap-2 font-bold mb-1 text-slate-800" id="explanationHeader">
+                            <i class="fa-solid fa-circle-info"></i> Justificativa Gramatical
+                        </div>
+                        <p id="explanationText" class="text-slate-600 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8 pt-4 border-t border-slate-100">
+                    <button id="btnPrev" onclick="navigateQuestion(-1)" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium text-sm transition disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-chevron-left mr-1"></i> Anterior
+                    </button>
+                    <button id="btnNext" onclick="navigateQuestion(1)" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-medium text-sm transition shadow-sm">
+                        Próxima <i class="fa-solid fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Screen (Hidden initially) -->
+            <div id="resultsCard" class="hidden bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm text-center">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center bg-brand-50 text-brand-600 text-3xl">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-1">Resultado do Quiz</h2>
+                <p class="text-sm text-slate-500 mb-6">Confira seu desempenho em Articulação e Coesão Textual</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto mb-8">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Pontuação</span>
+                        <span id="finalScore" class="text-2xl font-extrabold text-slate-800">0 / 20</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Aproveitamento</span>
+                        <span id="finalPercent" class="text-2xl font-extrabold text-brand-600">0%</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Desempenho</span>
+                        <span id="finalFeedback" class="text-sm font-bold text-slate-700 mt-1 block">Satisfatório</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button onclick="restartQuiz()" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm rounded-lg transition shadow">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Refazer Quiz
+                    </button>
+                    <button onclick="reviewQuiz()" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-lg transition">
+                        <i class="fa-solid fa-magnifying-glass mr-2"></i> Revisar Respostas
+                    </button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+        <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-400">
+            Quiz Pedagógico de Coesão Textual &bull; Prática de Sintaxe, Semântica e Conectivos do Português.
+        </div>
+    </footer>
+
+    <!-- JavaScript Quiz Logic -->
+    <script>
+        // Database of 20 Portuguese Questions
+       const questionsData = [
+    {
+        id: 1,
+        category: "Voz Ativa para Voz Passiva",
+        question: "Considere a frase na voz ativa: \"A comissão técnica analisará detalhadamente todos os recursos apresentados pelos candidatos.\" A conversão correta para a voz passiva analítica é:",
+        options: [
+            { text: "Todos os recursos apresentados pelos candidatos serão analisados detalhadamente pela comissão técnica.", isCorrect: true, rationale: "O objeto direto 'todos os recursos...' vira sujeito paciente; o verbo no futuro do presente ('analisará') transforma-se na locução 'serão analisados' mantendo o tempo verbal." },
+            { text: "Todos os recursos apresentados pelos candidatos seriam analisados detalhadamente pela comissão técnica.", isCorrect: false, rationale: "Incorreto: alterou-se o tempo verbal do futuro do presente para o futuro do pretérito ('seriam')." },
+            { text: "Todos os recursos apresentados pelos candidatos foram analisados detalhadamente pela comissão técnica.", isCorrect: false, rationale: "Incorreto: alterou-se o tempo verbal para o pretérito perfeito ('foram')." },
+            { text: "Analisou-se detalhadamente todos os recursos apresentados pela comissão técnica.", isCorrect: false, rationale: "Além de mudar a estrutura sintática de forma incompleta, apresenta erro de concordância." }
+        ],
+        hint: "Mantenha rigorosamente o mesmo tempo e modo verbal do verbo principal ('analisará' = futuro do presente)."
+    },
+    {
+        id: 2,
+        category: "Discurso Direto para Indireto",
+        question: "Ao transpor a fala do personagem do discurso direto para o indireto: \"O réu declarou: 'Não cometi nenhuma irregularidade durante a minha gestão'\", obtém-se a seguinte estrutura equivalente:",
+        options: [
+            { text: "O réu declarou que não cometera nenhuma irregularidade durante a sua gestão.", isCorrect: true, rationale: "Na transposição, o pretérito perfeito do indicativo ('cometi') passa para o pretérito mais-que-perfeito ('cometera' ou 'havia cometido') e o pronome 'minha' passa para 'sua'." },
+            { text: "O réu declarou que não cometeu nenhuma irregularidade durante a minha gestão.", isCorrect: false, rationale: "Incorreto: manteve-se o pronome 'minha' sem ajustar a pessoa do discurso." },
+            { text: "O réu declarou que não cometeria nenhuma irregularidade durante a sua gestão.", isCorrect: false, rationale: "Incorreto: alterou-se o sentido para o futuro do pretérito ('cometeria')." },
+            { text: "O réu declarou que não cometa nenhuma irregularidade durante a sua gestão.", isCorrect: false, rationale: "Incorreto: usou-se o presente do subjuntivo ('cometa'), desrespeitando a correlação temporal." }
+        ],
+        hint: "O pretérito perfeito do discurso direto ('cometi') deve virar pretérito mais-que-perfeito no discurso indireto."
+    },
+    {
+        id: 3,
+        category: "Oração Reduzida para Desenvolvida",
+        question: "Assinale a alternativa em que a oração reduzida de infinitivo \"Apesar de *estudar* diariamente, o candidato sentia-se inseguro\" foi corretamente transformada em uma oração desenvolvida equivalente:",
+        options: [
+            { text: "Embora estudasse diariamente, o candidato sentia-se inseguro.", isCorrect: true, rationale: "'Apesar de' indica concessão. A oração desenvolvida equivalente exige conjunção concessiva ('embora') e verbo flexionado no modo subjuntivo ('estudasse')." },
+            { text: "Pois estudava diariamente, o candidato sentia-se inseguro.", isCorrect: false, rationale: "'Pois' expressa causa ou explicação, alterando completamente o valor concessivo original." },
+            { text: "À medida que estudava diariamente, o candidato sentia-se inseguro.", isCorrect: false, rationale: "'À medida que' estabelece relação de proporção, e não de concessão." },
+            { text: "A fim de que estudasse diariamente, o candidato sentia-se inseguro.", isCorrect: false, rationale: "'A fim de que' estabelece relação de finalidade." }
+        ],
+        hint: "Substitua a locução concessiva reduzida ('Apesar de') por uma conjunção concessiva desenvolvida (como 'Embora') ajustando o verbo."
+    },
+    {
+        id: 4,
+        category: "Equivalência de Conectivos Causais",
+        question: "Na frase: \"Como não obteve o quórum necessário, a votação da matéria foi adiada.\" A oração destacada pode ser reescrita, mantendo a correção e o sentido original, por:",
+        options: [
+            { text: "Visto que não obteve o quórum necessário, a votação da matéria foi adiada.", isCorrect: true, rationale: "'Como' em início de período com valor causal equivale perfeitamente a 'visto que', 'já que' ou 'uma vez que'." },
+            { text: "Contanto que não obteve o quórum necessário, a votação da matéria foi adiada.", isCorrect: false, rationale: "'Contanto que' introduz uma condição e exige verbo no subjuntivo." },
+            { text: "Conquanto não obteve o quórum necessário, a votação da matéria foi adiada.", isCorrect: false, rationale: "'Conquanto' é conectivo concessivo e exige modo subjuntivo ('conquanto não obtivesse')." },
+            { text: "Segundo não obteve o quórum necessário, a votação da matéria foi adiada.", isCorrect: false, rationale: "'Segundo' possui valor conformativo." }
+        ],
+        hint: "A palavra 'Como' no início da frase introduz a causa da votação ter sido adiada."
+    },
+    {
+        id: 5,
+        category: "Ativa para Passiva Pronominal",
+        question: "A frase na voz ativa \"Os auditores identificaram severas inconsistências no balanço da empresa\" assume a forma equivalente na voz passiva sintética (ou pronominal) em:",
+        options: [
+            { text: "Identificaram-se severas inconsistências no balanço da empresa.", isCorrect: true, rationale: "A voz passiva sintética é formada pelo verbo transitivo direto na 3ª pessoa do plural concordando com o sujeito paciente ('severas inconsistências') + partícula apassivadora 'se'." },
+            { text: "Identificou-se severas inconsistências no balanço da empresa.", isCorrect: false, rationale: "Erro de concordância: o verbo deve ir para o plural ('identificaram-se') concordando com 'inconsistências'." },
+            { text: "Foram identificadas severas inconsistências no balanço da empresa.", isCorrect: false, rationale: "Esta é a voz passiva analítica, não a sintética (pronominal)." },
+            { text: "Severas inconsistências se identificaram no balanço da empresa.", isCorrect: false, rationale: "Colocação pronominal inadequada para o início absoluto de frase sem fator de atração." }
+        ],
+        hint: "A voz passiva sintética exige o pronome 'se' e a concordância verbal no plural com o elemento paciente."
+    },
+    {
+        id: 6,
+        category: "Orações Adjetivas: Restritiva vs. Explicativa",
+        question: "Considere a frase: \"Os funcionários que concluíram o treinamento receberam a gratificação.\" Se alterarmos a estrutura para \"Os funcionários, que concluíram o treinamento, receberam a gratificação\", ocorre a seguinte mudança semântica:",
+        options: [
+            { text: "A primeira frase restringe o benefício a apenas um grupo de funcionários; a segunda indica que a totalidade dos funcionários concluiu o treinamento e recebeu a gratificação.", isCorrect: true, rationale: "Sem vírgulas (restritiva), a oração delimita apenas um subgrupo. Com vírgulas (explicativa), atribui-se a propriedade a todos os elementos do conjunto." },
+            { text: "A primeira frase introduz uma relação de causa, enquanto a segunda estabelece uma condição hipotética.", isCorrect: false, rationale: "Ambas mantêm valor adjetivo, alterando apenas a abrangência (restrição vs. explicação)." },
+            { text: "Apenas a segunda frase apresenta correção gramatical de acordo com a norma-padrão.", isCorrect: false, rationale: "Ambas estão gramaticalmente corretas, mas possuem sentidos diferentes." },
+            { text: "A presença das vírgulas transforma a oração adjetiva em oração subordinada adverbial concessiva.", isCorrect: false, rationale: "Continuam sendo orações subordinadas adjetivas." }
+        ],
+        hint: "As vírgulas na oração adjetiva transformam o sentido de restrição (alguns) em explicação (todos)."
+    },
+    {
+        id: 7,
+        category: "Substituição por Nome Cognato (Nominalização)",
+        question: "Assinale a opção em que a oração destacada foi reescrita corretamente substituindo a estrutura verbal por uma estrutura nominal equivalente: \"O diretor solicitou *que os relatórios fossem entregues com urgência*.\"",
+        options: [
+            { text: "O diretor solicitou a entrega urgente dos relatórios.", isCorrect: true, rationale: "O verbo 'entregues' foi nominalizado para o substantivo 'entrega' e o adjetivo 'urgente' assumiu o papel do advérbio, mantendo equivalência." },
+            { text: "O diretor solicitou a distribuição urgente dos relatórios.", isCorrect: false, rationale: "Alteração de sentido: 'distribuição' não é cognato nem equivalente direto de 'entrega'." },
+            { text: "O diretor solicitou para entregarem urgentemente os relatórios.", isCorrect: false, rationale: "Manteve-se a estrutura verbal reduzida em vez da nominalização plena." },
+            { text: "O diretor solicitou que entregassem os relatórios rapidamente.", isCorrect: false, rationale: "Continua sendo uma oração subordinada verbal desenvolvida." }
+        ],
+        hint: "Transforme a oração com o verbo 'entregar' em uma frase que utilize o substantivo correspondente."
+    },
+    {
+        id: 8,
+        category: "Equivalência de Conectivos Concessivos",
+        question: "Na frase: \"Muito embora apresente bons resultados, a empresa manterá a política de contenção de despesas.\" A substituição de 'Muito embora' por 'A despeito de' exige a seguinte reescrita para manter a equivalência gramatical:",
+        options: [
+            { text: "A despeito de apresentar bons resultados, a empresa manterá a política de contenção de despesas.", isCorrect: true, rationale: "'A despeito de' é locução prepositiva concessiva que exige verbo no infinitivo (oração reduzida) ou um substantivo." },
+            { text: "A despeito de apresentasse bons resultados, a empresa manterá a política de contenção de despesas.", isCorrect: false, rationale: "Incorreto: a regência da preposição 'de' não aceita verbo conjugado no subjuntivo direto." },
+            { text: "A despeito que apresente bons resultados, a empresa manterá a política de contenção de despesas.", isCorrect: false, rationale: "Forma inexistente na norma-padrão ('a despeito que')." },
+            { text: "A despeito de apresentaria bons resultados, a empresa manterá a política de contenção de despesas.", isCorrect: false, rationale: "Uso do futuro do pretérito inviável após preposição 'de'." }
+        ],
+        hint: "A locução prepositiva 'A despeito de' pede a forma nominal do verbo (infinitivo)."
+    },
+    {
+        id: 9,
+        category: "Inversão de Orações e Correlação Temporal",
+        question: "Assinale a alternativa que reescreve a frase \"Se o governo investir em infraestrutura, a economia crescerá\" alterando a hipótese para uma condição irreal no passado com a devida correlação verbal:",
+        options: [
+            { text: "Se o governo tivesse investido em infraestrutura, a economia teria crescido.", isCorrect: true, rationale: "A hipótese irreal no passado exige o pretérito mais-que-perfeito do subjuntivo ('tivesse investido') correlacionado ao futuro do pretérito do indicativo ('teria crescido')." },
+            { text: "Se o governo investisse em infraestrutura, a economia cresceu.", isCorrect: false, rationale: "Incompatibilidade temporal entre o imperfeito do subjuntivo ('investisse') e o pretérito perfeito ('cresceu')." },
+            { text: "Se o governo investir em infraestrutura, a economia teria crescido.", isCorrect: false, rationale: "Incompatibilidade entre futuro do subjuntivo e futuro do pretérito." },
+            { text: "Se o governo investiu em infraestrutura, a economia cresceria.", isCorrect: false, rationale: "Desequilíbrio na correlação dos modos verbais para condicionalidade." }
+        ],
+        hint: "A correlação correta para algo irreal no passado é: pretérito mais-que-perfeito do subjuntivo + futuro do pretérito do indicativo."
+    },
+    {
+        id: 10,
+        category: "Transformação de Oração Final",
+        question: "A oração reduzida de infinitivo \"O atleta treinou exaustivamente *para conquistar a medalha de ouro*\" equivale plenamente à oração desenvolvida:",
+        options: [
+            { text: "O atleta treinou exaustivamente a fim de que conquistasse a medalha de ouro.", isCorrect: true, rationale: "'Para' + infinitivo indica finalidade, equivalente a 'a fim de que' + verbo no modo subjuntivo ('conquistasse')." },
+            { text: "O atleta treinou exaustivamente visto que conquistou a medalha de ouro.", isCorrect: false, rationale: "'Visto que' estabelece relação de causa e não de finalidade." },
+            { text: "O atleta treinou exaustivamente de modo que conquistou a medalha de ouro.", isCorrect: false, rationale: "'De modo que' com indicativo estabelece relação de consequência." },
+            { text: "O atleta treinou exaustivamente ainda que conquistasse a medalha de ouro.", isCorrect: false, rationale: "'Ainda que' estabelece relação de concessão." }
+        ],
+        hint: "Identifique a locução conjuntiva que expressa objetivo/finalidade e exige verbo no subjuntivo."
+    },
+    {
+        id: 11,
+        category: "Conversão de Voz Impossível/Agente Indeterminado",
+        question: "Assinale a frase na voz ativa que NÃO permite a conversão para a voz passiva analítica de forma gramaticalmente aceita:",
+        options: [
+            { text: "Os passageiros simpatizaram com a atitude do piloto.", isCorrect: true, rationale: "Verbos transitivos indiretos (como 'simpatizar', que exige a preposição 'com') não admitem passagem para a voz passiva." },
+            { text: "O arquiteto projetou o novo teatro municipal.", isCorrect: false, rationale: "Permite voz passiva: 'O novo teatro municipal foi projetado pelo arquiteto'." },
+            { text: "A tempestade destruiu a ponte de madeira.", isCorrect: false, rationale: "Permite voz passiva: 'A ponte de madeira foi destruída pela tempestade'." },
+            { text: "O conselho aprovou as novas diretrizes de segurança.", isCorrect: false, rationale: "Permite voz passiva: 'As novas diretrizes foram aprovadas pelo conselho'." }
+        ],
+        hint: "Apenas verbos transitivos diretos (VTD) aceitam transposição para a voz passiva analítica."
+    },
+    {
+        id: 12,
+        category: "Equivalência de Orações Consecutivas",
+        question: "A frase \"Tamanho foi o impacto do anúncio que as ações da empresa despencaram\" pode ser reescrita com idêntica relação de sentido em:",
+        options: [
+            { text: "O impacto do anúncio foi tão grande que as ações da empresa despencaram.", isCorrect: true, rationale: "A estrutura correlativa intensificadora 'tão... que' mantém com exatidão a relação de causa e consequência da oração 'tamanho... que'." },
+            { text: "Embora o impacto do anúncio fosse grande, as ações da empresa despencaram.", isCorrect: false, rationale: "Muda a relação semântica para concessão." },
+            { text: "Caso o impacto do anúncio fosse grande, as ações da empresa despencariam.", isCorrect: false, rationale: "Muda a relação semântica para condição." },
+            { text: "À medida que o impacto do anúncio crescia, as ações da empresa despencaram.", isCorrect: false, rationale: "Muda a relação semântica para proporção." }
+        ],
+        hint: "Mantenha a estrutura consecutiva introduzida por um intensificador ('tão... que')."
+    },
+    {
+        id: 13,
+        category: "Equivalência em Orações Temporais",
+        question: "Na passagem: \"*Mal o sol despontava no horizonte*, os trabalhadores já iniciavam a colheita.\" A oração sublinhada pode ser substituída sem alteração de sentido por:",
+        options: [
+            { text: "Logos que o sol despontava no horizonte...", isCorrect: true, rationale: "A conjunção 'Mal' com valor temporal expressa ação imediata, sendo equivalente a 'Logo que', 'Assim que' ou 'Apenas'." },
+            { text: "Conforme o sol despontava no horizonte...", isCorrect: false, rationale: "'Conforme' indica conformidade ou proporcionalidade, não immediatez temporal." },
+            { text: "Ainda que o sol despontasse no horizonte...", isCorrect: false, rationale: "'Ainda que' introduz valor concessivo." },
+            { text: "Para que o sol despontasse no horizonte...", isCorrect: false, rationale: "'Para que' indica finalidade." }
+        ],
+        hint: "'Mal' atuando como conectivo de tempo indica que algo acontece imediatamente após outra coisa."
+    },
+    {
+        id: 14,
+        category: "Discurso Indireto Livre para Indireto",
+        question: "Considere a frase em discurso direto: \"'Preciso terminar este parecer hoje', pensou a consultora.\" A transposição para o discurso indireto exige a forma:",
+        options: [
+            { text: "A consultora pensou que precisava terminar aquele parecer naquele dia.", isCorrect: true, rationale: "No discurso indireto: o presente 'preciso' vira imperfeito 'precisava'; o demonstrativo 'este' vira 'aquele'; e o advérbio 'hoje' passa a 'naquele dia'." },
+            { text: "A consultora pensou que precisa terminar este parecer hoje.", isCorrect: false, rationale: "Manteve os pronomes e tempos do discurso direto sem a devida adaptação." },
+            { text: "A consultora pensou que precisará terminar este parecer naquele dia.", isCorrect: false, rationale: "Mistura incorreta de futuro do presente com advérbio de tempo passado." },
+            { text: "A consultora pensou que precisasse terminar aquele parecer hoje.", isCorrect: false, rationale: "Uso indevido do subjuntivo e manutenção do advérbio de tempo 'hoje'." }
+        ],
+        hint: "Lembre-se de adaptar três elementos no discurso indireto: tempo verbal, pronome demonstrativo ('este' -> 'aquele') e advérbio de tempo ('hoje' -> 'naquele dia')."
+    },
+    {
+        id: 15,
+        category: "Substituição do Operador 'Desde que'",
+        question: "Na frase: \"A aprovação da reforma ocorrerá, *desde que haja consenso entre os partidos*.\" A oração sublinhada expressa ideia de condição. A sua reescrita equivalente é:",
+        options: [
+            { text: "A aprovação da reforma ocorrerá, contanto que haja consenso entre os partidos.", isCorrect: true, rationale: "'Desde que' com verbo no subjuntivo ('haja') possui valor condicional, sendo perfeitamente substituível por 'contanto que'." },
+            { text: "A aprovação da reforma ocorrerá, já que há consenso entre os partidos.", isCorrect: false, rationale: "'Já que' indica causa afirmativa, e não hipótese/condição." },
+            { text: "A aprovação da reforma ocorrerá, embora haja consenso entre os partidos.", isCorrect: false, rationale: "'Embora' altera o sentido para concessão." },
+            { text: "A aprovação da reforma ocorrerá, segundo há consenso entre os partidos.", isCorrect: false, rationale: "'Segundo' expressa conformidade." }
+        ],
+        hint: "Aponte o conectivo que também exige verbo no modo subjuntivo e mantém a ideia de exigência/condição."
+    },
+    {
+        id: 16,
+        category: "Ativa com Objeto Indireto e Voz Passiva",
+        question: "Analise a frase: \"A população obedeceu às diretrizes do decreto.\" A tentativa de conversão dessa frase para a voz passiva analítica resulta em:",
+        options: [
+            { text: "Uma estrutura gramaticalmente incorreta, pois o verbo 'obedecer' rege complemento indireto e não admite voz passiva na norma culta tradicional.", isCorrect: true, rationale: "Pela norma culta estrita, verbos transitivos indiretos não formam voz passiva analítica (a exceção tradicional ocorre apenas em linguagem poética ou desvios do uso)." },
+            { text: "\"As diretrizes do decreto foram obedecidas pela população\", mantendo total correção gramatical.", isCorrect: false, rationale: "Embora comum no uso informal, a gramática normativa tradicional rejeita a passiva com VTI." },
+            { text: "\"Obedeceu-se as diretrizes do decreto pela população\", com total equivalência sintática.", isCorrect: false, rationale: "Falta preposição exigida pela regência do verbo em 'as diretrizes'." },
+            { text: "\"Foram obedecidas às diretrizes do decreto pela população\", mantendo a crase original.", isCorrect: false, rationale: "É gramaticalmente impossível manter a preposição de objeto indireto no sujeito da passiva." }
+        ],
+        hint: "Apenas verbos Transitivos Diretos (VTD) aceitam transposição perfeita para a voz passiva tradicional."
+    },
+    {
+        id: 17,
+        category: "Orações Subordinadas Substantivas para Reduzidas",
+        question: "A oração desenvolvida \"É fundamental *que todos respeitem as normas de convivência*\" transforma-se em uma oração reduzida de infinitivo equivalente em:",
+        options: [
+            { text: "É fundamental todos respeitarem as normas de convivência.", isCorrect: true, rationale: "O verbo da oração subordinada substantiva subjetiva assume a forma de infinitivo flexionado ('respeitarem') sem a conjunção integrante 'que'." },
+            { text: "É fundamental ao respeito de todos pelas normas de convivência.", isCorrect: false, rationale: "Trata-se de uma nominalização com preposição incorreta, não de oração reduzida de infinitivo." },
+            { text: "É fundamental que o respeito das normas de convivência aconteça.", isCorrect: false, rationale: "Permanece sendo uma oração desenvolvida com outro verbo." },
+            { text: "É fundamental respeitando as normas de convivência.", isCorrect: false, rationale: "Uso indevido do gerúndio no lugar do infinitivo." }
+        ],
+        hint: "Para reduzir a oração substantiva, elimina-se a conjunção 'que' e utiliza-se o verbo no infinitivo."
+    },
+    {
+        id: 18,
+        category: "Transformação de Oração Proporcional",
+        question: "A frase \"À medida que a tecnologia avança, surgem novos desafios éticos\" pode ser reescrita com exata equivalência semântica e gramatical por:",
+        options: [
+            { text: "Ao passo que a tecnologia avança, surgem novos desafios éticos.", isCorrect: true, rationale: "'Ao passo que' é locução conjuntiva proporcional equivalente a 'À medida que'." },
+            { text: "Na medida que a tecnologia avança, surgem novos desafios éticos.", isCorrect: false, rationale: "A expressão 'Na medida que' é considerada incorreta/inexistente na norma-padrão." },
+            { text: "À proporção que a tecnologia avançar, surgiam novos desafios éticos.", isCorrect: false, rationale: "Erro grave de correlação verbal ('avançar' / 'surgiam')." },
+            { text: "Conforme a tecnologia avançasse, surgem novos desafios éticos.", isCorrect: false, rationale: "Incompatibilidade do modo subjuntivo 'avançasse' com o presente do indicativo 'surgem'." }
+        ],
+        hint: "Procure a locução proporcional escorreita que não apresente erros de flexão ou de norma-padrão."
+    },
+    {
+        id: 19,
+        category: "Inversão da Posição do Agente da Passiva",
+        question: "Considere a frase passiva: \"As diretrizes foram elaboradas pelos especialistas do ministério.\" Ao converter para a voz ativa, o segmento 'pelos especialistas do ministério' assume a função sintática de:",
+        options: [
+            { text: "sujeito agente.", isCorrect: true, rationale: "O agente da passiva ('pelos especialistas...') transforma-se no sujeito ativo da oração na voz ativa: 'Os especialistas do ministério elaboraram as diretrizes'." },
+            { text: "objeto direto.", isCorrect: false, rationale: "O objeto direto na voz ativa será o antigo sujeito paciente ('as diretrizes')." },
+            { text: "adjunto adnominal.", isCorrect: false, rationale: "Não funciona como mero modificador, mas como núcleo do sujeito da oração ativa." },
+            { text: "objeto indireto.", isCorrect: false, rationale: "O verbo 'elaborar' na ativa rege objeto direto." }
+        ],
+        hint: "Quem executa a ação na voz passiva (agente da passiva) torna-se o sujeito que pratica a ação na voz ativa."
+    },
+    {
+        id: 20,
+        category: "Equivalência de Conectivos Explicativos/Explicativos",
+        question: "Na frase: \"Não saia sem o casaco, *pois a temperatura cairá drasticamente durante a noite*.\" A conjunção 'pois' pode ser substituída sem alteração de sentido e mantendo a pontuação por:",
+        options: [
+            { text: "porque", isCorrect: true, rationale: "'Pois' antes do verbo introduz oração coordenada explicativa/causal, sendo sinônimo direto de 'porque' e 'porquanto'." },
+            { text: "portanto", isCorrect: false, rationale: "'Portanto' possui sentido conclusivo, e não explicativo." },
+            { text: "porquanto pós-posto ao verbo", isCorrect: false, rationale: "'Porquanto' atua na ordem direta e não exige posposição ao verbo como o 'pois' conclusivo." },
+            { text: "todavia", isCorrect: false, rationale: "'Todavia' é conjunção adversativa (oposição)." }
+        ],
+        hint: "Identifique a conjunção que introduz uma justificativa ou explicação para a ordem dada na primeira oração."
+    }
+];
+
+        // State Management
+        let currentQuestionIdx = 0;
+        let userAnswers = new Array(questionsData.length).fill(null);
+        let bookmarked = new Array(questionsData.length).fill(false);
+        let quizMode = 'study'; // 'study' or 'exam'
+        let isSubmitted = false;
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGrid();
+            loadQuestion(0);
+        });
+
+        // Set Mode
+        function setMode(mode) {
+            if (isSubmitted) return;
+            quizMode = mode;
+            
+            const btnStudy = document.getElementById('btnModeStudy');
+            const btnExam = document.getElementById('btnModeExam');
+
+            if (mode === 'study') {
+                btnStudy.className = "px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm";
+                btnExam.className = "px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900";
+            } else {
+                btnExam.className = "px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm";
+                btnStudy.className = "px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900";
+            }
+
+            // Re-render current question view
+            loadQuestion(currentQuestionIdx);
+        }
+
+        // Render Side Navigation Grid
+        function renderGrid() {
+            const gridContainer = document.getElementById('questionGrid');
+            gridContainer.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `gridBtn-${idx}`;
+                btn.onclick = () => jumpToQuestion(idx);
+                btn.className = getGridBtnClass(idx);
+                btn.innerText = idx + 1;
+                gridContainer.appendChild(btn);
+            });
+
+            updateProgress();
+        }
+
+        function getGridBtnClass(idx) {
+            let base = "w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center transition-all ";
+            
+            if (idx === currentQuestionIdx) {
+                base += "ring-2 ring-brand-600 ring-offset-2 ";
+            }
+
+            if (bookmarked[idx]) {
+                base += "bg-amber-400 text-amber-950 font-extrabold ";
+            } else if (userAnswers[idx] !== null) {
+                if (isSubmitted || quizMode === 'study') {
+                    const isCorrect = questionsData[idx].options[userAnswers[idx]].isCorrect;
+                    base += isCorrect ? "bg-emerald-500 text-white " : "bg-rose-500 text-white ";
+                } else {
+                    base += "bg-brand-600 text-white ";
+                }
+            } else {
+                base += "bg-slate-100 text-slate-600 hover:bg-slate-200 ";
+            }
+
+            return base;
+        }
+
+        // Update Progress Bar & Score
+        function updateProgress() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            const percent = Math.round((answeredCount / questionsData.length) * 100);
+            
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('progressPercent').innerText = `${percent}% concluído`;
+
+            // Calculate score
+            let correctCount = 0;
+            userAnswers.forEach((ans, i) => {
+                if (ans !== null && questionsData[i].options[ans].isCorrect) {
+                    correctCount++;
+                }
+            });
+
+            document.getElementById('scoreDisplay').innerText = `${correctCount} / ${questionsData.length}`;
+        }
+
+        // Load Question Data
+        function loadQuestion(idx) {
+            currentQuestionIdx = idx;
+            const q = questionsData[idx];
+
+            // Update Header Info
+            document.getElementById('questionCategory').innerText = q.category;
+            document.getElementById('questionNumberBadge').innerText = `Questão ${idx + 1} de ${questionsData.length}`;
+            document.getElementById('questionTitle').innerText = q.question;
+
+            // Update Bookmark Button
+            const btnBookmark = document.getElementById('btnBookmark');
+            if (bookmarked[idx]) {
+                btnBookmark.className = "text-amber-500 font-medium text-sm transition flex items-center gap-1.5";
+                btnBookmark.innerHTML = `<i class="fa-solid fa-bookmark"></i> <span class="hidden sm:inline">Marcada</span>`;
+            } else {
+                btnBookmark.className = "text-slate-400 hover:text-amber-500 text-sm font-medium transition flex items-center gap-1.5";
+                btnBookmark.innerHTML = `<i class="fa-regular fa-bookmark"></i> <span class="hidden sm:inline">Revisar</span>`;
+            }
+
+            // Render Options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const selectedOpt = userAnswers[idx];
+            const showFeedback = isSubmitted || (quizMode === 'study' && selectedOpt !== null);
+
+            q.options.forEach((opt, optIdx) => {
+                const optBtn = document.createElement('button');
+                optBtn.className = getOptionClass(idx, optIdx, selectedOpt, showFeedback);
+                optBtn.onclick = () => selectOption(optIdx);
+                if (showFeedback || isSubmitted) {
+                    // Disable changing if already answered in study mode or if quiz is finished
+                    if (quizMode === 'study' || isSubmitted) {
+                        optBtn.disabled = true;
+                    }
+                }
+
+                const letter = String.fromCharCode(65 + optIdx); // A, B, C, D
+
+                let iconHtml = '';
+                if (showFeedback) {
+                    if (opt.isCorrect) {
+                        iconHtml = `<i class="fa-solid fa-circle-check text-emerald-600 text-lg ml-auto"></i>`;
+                    } else if (selectedOpt === optIdx) {
+                        iconHtml = `<i class="fa-solid fa-circle-xmark text-rose-600 text-lg ml-auto"></i>`;
+                    }
+                }
+
+                optBtn.innerHTML = `
+                    <div class="flex items-start gap-3 text-left w-full">
+                        <span class="w-6 h-6 rounded-full border border-current flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
+                            ${letter}
+                        </span>
+                        <span class="text-sm font-medium leading-relaxed flex-1">${opt.text}</span>
+                        ${iconHtml}
+                    </div>
+                `;
+
+                optionsContainer.appendChild(optBtn);
+            });
+
+            // Handle Explanation Box
+            const explanationBox = document.getElementById('explanationBox');
+            const explanationHeader = document.getElementById('explanationHeader');
+            const explanationText = document.getElementById('explanationText');
+
+            if (showFeedback && selectedOpt !== null) {
+                explanationBox.classList.remove('hidden');
+                const chosenOptObj = q.options[selectedOpt];
+                const correctOptObj = q.options.find(o => o.isCorrect);
+
+                if (chosenOptObj.isCorrect) {
+                    explanationHeader.className = "flex items-center gap-2 font-bold mb-1 text-emerald-700";
+                    explanationHeader.innerHTML = `<i class="fa-solid fa-circle-check"></i> Correto!`;
+                    explanationText.innerText = chosenOptObj.rationale;
+                } else {
+                    explanationHeader.className = "flex items-center gap-2 font-bold mb-1 text-rose-700";
+                    explanationHeader.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Incorreto.`;
+                    explanationText.innerText = `${chosenOptObj.rationale} (Gabarito: ${correctOptObj.text})`;
+                }
+            } else {
+                explanationBox.classList.add('hidden');
+            }
+
+            // Navigation Buttons State
+            document.getElementById('btnPrev').disabled = (idx === 0);
+            
+            const btnNext = document.getElementById('btnNext');
+            if (idx === questionsData.length - 1) {
+                btnNext.innerHTML = `Finalizar <i class="fa-solid fa-flag-checkered ml-1"></i>`;
+            } else {
+                btnNext.innerHTML = `Próxima <i class="fa-solid fa-chevron-right ml-1"></i>`;
+            }
+
+            renderGrid();
+        }
+
+        function getOptionClass(qIdx, optIdx, selectedOpt, showFeedback) {
+            let base = "w-full p-4 rounded-xl border text-left transition-all flex items-center ";
+
+            if (showFeedback) {
+                const isCorrect = questionsData[qIdx].options[optIdx].isCorrect;
+                if (isCorrect) {
+                    return base + "bg-emerald-50 border-emerald-300 text-emerald-950 font-medium ";
+                } else if (selectedOpt === optIdx) {
+                    return base + "bg-rose-50 border-rose-300 text-rose-950 ";
+                } else {
+                    return base + "bg-slate-50 border-slate-200 text-slate-400 opacity-60 ";
+                }
+            } else {
+                if (selectedOpt === optIdx) {
+                    return base + "bg-brand-50 border-brand-500 text-brand-900 shadow-sm ";
+                } else {
+                    return base + "bg-white border-slate-200 text-slate-700 hover:border-brand-300 hover:bg-slate-50 ";
+                }
+            }
+        }
+
+        // Action Handlers
+        function selectOption(optIdx) {
+            if (isSubmitted) return;
+            userAnswers[currentQuestionIdx] = optIdx;
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function toggleBookmark() {
+            bookmarked[currentQuestionIdx] = !bookmarked[currentQuestionIdx];
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function jumpToQuestion(idx) {
+            loadQuestion(idx);
+        }
+
+        function navigateQuestion(direction) {
+            const nextIdx = currentQuestionIdx + direction;
+            if (nextIdx >= 0 && nextIdx < questionsData.length) {
+                loadQuestion(nextIdx);
+            } else if (nextIdx >= questionsData.length) {
+                finishQuiz();
+            }
+        }
+
+        // Finish Quiz & Show Results
+        function finishQuiz() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            if (unanswered > 0 && !isSubmitted) {
+                const confirmSubmit = confirm(`Você ainda tem ${unanswered} questão(ões) não respondida(s). Deseja realmente finalizar?`);
+                if (!confirmSubmit) return;
+            }
+
+            isSubmitted = true;
+            document.getElementById('quizCard').classList.add('hidden');
+            document.getElementById('resultsCard').classList.remove('hidden');
+
+            // Calculate final statistics
+            let correctCount = 0;
+            userAnswers.forEach((ans, i) => {
+                if (ans !== null && questionsData[i].options[ans].isCorrect) {
+                    correctCount++;
+                }
+            });
+
+            const percent = Math.round((correctCount / questionsData.length) * 100);
+
+            document.getElementById('finalScore').innerText = `${correctCount} / ${questionsData.length}`;
+            document.getElementById('finalPercent').innerText = `${percent}%`;
+
+            let feedbackText = "Insuficiente";
+            let feedbackColor = "text-rose-600";
+            if (percent >= 85) {
+                feedbackText = "Excelente!";
+                feedbackColor = "text-emerald-600";
+            } else if (percent >= 70) {
+                feedbackText = "Muito Bom!";
+                feedbackColor = "text-brand-600";
+            } else if (percent >= 50) {
+                feedbackText = "Regular";
+                feedbackColor = "text-amber-600";
+            }
+
+            const feedbackElem = document.getElementById('finalFeedback');
+            feedbackElem.innerText = feedbackText;
+            feedbackElem.className = `text-sm font-bold mt-1 block ${feedbackColor}`;
+
+            renderGrid();
+        }
+
+        function restartQuiz() {
+            userAnswers = new Array(questionsData.length).fill(null);
+            bookmarked = new Array(questionsData.length).fill(false);
+            isSubmitted = false;
+            currentQuestionIdx = 0;
+
+            document.getElementById('resultsCard').classList.add('hidden');
+            document.getElementById('quizCard').classList.remove('hidden');
+
+            renderGrid();
+            loadQuestion(0);
+        }
+
+        function reviewQuiz() {
+            document.getElementById('resultsCard').classList.add('hidden');
+            document.getElementById('quizCard').classList.remove('hidden');
+            loadQuestion(0);
+        }
+    </script>
+</body>
+</html>
