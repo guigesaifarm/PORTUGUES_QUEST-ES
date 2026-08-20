@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Significação Contextual</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb; /* Azul padrão */
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        /* Fontes aumentadas para melhor legibilidade */
+        .card-content {
+            font-size: 1.7rem; 
+            line-height: 1.5;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.2rem; 
+            text-align: left;
+            color: #34495e;
+            overflow-y: auto;
+            max-height: 220px;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.4rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Significação Contextual de Palavras e Expressões</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Significação</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            {
+                category: "Conceito Base",
+                front: "O que significa o princípio da <b>Significação Contextual</b> em provas de concurso?",
+                back: "Significa que o sentido de uma palavra ou expressão não é isolado, mas moldado pelo texto. Em provas, sinônimos aceitos no dicionário podem ser considerados incorretos se não preservarem o sentido exato do contexto abordado."
+            },
+            {
+                category: "Denotação vs. Conotação",
+                front: "Qual é a diferença fundamental entre sentido <b>denotativo</b> e sentido <b>conotativo</b>?",
+                back: "• <b>Denotativo:</b> Sentido real, literal, dicionarizado (ex: 'O <i>coração</i> bombeia sangue').<br>• <b>Conotativo:</b> Sentido figurado, metafórico, dependente do contexto (ex: 'Ele tem um <i>coração</i> de ouro')."
+            },
+            {
+                category: "Polissemia",
+                front: "O que é a <b>polissemia</b> e como ela se difere da ambiguidade indesejada?",
+                back: "A polissemia é a multiplicidade de sentidos legítimos que uma mesma palavra pode assumir conforme o contexto (ex: <i>cabeça</i> de gado / <i>cabeça</i> da equipe). Já a ambiguidade indesejada gera duplo sentido confuso."
+            },
+            {
+                category: "Homônimos Perfeitos",
+                front: "Como o contexto diferencia palavras homônimas perfeitas? (Ex: <b>cedo</b> do verbo ceder x advérbio cedo)",
+                back: "Apenas a análise sintática e o contexto imediato revelam a classe gramatical e o sentido pretendido (ex: 'Eu <i>cedo</i> o lugar' = verbo; 'Acordei <i>cedo</i>' = advérbio de tempo)."
+            },
+            {
+                category: "Homônimos Homófonos",
+                front: "Qual é o sentido contextual que diferencia <b>conserto</b> (com S) de <b>concerto</b> (com C)?",
+                back: "• <b>Conserto:</b> Reparo, arrerto de algo que estava quebrado.<br>• <b>Concerto:</b> Apresentação musical ou acordo/harmonia entre partes."
+            },
+            {
+                category: "Homônimos Homógrafos",
+                front: "Como o contexto define a palavra <b>colher</b> (substantivo) e <b>colher</b> (verbo)?",
+                back: "Além do sentido, a fonética (abertura da vogal) costuma mudar, mas o contexto esclarece se é o talher de cozinha (substantivo) ou a ação de apanhar frutos (verbo)."
+            },
+            {
+                category: "Parônimos",
+                front: "Qual é a distinção de sentido no contexto entre <b>eminente</b> e <b>iminente</b>?",
+                back: "• <b>Eminente:</b> Que se destaca, superior, ilustre (ex: um cientista eminente).<br>• <b>Iminente:</b> Que está prestes a acontecer, imediato (ex: perigo iminente)."
+            },
+            {
+                category: "Parônimos",
+                front: "Como diferenciar o uso contextual de <b>flagrante</b> e <b>fragrante</b>?",
+                back: "• <b>Flagrante:</b> O que ocorre no exato momento, evidente (ex: pego em flagrante).<br>• <b>Fragrante:</b> Que tem boa fragrância, aromático, perfumado."
+            },
+            {
+                category: "Parônimos",
+                front: "Qual a diferença de sentido entre <b>discriminar</b> e <b>descriminar</b>?",
+                back: "• <b>Discriminar:</b> Diferenciar, distinguir ou marginalizar preconceituosamente.<br>• <b>Descriminar:</b> Desculpar, absolver de um crime, tirar a culpa (despenalizar)."
+            },
+            {
+                category: "Parônimos",
+                front: "O que significam contextualmente <b>ratificar</b> e <b>retificar</b>?",
+                back: "• <b>Ratificar:</b> Confirmar, validar, reforçar algo que foi dito.<br>• <b>Retificar:</b> Corrigir, endireitar, consertar um erro."
+            },
+            {
+                category: "Parônimos",
+                front: "Como o contexto orienta o uso de <b>tráfego</b> e <b>tráfico</b>?",
+                back: "• <b>Tráfego:</b> Trânsito, movimento de veículos ou pedestres nas ruas.<br>• <b>Tráfico:</b> Comércio ilegal, clandestino (ex: tráfico de drogas)."
+            },
+            {
+                category: "Ambiguidade",
+                front: "O que é um texto <b>ambíguo</b> em termos de significação e por que bancas o cobram?",
+                back: "É aquele que apresenta mais de uma interpretação lógica devido a falhas de construção ou duplo sentido não intencional. As bancas cobram para avaliar a clareza e precisão redacional."
+            },
+            {
+                category: "Sinonímia Contextual",
+                front: "A palavra 'efêmero' pode ser substituída por 'passageiro' sem alteração de sentido em qualquer contexto?",
+                back: "<b>Sim, contextualmente são sinônimos perfeitos</b> em passagens que tratam de algo de curta duração. No entanto, é preciso testar se a coesão e o tom do texto original permanecem intactos."
+            },
+            {
+                category: "Antonímia Contextual",
+                front: "Os antônimos literais mantêm oposição exata em todos os contextos? Dê um exemplo.",
+                back: "<b>Nem sempre.</b> O sentido oposto depende da situação comunicativa. Por exemplo, 'doce' opõe-se a 'salgado' na culinária, mas opõe-se a 'amargo' ou 'áspero' (em sentido figurado de voz/trato) em outros contextos."
+            },
+            {
+                category: "Hiperonímia e Hiponímia",
+                front: "O que é um <b>hiperônimo</b> em relação à significação de um texto?",
+                back: "É uma palavra de sentido mais amplo/geral que engloba outras mais específicas (hipônimos). Exemplo: <i>'Mamífero'</i> é hiperônimo de <i>'cachorro'</i>. Textualmente, serve para evitar repetições vocabulares."
+            },
+            {
+                category: "Hiponímia",
+                front: "O que caracteriza um <b>hipônimo</b> no contexto da coesão e significação textual?",
+                back: "É o termo de sentido mais restrito ou específico contido no significado de outro mais amplo. Exemplo: <i>'Rosa'</i> é hipônimo de <i>'flor'</i>."
+            },
+            {
+                category: "Ambiguidade Estrutural",
+                front: "Como o pronome possessivo mal colocado pode corromper a significação da frase? (Ex: 'O pai beijou o filho em seu quarto')",
+                back: "Gera ambiguidade porque o pronome 'seu' pode se referir tanto ao pai quanto ao filho. Contextualmente, a frase perde a precisão informativa exigida pela norma culta."
+            },
+            {
+                category: "Sentido Figurado",
+                front: "Qual é o sentido contextual da expressão 'jogar a toalha' em uma narrativa jornalística ou cotidiana?",
+                back: "Significa <b>desistir</b>, render-se perante uma dificuldade. É um uso estritamente conotativo (metafórico), originado do boxe."
+            },
+            {
+                category: "Expressões idiomáticas",
+                front: "O sentido de uma expressão idiomática (ex: 'enfiar o pé na jaca') pode ser deduzido pelas palavras literais?",
+                back: "<b>Não.</b> O sentido é global e convencionalizado pela cultura, significando exagerar, perder o controle ou chutar o balde. O contexto dita essa interpretação figurada."
+            },
+            {
+                category: "Troca de Vocábulos",
+                front: "Em uma questão de substituição de termos, o que invalida a troca de 'iminente' por 'eminente'?",
+                back: "A violação do sentido semântico pretendido pelo autor. Trocar algo 'prestes a ocorrer' por algo 'ilustre/superior' quebra totalmente a lógica da frase."
+            },
+            {
+                category: "Conotação Textual",
+                front: "Na frase 'A burocracia engoliu o projeto', qual é a significação contextual do verbo 'engolir'?",
+                back: "Possui sentido conotativo (figurado) indicando que a burocracia absorveu, paralisou ou destruiu completamente o projeto de forma rápida e implacável."
+            },
+            {
+                category: "Ambiguidade por Coordenação",
+                front: "Como a significação de termos coordenados pode gerar duplo sentido? (Ex: 'Comprei frutas e legumes frescos')",
+                back: "Gera ambiguidade porque o adjetivo 'frescos' pode qualificar apenas os legumes ou tanto as frutas quanto os legumes. O contexto costuma exigir reescrita para esclarecer."
+            },
+            {
+                category: "Sentido Implícito",
+                front: "O que distingue o sentido explícito do sentido implícito (pressupostos e subentendidos) na interpretação textual?",
+                back: "• <b>Explícito:</b> O que está escrito claramente.<br>• <b>Implícito:</b> O que se deduz através de pistas textuais (pressuposto) ou de entrelinhas e contexto externo (subentendido)."
+            },
+            {
+                category: "Polissemia Verbal",
+                front: "Qual a variação de sentido do verbo 'dar' nos contextos: 'dar uma notícia', 'dar para a rua' e 'dar um presente'?",
+                back: "Demonstra polissemia: transmitir/comunicar ('dar notícia'), estar voltado para ('dar para a rua') e entregar/oferecer ('dar um presente'). O contexto define cada acepção."
+            },
+            {
+                category: "Parônimos",
+                front: "Qual é o significado contextual de <b>delatar</b> e <b>dilatar</b>?",
+                back: "• <b>Delatar:</b> Denunciar, acusar, revelar um segredo ou crime.<br>• <b>Dilatar:</b> Alargar, expandir, esticar, demorar."
+            },
+            {
+                category: "Parônimos",
+                front: "Como diferenciar o sentido de <b>infração</b> e <b>inflação</b>?",
+                back: "• <b>Infração:</b> Violação de uma lei, regra ou preceito.<br>• <b>Inflação:</b> Aumento generalizado e contínuo dos preços na economia."
+            },
+            {
+                category: "Coesão Lexical",
+                front: "Como a substituição de uma palavra por um sinônimo contextual evita a repetição sem empobrecer o texto?",
+                back: "Permite manter a mesma referência semântica (coesão referencial por substituição lexical), enriquecendo o vocabulário e preservando o sentido original."
+            },
+            {
+                category: "Termos Polissêmicos",
+                front: "Na frase 'O banco da praça estava quebrado', o termo 'banco' assume qual acepção contextual?",
+                back: "Assento público de madeira ou alvenaria. Trata-se de uma das várias acepções da palavra polissêmica 'banco' (instituição financeira, conjunto de peixes, etc.)."
+            },
+            {
+                category: "Ironia e Sentido",
+                front: "Como o contexto reconstrói o sentido de um enunciado irônico? (Ex: 'Que dia maravilhoso!' sob forte tempestade)",
+                back: "O contexto situacional e o tom da enunciação invertem o sentido literal da palavra, fazendo com que 'maravilhoso' signifique exatamente o oposto (péssimo)."
+            },
+            {
+                category: "Dica de Ouro para Provas",
+                front: "Qual é o erro mais comum que os candidatos cometem ao responder questões de significação contextual?",
+                back: "Responder com base no <b>significado genérico do dicionário</b> em vez de analisar estritamente como a palavra está operando dentro daquele parágrafo ou frase específica do autor."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
