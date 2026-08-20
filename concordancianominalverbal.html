@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interativo: Articulação do Texto e Coesão</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Aumenta a base de todas as fontes do site */
+    html {
+        font-size: 19px; /* O padrão é 16px. Aumente para 18px ou 20px */
+    }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-sm">
+                    <i class="fa-solid fa-[#fa-book-open] text-xl"></i>
+                    <i class="fa-solid fa-pen-nib text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 leading-tight">Quiz de Língua Portuguesa</h1>
+                    <p class="text-xs text-slate-500">Articulação do Texto: Pronomes, Referenciação e Nexos</p>
+                </div>
+            </div>
+
+            <!-- Mode Selector & Stats -->
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex bg-slate-100 p-1 rounded-lg text-xs font-semibold">
+                    <button id="btnModeStudy" onclick="setMode('study')" class="px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm">
+                        <i class="fa-solid fa-[#fa-graduation-cap] mr-1"></i> Modo Estudo
+                    </button>
+                    <button id="btnModeExam" onclick="setMode('exam')" class="px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900">
+                        <i class="fa-solid fa-stopwatch mr-1"></i> Modo Simulado
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 bg-brand-50 text-brand-700 px-3 py-1.5 rounded-lg border border-brand-100 text-sm font-semibold">
+                    <i class="fa-solid fa-trophy text-brand-500"></i>
+                    <span id="scoreDisplay">0 / 20</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- Sidebar Navigation Grid (Desktop) -->
+        <aside class="lg:col-span-1 order-2 lg:order-1 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col h-fit">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Navegador</h2>
+                <span id="progressPercent" class="text-xs font-semibold text-brand-600">0% concluído</span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4">
+                <div id="progressBar" class="bg-brand-600 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Question Grid Buttons -->
+            <div id="questionGrid" class="grid grid-cols-5 gap-2 mb-4">
+                <!-- Javascript will insert 20 question buttons here -->
+            </div>
+
+            <!-- Legend -->
+            <div class="text-xs text-slate-500 border-t border-slate-100 pt-3 space-y-1.5">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-slate-200 inline-block"></span>
+                    <span>Não respondida</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-brand-600 inline-block"></span>
+                    <span>Respondida</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span>
+                    <span>Marcada p/ revisão</span>
+                </div>
+            </div>
+
+            <button onclick="finishQuiz()" class="mt-5 w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded-lg transition shadow">
+                <i class="fa-solid fa-flag-checkered mr-2"></i> Finalizar Quiz
+            </button>
+        </aside>
+
+        <!-- Question Section -->
+        <section class="lg:col-span-3 order-1 lg:order-2 flex flex-col justify-between">
+            
+            <!-- Quiz Screen -->
+            <div id="quizCard" class="bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm mb-4 min-h-[420px] flex flex-col justify-between">
+                <div>
+                    <!-- Header Question Info -->
+                    <div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100">
+                        <div class="flex items-center gap-2">
+                            <span id="questionCategory" class="px-2.5 py-1 bg-brand-50 text-brand-700 text-xs font-semibold rounded-md border border-brand-100">
+                                Categoria
+                            </span>
+                            <span id="questionNumberBadge" class="text-xs font-semibold text-slate-400">
+                                Questão 1 de 20
+                            </span>
+                        </div>
+                        <button id="btnBookmark" onclick="toggleBookmark()" class="text-slate-400 hover:text-amber-500 text-sm font-medium transition flex items-center gap-1.5">
+                            <i class="fa-regular fa-bookmark"></i>
+                            <span class="hidden sm:inline">Revisar</span>
+                        </button>
+                    </div>
+
+                    <!-- Question Text -->
+                    <div class="mb-6">
+                        <h3 id="questionTitle" class="text-base sm:text-lg font-semibold text-slate-900 leading-relaxed">
+                            Carregando questão...
+                        </h3>
+                    </div>
+
+                    <!-- Answer Options -->
+                    <div id="optionsContainer" class="space-y-3">
+                        <!-- Dynamic options generated by JS -->
+                    </div>
+
+                    <!-- Explanation/Rationale Box (Study Mode) -->
+                    <div id="explanationBox" class="hidden mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm">
+                        <div class="flex items-center gap-2 font-bold mb-1 text-slate-800" id="explanationHeader">
+                            <i class="fa-solid fa-circle-info"></i> Justificativa Gramatical
+                        </div>
+                        <p id="explanationText" class="text-slate-600 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8 pt-4 border-t border-slate-100">
+                    <button id="btnPrev" onclick="navigateQuestion(-1)" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium text-sm transition disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-chevron-left mr-1"></i> Anterior
+                    </button>
+                    <button id="btnNext" onclick="navigateQuestion(1)" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-medium text-sm transition shadow-sm">
+                        Próxima <i class="fa-solid fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Screen (Hidden initially) -->
+            <div id="resultsCard" class="hidden bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm text-center">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center bg-brand-50 text-brand-600 text-3xl">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-1">Resultado do Quiz</h2>
+                <p class="text-sm text-slate-500 mb-6">Confira seu desempenho em Articulação e Coesão Textual</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto mb-8">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Pontuação</span>
+                        <span id="finalScore" class="text-2xl font-extrabold text-slate-800">0 / 20</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Aproveitamento</span>
+                        <span id="finalPercent" class="text-2xl font-extrabold text-brand-600">0%</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Desempenho</span>
+                        <span id="finalFeedback" class="text-sm font-bold text-slate-700 mt-1 block">Satisfatório</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button onclick="restartQuiz()" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm rounded-lg transition shadow">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Refazer Quiz
+                    </button>
+                    <button onclick="reviewQuiz()" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-lg transition">
+                        <i class="fa-solid fa-magnifying-glass mr-2"></i> Revisar Respostas
+                    </button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+        <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-400">
+            Quiz Pedagógico de Coesão Textual &bull; Prática de Sintaxe, Semântica e Conectivos do Português.
+        </div>
+    </footer>
+
+    <!-- JavaScript Quiz Logic -->
+    <script>
+        // Database of 20 Portuguese Questions
+       {
+        id: 2,
+        category: "Discurso Direto para Indireto",
+        question: "Ao transpor a fala do personagem do discurso direto para o indireto: \"O réu declarou: 'Não cometi nenhuma irregularidade durante a minha gestão'\", obtém-se a seguinte estrutura equivalente:",
+        options: [
+            { text: "O réu declarou que não cometera nenhuma irregularidade durante a sua gestão.", isCorrect: true, rationale: "Na transposição, o pretérito perfeito do indicativo ('cometi') passa para o pretérito mais-que-perfeito ('cometera' ou 'havia cometido') e o pronome de 1ª pessoa ('minha') passa para a 3ª pessoa ('sua')." },
+            { text: "O réu declarou que não cometeu nenhuma irregularidade durante a minha gestão.", isCorrect: false, rationale: "Incorreto: manteve o pronome possessivo de primeira pessoa 'minha' e o pretérito perfeito 'cometeu'." },
+            { text: "O réu declarou que não cometeria nenhuma irregularidade durante a sua gestão.", isCorrect: false, rationale: "Incorreto: alterou-se o tempo para o futuro do pretérito ('cometeria')." },
+            { text: "O réu declarara que não cometeu nenhuma irregularidade durante a sua gestão.", isCorrect: false, rationale: "Incorreto: o verbo declarativo é que foi alterado indevidamente para o pretérito mais-que-perfeito." }
+        ],
+        hint: "O pretérito perfeito do discurso direto converte-se em pretérito mais-que-perfeito no discurso indireto."
+    },
+    {
+        id: 3,
+        category: "Concordância Verbal - Sujeito Composto",
+        question: "Assinale a opção em que a concordância verbal atende rigorosamente à norma-padrão da língua portuguesa:",
+        options: [
+            { text: "O diretor, acompanhado de toda a sua equipe de assessores, chegou antecipadamente ao evento.", isCorrect: true, rationale: "Quando o sujeito vem acompanhado da expressão 'com' ou 'acompanhado de', o verbo fica preferencialmente no singular concordando com o primeiro núcleo ('o diretor')." },
+            { text: "Chegou antecipadamente ao evento o diretor acompanhados de toda a sua equipe.", isCorrect: false, rationale: "Incorreto: o adjetivo 'acompanhados' deveria concordar no singular com 'o diretor'." },
+            { text: "Haviam muitos candidatos aguardando o início das provas do concurso no portão principal.", isCorrect: false, rationale: "Incorreto: o verbo 'haver' no sentido de existir é impessoal e deve permanecer na 3ª pessoa do singular ('Havia muitos candidatos')." },
+            { text: "Faziam dez anos que a instituição não realizava uma reformulação completa em seus estatutos.", isCorrect: false, rationale: "Incorreto: o verbo 'fazer' indicando tempo decorrido é impessoal e fica no singular ('Fazia dez anos')." }
+        ],
+        hint: "Fique atento aos verbos impessoais (haver e fazer) e às estruturas acompanhadas de 'com/acompanhado de'."
+    },
+    {
+        id: 4,
+        category: "Concordância Verbal - Verbo Haver e Fazer (Impessoais)",
+        question: "Considere as seguintes frases quanto à concordância verbal:\nI. Devem haver razões plausíveis para o atraso da encomenda.\nII. Fazia meses que os auditores não encontravam irregularidades.\nIII. Vai fazer cinco anos que o projeto foi aprovado.\nEstá(ão) de acordo com a norma-padrão:",
+        options: [
+            { text: "Apenas II e III.", isCorrect: true, rationale: "Em I, o verbo auxiliar contamina-se com a impessoalidade de 'haver', devendo ficar no singular ('Deve haver'). As frases II e III estão corretas, pois 'fazer' indicando tempo decorrido é impessoal." },
+            { text: "Apenas I e II.", isCorrect: false, rationale: "Incorreto: a frase I apresenta erro ('Devem haver' em vez de 'Deve haver')." },
+            { text: "I, II e III.", isCorrect: false, rationale: "Incorreto: a frase I está errada." },
+            { text: "Apenas III.", isCorrect: false, rationale: "Incorreto: a frase II também está absolutamente correta." }
+        ],
+        hint: "Nas locuções verbais em que o verbo principal é impessoal (haver/fazer), o verbo auxiliar também deve ficar no singular."
+    },
+    {
+        id: 5,
+        category: "Concordância Nominal - É bom / É necessário / É proibido",
+        question: "Assinale a alternativa em que a concordância nominal está inteiramente CORRETA de acordo com a norma-padrão:",
+        options: [
+            { text: "É necessária prudência na avaliação dos documentos apresentados pela comissão.", isCorrect: true, rationale: "O termo 'prudência' está desacompanhado de artigo ou determinante; a flexão 'necessária' concorda diretamente com o substantivo feminino." },
+            { text: "É proibido a entrada de pessoas estranhas ao serviço no recinto.", isCorrect: false, rationale: "Incorreto: com o artigo definido 'a', exige-se a concordância obrigatória no feminino: 'É proibida a entrada'." },
+            { text: "A entrada de pessoas não autorizadas é proibido neste setor.", isCorrect: false, rationale: "Incorreto: o sujeito é 'A entrada', exigindo 'é proibida'." },
+            { text: "Para a consolidação da paz, é necessário a participação de todos os cidadãos.", isCorrect: false, rationale: "Incorreto: a presença do artigo 'a' antes de 'participação' exige a flexão 'é necessária'." }
+        ],
+        hint: "Expressões como 'é proibido', 'é necessário' e 'é bom' só variam se o substantivo estiver acompanhado de determinante."
+    },
+    {
+        id: 6,
+        category: "Concordância Nominal - Bastante, Meio, Anexo, Incluso",
+        question: "Assinale a opção que preenche corretamente e respectivamente as lacunas da frase:\n\"Seguem _________ os comprovantes de despesa. As certidões já estavam _________ no processo, pois havia razões _________ para a decisão, embora a advogada estivesse _________ preocupada.\"",
+        options": [
+            { text: "anexos – inclusas – bastantes – meio", isCorrect: true, rationale: "'Anexos' concorda com 'comprovantes'; 'inclusas' concorda com 'certidões'; 'bastantes' funciona como adjetivo (=suficientes) e concorda com 'razões'; 'meio' funciona como advérbio (=um pouco) e é invariável." },
+            { text: "anexo – inclusas – bastante – meia", isCorrect: false, rationale: "Incorreto: 'anexo' e 'bastante' não concordaram com os substantivos e 'meia' foi usado indevidamente como advérbio." },
+            { text: "em anexo – inclusos – bastantes – meia", isCorrect: false, rationale: "Incorreto: 'inclusos' não concorda com 'certidões' e 'meia' não deve variar antes de adjetivo." },
+            { text: "anexos – inclusa – bastante – meio", isCorrect: false, rationale: "Incorreto: 'inclusa' não concorda com 'certidões' no plural." }
+        ],
+        highlight: "'Bastante' varia quando equivale a 'suficientes' (adjetivo). 'Meio' é invariável quando equivale a 'um pouco' (advérbio)."
+    },
+    {
+        id: 7,
+        category: "Concordância Verbal - Sujeito Coletivo e Partitivo",
+        question: "Na frase \"A maioria dos candidatos _________ o resultado final com relativa tranquilidade\", a lacuna pode ser preenchida corretamente por:",
+        options": [
+            { text: "aguardou ou aguardaram.", isCorrect: true, rationale: "Com expressões partitivas ('a maioria de', 'a maior parte de') seguidas de substantivo no plural, o verbo pode concordar no singular (com o núcleo 'maioria') ou no plural (com 'candidatos')." },
+            { text: "apenas aguardaram.", isCorrect: false, rationale: "Incorreto: a concordância no singular com o núcleo 'maioria' também é perfeitamente gramatical." },
+            { text: "apenas aguardou.", isCorrect: false, rationale: "Incorreto: a atração pelo especificador no plural ('candidatos') é facultativa e aceita pela norma-padrão." },
+            { text: "aguardara, exclusivamente.", isCorrect: false, rationale: "Incorreto: não há limitação exclusiva para o tempo verbal e ambas as formas do número (singular e plural) são válidas." }
+        ],
+        hint: "Expressões partitivas acompanhadas de termo no plural admitem dupla concordância verbal."
+    },
+    {
+        id: 8,
+        category: "Concordância Verbal - Pronome Relativo 'Que' e 'Quem'",
+        question: "Assinale a opção em que a concordância verbal está de acordo com a norma culta:",
+        options": [
+            { text: "Fomos nós quem assumiu a responsabilidade pelo projeto.", isCorrect: true, rationale: "Com o pronome relativo 'quem', o verbo pode concordar na 3ª pessoa do singular (concordando com 'quem') ou com o antecedente ('fomos nós quem assumimos'). A forma 'assumiu' está correta." },
+            { text: "Fui eu que apresentou as propostas de melhoria na reunião.", isCorrect: false, rationale: "Incorreto: com o pronome relativo 'que', o verbo concorda obrigatoriamente com o antecedente ('Fui eu que apresentei')." },
+            { text: "Somos nós que resolve os problemas mais complexos da empresa.", isCorrect: false, rationale: "Incorreto: o antecedente é 'nós', logo o verbo deve ser 'resolvemos'." },
+            { text: "Foram eles quem organizaram a cerimônia de formatura.", isCorrect: false, rationale: "A regra estrita do 'quem' exige 3ª pessoa do singular ('organizou') ou concordância exata com o antecedente." }
+        ],
+        hint: "Com o pronome 'que', o verbo concorda obrigatoriamente com o antecedente. Com 'quem', concorda com 'quem' (3ª p. singular) ou com o antecedente."
+    },
+    {
+        id: 9,
+        category: "Concordância Nominal - Adjetivo Anteposto a Vários Substantivos",
+        question: "Em qual das opções a concordância nominal do adjetivo anteposto aos substantivos está plenamente CORRETA?",
+        options": [
+            { text: "Apresentou extraordinária coragem e talento durante a operação.", isCorrect: true, rationale: "Quando o adjetivo vem anteposto a múltiplos substantivos, concorda preferencialmente com o mais próximo ('extraordinária coragem')." },
+            { text: "Apresentou extraordinários coragem e talento durante a operação.", isCorrect: false, rationale: "Adjetivo anteposto não vai para o plural masculino se o mais próximo for feminino sem concordar isoladamente." },
+            { text: "Foram contratados nova analista e técnico de suporte para o setor.", isCorrect: false, rationale: "Incorreto: a forma 'nova' anteposta deveria concordar com 'analista', mas a estrutura do predicativo exige atenção especial ao conjunto." },
+            { text: "Mantinha limpos a sala e os corredores do prédio comercial.", isCorrect: false, rationale: "Incorreto: o predicativo anteposto deveria concordar com o mais próximo ('limpa a sala') ou ir para o plural concorde com os termos." }
+        ],
+        hint: "O adjetivo anteposto a dois ou mais substantivos deve concordar em gênero e número com o mais próximo."
+    },
+    {
+        id: 10,
+        category: "Concordância Verbal - Verbo Passivo com Partícula 'Se'",
+        question: "Indique a alternativa em que a concordância do verbo com a partícula 'se' está CORRETA:",
+        options": [
+            { text: "Precisava-se de profissionais qualificados para o novo setor da empresa.", isCorrect: true, rationale: "Com verbo transitivo indireto + 'se' (índice de indeterminação do sujeito), o verbo fica obrigatoriamente na 3ª pessoa do singular. O termo 'de profissionais' é objeto indireto." },
+            { text: "Precisavam-se de profissionais qualificados para o novo setor da empresa.", isCorrect: false, rationale: "Incorreto: não existe voz passiva de verbo transitivo indireto; o verbo deve ficar no singular." },
+            { text: "Tratam-se de assuntos de extrema relevância para a comunidade local.", isCorrect: false, rationale: "Incorreto: 'tratar-se de' é VTI + 'se', o verbo deve permanecer no singular ('Trata-se de')." },
+            { text: "Aluga-se ótimos apartamentos no centro da cidade durante as férias.", isCorrect: false, rationale: "Incorreto: 'alugar' é VTD + 'se' (partícula apassivadora), logo 'ótimos apartamentos' é sujeito paciente e exige o plural ('Alugam-se')." }
+        ],
+        hint: "VTI + 'se' fica sempre no singular (sujeito indeterminado). VTD + 'se' concorda com o sujeito paciente."
+    },
+    {
+        id: 11,
+        category: "Concordância Nominal - Só, Sós, A sós",
+        question: "Assinale a opção em que a palavra 'só' foi utilizada com concordância INCORRETA:",
+        options": [
+            { text: "As candidatas estavam sós nervosas antes do início da entrevista.", isCorrect: true, rationale: "INCORRETO: no sentido de 'apenas' ou 'somente' (modificando o adjetivo 'nervosas'), 'só' é advérbio e deve permanecer invariável ('estavam só nervosas')." },
+            { text: "Eles ficaram sós na sala de reunião para debater a proposta.", isCorrect: false, rationale: "CORRETO: 'sós' funciona como adjetivo (=sozinhos) e concorda com o pronome 'eles'." },
+            { text: "Elas só desejavam uma oportunidade justa no processo seletivo.", isCorrect: false, rationale: "CORRETO: 'só' funciona como advérbio (=apenas/somente) e é invariável." },
+            { text: "Os diretores queriam conversar a sós com o novo gestor.", isCorrect: false, rationale: "CORRETO: a locução 'a sós' é invariável." }
+        ],
+        hint: "'Só' varia quando significa 'sozinho(a)s' (adjetivo). É invariável quando significa 'apenas' (advérbio) ou na locução 'a sós'."
+    },
+    {
+        id: 12,
+        category: "Concordância Verbal - Nomes Próprios Plurais",
+        question: "Qual das frases a seguir apresenta a concordância verbal de acordo com a norma-padrão?",
+        options": [
+            { text: "Os Estados Unidos representam uma das maiores economias do planeta.", isCorrect: true, rationale: "Quando o nome próprio no plural vem acompanhado de artigo no plural ('Os Estados Unidos'), o verbo concorda obrigatoriamente no plural." },
+            { text: "Os Estados Unidos representa uma das maiores economias do planeta.", isCorrect: false, rationale: "Incorreto: havendo artigo no plural ('Os'), o verbo não pode ficar no singular." },
+            { text: "Estados Unidos representam uma das maiores economias do planeta.", isCorrect: false, rationale: "Incorreto: sem o artigo, o verbo deve ficar no singular ('Estados Unidos representa')." },
+            { text: "As Minas Gerais produz excelente café e produtos laticínios.", isCorrect: false, rationale: "Incorreto: a presença do artigo 'As' exige o verbo no plural ('produzem')." }
+        ],
+        hint: "Com nomes próprios no plural antecedidos de artigo, o verbo concorda com o artigo. Sem artigo, fica no singular."
+    },
+    {
+        id: 13,
+        category: "Concordância Nominal - Adjetivo Posposto a Vários Substantivos",
+        question: "Na frase: \"O departamento adquiriu computador e impressora _________\", a lacuna pode ser preenchida por:",
+        options": [
+            { text: "novos ou nova.", isCorrect: true, rationale: "O adjetivo posposto a substantivos de gêneros diferentes pode concordar no plural masculino ('novos') ou com o substantivo mais próximo ('nova')." },
+            { text: "apenas novos.", isCorrect: false, rationale: "Incorreto: a concordância atrativa com o elemento mais próximo ('impressora nova') também é válida." },
+            { text: "apenas novas.", isCorrect: false, rationale: "Incorreto: não é possível usar o feminino plural 'novas' para qualificar um masculino e um feminino." },
+            { text: "novo, exclusivamente.", isCorrect: false, rationale: "Incorreto: 'novo' concorda com o masculino singular, mas o termo imediatamente anterior é 'impressora' (feminino)." }
+        ],
+        hint: "Adjetivo posposto a substantivos de gêneros diferentes vai para o plural masculino ou concorda com o mais próximo."
+    },
+    {
+        id: 14,
+        category: "Concordância Verbal - Pronome de Tratamento",
+        question: "Assinale a alternativa que preenche adequadamente a frase no padrão culto:\n\"Vossa Excelência _________ de apresentar _________ relatórios até a próxima semana, conforme _________ solicitado.\"",
+        options": [
+            { text: "há de – seus – foi", isCorrect: true, rationale: "Com pronomes de tratamento ('Vossa Excelência'), os verbos e os pronomes possessivos/pessoais devem ficar obrigatoriamente na 3ª pessoa ('há de', 'seus')." },
+            { text: "reis de – vossos – foi", isCorrect: false, rationale: "Incorreto: não se utiliza a 2ª pessoa do plural (vós) com pronomes de tratamento." },
+            { text: "hão de – seus – foram", isCorrect: false, rationale: "Incorreto: o verbo deve concordar no singular com 'Vossa Excelência'." },
+            { text: "há de – vossos – foi", isCorrect: false, rationale: "Incorreto: mistura indevida de 3ª pessoa ('há') com 2ª pessoa do plural ('vossos')." }
+        ],
+        hint: "Pronomes de tratamento exigem sempre concordância verbal e pronominal em 3ª pessoa."
+    },
+    {
+        id: 15,
+        category: "Concordância Nominal - Menos e Meio",
+        question: "Assinale a frase gramaticalmente CORRETA quanto à concordância nominal:",
+        "options": [
+            { text: "Os policiais mantiveram-se alerta durante toda a manifestação pública.", isCorrect: true, rationale: "'Alerta' na função de advérbio (=atentamente) ou adjetivo invariável permanece no singular na norma tradicional." },
+            { text: "Ela estava meia cansada após a longa jornada de trabalho no escritório.", isCorrect: false, rationale: "Incorreto: 'meio' modificando adjetivo é advérbio e não varia ('meio cansada')." },
+            { text: "Existem menas chances de aprovação para quem não estuda regularmente.", isCorrect: false, rationale: "Incorreto: a palavra 'menas' não existe na norma-padrão." },
+            { text: "Os documentos já estão meio impressos na sala ao lado.", isCorrect: false, rationale: "Em sentido adjetivo pleno/numeral aplica-se a flexão, mas no sentido advérbio 'um pouco' é invariável." }
+        ],
+        hint: "As palavras 'menos' e 'alerta' são invariáveis nessa função."
+    },
+    {
+        id: 16,
+        category: "Concordância Verbal - Verbo Ser (Datas)",
+        question: "Em relação à concordância do verbo SER na indicação de datas, assinale a opção correta:",
+        options": [
+            { text: "Hoje são vinte de agosto de 2026.", isCorrect: true, rationale: "Na indicação de datas, o verbo ser concorda com o numeral ('são vinte') ou com a palavra 'dia' implícita ('É dia vinte')." },
+            { text: "Hoje é vinte de agosto de 2026.", isCorrect: false, rationale: "Incorreto na norma estrita sem a presença explícita da palavra 'dia' ('É dia vinte')." },
+            { text: "Hoje fazem vinte de agosto de 2026.", isCorrect: false, rationale: "Incorreto: o verbo 'fazer' não é utilizado para indicação direta de datas do calendário desta forma." },
+            { text: "Hoje são dia vinte de agosto de 2026.", isCorrect: false, rationale: "Incorreto: anteposto à palavra 'dia', o verbo ser fica obrigatoriamente no singular ('É dia vinte')." }
+        ],
+        hint: "Sem a palavra 'dia', o verbo SER concorda com o numeral da data."
+    },
+    {
+        id: 17,
+        category: "Concordância Verbal - Um e Outro / Nem um nem outro",
+        question: "Assinale a opção que atende à norma-padrão em relação ao sujeito formado por \"Nem um nem outro\":",
+        options": [
+            { text: "Nem um nem outro candidato compareceu ao debate promovido pela emissora.", isCorrect: true, rationale: "Com 'nem um nem outro', o verbo fica preferencialmente no singular e o substantivo seguinte permanece obrigatoriamente no singular ('candidato')." },
+            { text: "Nem um nem outro candidatos compareceram ao debate promovido pela emissora.", isCorrect: false, rationale: "Incorreto: após 'nem um nem outro', o substantivo deve ficar no singular ('candidato')." },
+            { text: "Um e outro funcionário apresentaram os relatórios de vendas solicitados.", isCorrect: false, rationale: "O substantivo fica no singular ('funcionário'), apesar de o verbo aceitar o plural nesta locução." },
+            { text: "Um e outros pareceres foram anexados ao processo principal.", isCorrect: false, rationale: "Estrutura correlativa incorreta." }
+        ],
+        hint: "A expressão 'Um e outro' ou 'Nem um nem outro' exige o substantivo subsequente no singular."
+    },
+    {
+        id: 18,
+        category: "Concordância Nominal - Quite, Mesmo, Obrigado",
+        question: "Assinale a alternativa em que a concordância nominal está INCORRETA:",
+        options": [
+            { text: "As secretárias disseram que elas mesmo fariam o agendamento das reuniões.", isCorrect: true, rationale: "INCORRETO: a palavra 'mesmo' com valor de 'próprias' deve concordar em gênero e número ('elas mesmas')." },
+            { text: "Os devedores afirmaram que já estavam quites com as obrigações fiscais.", isCorrect: false, rationale: "CORRETO: 'quite' flexiona no plural ('quites') concordando com 'os devedores'." },
+            { text: "Elas mesmas prepararam todo o material explicativo para a palestra.", isCorrect: false, rationale: "CORRETO: 'mesmas' concorda em gênero e número com 'Elas'." },
+            { text: "A diretora disse: \"Muito obrigada pela atenção prestada por todos\".", isCorrect: false, rationale: "CORRETO: 'obrigada' concorda com a pessoa de gênero feminino que fala." }
+        ],
+        hint: "'Quite', 'obrigado' e 'mesmo' (pronome) concordam com o termo a que se referem."
+    },
+    {
+        id: 19,
+        category: "Concordância Verbal - Sujeito Oracional",
+        question: "Na frase \"Ainda convém _________ novas medidas preventivas para conter o avanço da contaminação\", a lacuna deve ser preenchida por:",
+        options": [
+            { text: "adotar", isCorrect: true, rationale: "O sujeito do verbo 'convém' é a oração reduzida 'adotar novas medidas...'. Sujeitos oracionais mantêm o verbo regente na 3ª pessoa do singular." },
+            { text: "adotarem", isCorrect: false, rationale: "A oração reduzida na função de sujeito não deve flexionar o verbo da oração principal." },
+            { text: "serem adotadas", isCorrect: false, rationale: "Não altera a exigência de o verbo principal 'convém' permanecer no singular." },
+            { text: "adotarem-se", isCorrect: false, rationale: "Incorreto: o sujeito oracional não flexiona o verbo principal." }
+        ],
+        hint: "Quando o sujeito é uma oração inteira, o verbo principal fica na 3ª pessoa do singular."
+    },
+    {
+        id: 20,
+        category: "Concordância Nominal - Cores Compostas",
+        question: "Observe a concordância nas frases a seguir:\nI. Ela comprou dois vestidos rosa-choque na promoção.\nII. Os uniformes verde-oliva foram distribuídos aos recrutas.\nIII. O evento reuniu especialistas luso-brasileiros.\nEstá(ão) correta(s):",
+        options": [
+            { text: "I, II e III.", isCorrect: true, rationale: "I: 'rosa-choque' é invariável por ter substantivo na composição. II: 'verde-oliva' é invariável pelo mesmo motivo. III: em adjetivos pátrios compostos, apenas o último elemento flexiona ('luso-brasileiros')." },
+            { text: "Apenas III.", isCorrect: false, rationale: "Incorreto: as opções I e II também estão corretas conforme as regras de cores compostas." },
+            { text: "Apenas I e II.", isCorrect: false, rationale: "Incorreto: a opção III também está totalmente correta." },
+            { text: "Apenas II e III.", isCorrect: false, rationale: "Incorreto: a opção I também está correta." }
+        ],
+        hint: "Substantivos empregados para designar cor (ex: rosa, oliva) tornam o termo composto invariável."
+    },
+    {
+        id: 21,
+        category: "Concordância Verbal - Sujeito Ligado por 'OU'",
+        question: "Na frase \"Paulo ou Antônio _________ o cargo de diretor executivo da multinacional\", a concordância adequada é:",
+        options": [
+            { text: "assumirá", isCorrect: true, rationale: "Quando os núcleos do sujeito composto ligados pela conjunção 'ou' indicam exclusão (apenas um poderá ocupar o cargo), o verbo fica no singular." },
+            { text: "assumirão", isCorrect: false, rationale: "Incorreto: a ideia é de exclusão mútua; somente um dos dois assumirá a vaga." },
+            { text: "assumiram", isCorrect: false, rationale: "Incorreto: o plural viola o princípio da exclusão do sujeito." },
+            { text: "assumiam", isCorrect: false, rationale: "Incorreto: aplica-se a mesma restrição da exclusão." }
+        ],
+        hint: "Se a conjunção 'ou' indicar ideia de exclusão, o verbo concorda obrigatoriamente no singular."
+    },
+    {
+        id: 22,
+        category: "Concordância Verbal - Parecer + Infinitivo",
+        question: "Na locução verbal composta com o verbo 'parecer' seguido de infinitivo: \"As estrelas pareciam brilhar mais intensamente\", qual é a concordância alternativa igualmente aceita pela norma-padrão?",
+        options": [
+            { text: "As estrelas parecia brilharem mais intensamente.", isCorrect: true, rationale: "Na locução 'parecer + infinitivo', pode-se flexionar o verbo parecer ('pareciam brilhar') OU flexionar o infinitivo mantendo parecer no singular ('parecia brilharem')." },
+            { text: "As estrelas pareciam brilharem mais intensamente.", isCorrect: false, rationale: "Incorreto: não se devem flexionar ambos os verbos simultaneamente na norma culta." },
+            { text: "As estrelas pareceriam brilharem mais intensamente.", isCorrect: false, rationale: "Incorreto pela mesma razão da dupla flexão inadequada." },
+            { text: "As estrelas parecia brilhar mais intensamente.", isCorrect: false, rationale: "Incorreto: se o infinitivo não for flexionado, o verbo 'parecer' deve concordar no plural com 'As estrelas'." }
+        ],
+        hint: "Na construção 'parecer + infinitivo', flexiona-se apenas um dos dois verbos: o auxiliar ou o principal."
+    },
+    {
+        id: 23,
+        category: "Concordância Nominal - Haja vista",
+        question: "Assinale a opção que apresenta a forma INCORRETA de uso da expressão 'haja vista':",
+        options": [
+            { text: "Hajam vistas os problemas apresentados no parecer.", isCorrect: true, rationale: "INCORRETO: a forma 'hajam vistas' não existe na norma gramatical. As formas válidas são 'haja vista os problemas', 'haja vista aos problemas' ou 'hajam vista os problemas'." },
+            { text: "Haja vista os problemas apresentados no parecer.", isCorrect: false, rationale: "CORRETO: forma clássica e invariável da expressão." },
+            { text: "Haja vista aos problemas apresentados no parecer.", isCorrect: false, rationale: "CORRETO: construção aceita utilizando a preposição 'a'." },
+            { text: "Hajam vista os problemas apresentados no parecer.", isCorrect: false, rationale: "CORRETO: o verbo 'haver' pode ir ao plural antes do substantivo no plural, mantendo 'vista' invariável." }
+        ],
+        hint: "A palavra 'vista' na expressão 'haja vista' nunca deve ser flexionada no plural."
+    },
+    {
+        id: 24,
+        category: "Concordância Verbal - Verbos Bater / Soar / Dar (Horas)",
+        question: "Assinale a alternativa que apresenta a concordância do verbo indicador de horas de acordo com a norma-padrão:",
+        options": [
+            { text: "Bateram três horas no relógio da torre da igreja.", isCorrect: true, rationale: "Os verbos dar, bater e soar concordam com o numeral das horas, a menos que o sujeito explícito seja a palavra 'relógio' ou 'sino'." },
+            { text: "Bateu três horas no relógio da matriz.", isCorrect: false, rationale: "Incorreto: sem o sujeito 'relógio' antecedente, o verbo concorda com 'três horas' (plural)." },
+            { text: "O relógio da matriz deram quatro horas da tarde.", isCorrect: false, rationale: "Incorreto: o sujeito é 'O relógio', exigindo o verbo no singular ('deu')." },
+            { text: "Soou cinco badaladas no grande sino de bronze.", isCorrect: false, rationale: "Incorreto: o sujeito é 'cinco badaladas', exigindo o verbo no plural ('Soaram')." }
+        ],
+        hint: "Verbos como bater, dar e soar concordam com o número de horas, exceto quando o sujeito for o instrumento."
+    },
+    {
+        id: 25,
+        category: "Concordância Nominal - Adjetivo Referente a Vários Substantivos Masculinos",
+        question: "Assinale a alternativa em que a concordância do adjetivo atende às regras da norma culta:\n\"A empresa contratou gerentes e diretores _________.\"",
+        options": [
+            { text: "capacitados", isCorrect: true, rationale: "Quando o adjetivo se refere a múltiplos substantivos masculinos no plural, deve flexionar-se no masculino plural ('capacitados')." },
+            { text: "capacitadas", isCorrect: false, rationale: "Incorreto: não se usa a flexão feminina para qualificar substantivos do gênero masculino." },
+            { text: "capacitada", isCorrect: false, rationale: "Incorreto: a forma no singular é incompatível com núcleos no plural." },
+            { text: "capacitado", isCorrect: false, rationale: "Incorreto: o singular masculino não abrange o conjunto dos núcleos plurais." }
+        ],
+        hint: "Para substantivos masculinos no plural, o adjetivo posposto deve concordar no masculino plural."
+    },
+    {
+         ancient: 26,
+        category: "Concordância Verbal - Verbo Ser indicando Quantidade e Preço",
+        question: "Em qual das alternativas o verbo SER apresenta concordância CORRETA?",
+        options": [
+            { text: "Cinquenta mil reais é pouco para financiar toda a pesquisa.", isCorrect: true, rationale: "Nas expressões que indicam quantidade, peso, medida, preço, o verbo SER fica obrigatoriamente no singular quando acompanhado das palavras 'pouco', 'muito', 'suficiente', 'demais'." },
+            { text: "Cinquenta mil reais são pouco para financiar toda a pesquisa.", isCorrect: false, rationale: "Incorreto: o verbo deve permanecer no singular nessa estrutura de preço e quantidade." },
+            { text: "Dez quilômetros são muito para caminharmos sob o sol forte.", isCorrect: false, rationale: "Incorreto: exige-se o verbo no singular ('Dez quilômetros é muito')." },
+            { text: "Três quilos de carne são suficiente para o almoço de domingo.", isCorrect: false, rationale: "Incorreto: o correto na norma-padrão é 'Três quilos de carne é suficiente'." }
+        ],
+        hint: "Nas expressões de quantidade, peso ou preço acompanhadas de 'pouco', 'muito' ou 'suficiente', o verbo SER fica no singular."
+    },
+    {
+        id: 27,
+        category: "Concordância Nominal - Salvo com valor adjetivo",
+        question: "Assinale a frase em que a palavra 'salvo' foi empregada com a devida concordância nominal:",
+        options": [
+            { text: "Salvas as exceções previstas em lei, todos os documentos são públicos.", isCorrect: true, rationale: "'Salvo' quando possui valor adjetivo (=ressalvadas, excetuadas) varia em gênero e número com o substantivo a que se refere." },
+            { text: "Salvos as exceções previstas em lei, todos os documentos são públicos.", isCorrect: false, rationale: "Incorreto: a concordância no masculino plural não se ajusta ao termo 'exceções'." },
+            { text: "Exceções salvo, foram aprovados os relatórios finais do projeto.", isCorrect: false, rationale: "Incorreto: a posição posposta exige flexão coerente no feminino plural ('Exceções salvas')." },
+            { text: "Todos saíram da sala, salvos as duas testemunhas do caso.", isCorrect: false, rationale: "Incorreto: como preposição é invariável ('salvo as'); como adjetivo concorda com 'testemunhas' ('salvas as')." }
+        ],
+        hint: "A palavra 'salvo' varia quando atua com valor adjetivo equivalente a 'ressalvado(a)s'."
+    },
+    {
+        id: 28,
+        category: "Concordância Verbal - Pronomes Indefinidos + 'De nós' / 'De vós'",
+        question: "Considere a frase: \"Quais de nós _________ a capacidade de liderar este novo projeto?\" A lacuna pode ser preenchida de forma correta por:",
+        options": [
+            { text: "teremos ou terão.", isCorrect: true, rationale: "Com pronomes interrogativos ou indefinidos no plural ('Quais', 'Alguns', 'Poucos') seguidos de 'de nós' / 'de vós', o verbo pode concordar na 3ª pessoa do plural ('terão') ou com o pronome pessoal ('teremos')." },
+            { text: "terá, exclusivamente.", isCorrect: false, rationale: "Incorreto: o pronome 'Quais' está no plural, não permitindo concordância no singular." },
+            { text: "apenas teremos.", isCorrect: false, rationale: "Incorreto: a concordância em 3ª pessoa do plural ('terão') é igualmente válida." },
+            { text: "apenas terão.", isCorrect: false, rationale: "Incorreto: a concordância com o pronome 'nós' ('teremos') é perfeitamente aceita." }
+        ],
+        hint: "Com pronomes no plural + 'de nós'/'de vós', o verbo pode concordar na 3ª pessoa do plural ou com o pronome pessoal."
+    },
+    {
+        id: 29,
+        category: "Concordância Nominal - Tal / Qual",
+        question: "Assinale a alternativa em que a concordância da estrutura 'tal... qual' está CORRETA:",
+        options": [
+            { text: "Os filhos são tais quais os pais no comportamento diário.", isCorrect: true, rationale: "'Tal' concorda com o termo antecedente no plural ('filhos' -> 'tais') e 'qual' concorda com o termo consequente no plural ('pais' -> 'quais')." },
+            { text: "Os filhos são tal quais os pais no comportamento diário.", isCorrect: false, rationale: "Incorreto: 'tal' deveria concordar no plural com 'Os filhos'." },
+            { text: "Os filhos são tais qual os pais no comportamento diário.", isCorrect: false, rationale: "Incorreto: 'qual' deveria concordar no plural com 'os pais'." },
+            { text: "O filho é tais qual o pai no comportamento diário.", isCorrect: false, rationale: "Incorreto: o antecedente no singular 'O filho' exige a forma 'tal'." }
+        ],
+        hint: "Na correlação 'tal... qual', a palavra 'tal' concorda com o antecedente e 'qual' concorda com o consequente."
+    },
+    {
+        id: 30,
+        category: "Concordância Geral - Síntese de Regras",
+        question: "Assinale a opção em que AMBAS as frases apresentam concordância (verbal e nominal) inteiramente de acordo com o padrão culto:",
+        options": [
+            { text: "I. Seguem anexas as planilhas financeiras do último trimestre.\nII. Alugam-se salas comerciais no centro da cidade.", isCorrect: true, rationale: "Ambas estão corretas: em I, 'anexas' concorda com 'planilhas'; em II, 'alugam-se' concorda no plural com 'salas comerciais' (sujeito paciente na voz passiva sintética)." },
+            { text: "I. Houve razões bastantes para a tomada de decisão.\nII. Faziam dias quentes no litoral durante o verão.", isCorrect: false, rationale: "Incorreto: na frase II, o verbo 'fazer' indicando clima/tempo é impessoal e deve ficar no singular ('Fazia dias quentes')." },
+            { text: "I. É proibida entrada de pessoas não autorizadas neste local.\nII. Deve haver opções melhores para resolver o impasse.", isCorrect: false, rationale: "Incorreto: na frase I, sem o artigo 'a', deve-se usar 'É proibido entrada'." },
+            { text: "I. Elas próprias resolveram as pendências do contrato.\nII. Tratam-se de questões prioritárias para o conselho.", isCorrect: false, rationale: "Incorreto: na frase II, 'trata-se de' com VTI exige verbo obrigatoriamente no singular." }
+        ],
+        hint: "Atente para verbos impessoais, expressões de proibição sem determinante e a voz passiva sintética."
+    }
+];
+
+        // State Management
+        let currentQuestionIdx = 0;
+        let userAnswers = new Array(questionsData.length).fill(null);
+        let bookmarked = new Array(questionsData.length).fill(false);
+        let quizMode = 'study'; // 'study' or 'exam'
+        let isSubmitted = false;
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGrid();
+            loadQuestion(0);
+        });
+
+        // Set Mode
+        function setMode(mode) {
+            if (isSubmitted) return;
+            quizMode = mode;
+            
+            const btnStudy = document.getElementById('btnModeStudy');
+            const btnExam = document.getElementById('btnModeExam');
+
+            if (mode === 'study') {
+                btnStudy.className = "px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm";
+                btnExam.className = "px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900";
+            } else {
+                btnExam.className = "px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm";
+                btnStudy.className = "px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900";
+            }
+
+            // Re-render current question view
+            loadQuestion(currentQuestionIdx);
+        }
+
+        // Render Side Navigation Grid
+        function renderGrid() {
+            const gridContainer = document.getElementById('questionGrid');
+            gridContainer.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `gridBtn-${idx}`;
+                btn.onclick = () => jumpToQuestion(idx);
+                btn.className = getGridBtnClass(idx);
+                btn.innerText = idx + 1;
+                gridContainer.appendChild(btn);
+            });
+
+            updateProgress();
+        }
+
+        function getGridBtnClass(idx) {
+            let base = "w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center transition-all ";
+            
+            if (idx === currentQuestionIdx) {
+                base += "ring-2 ring-brand-600 ring-offset-2 ";
+            }
+
+            if (bookmarked[idx]) {
+                base += "bg-amber-400 text-amber-950 font-extrabold ";
+            } else if (userAnswers[idx] !== null) {
+                if (isSubmitted || quizMode === 'study') {
+                    const isCorrect = questionsData[idx].options[userAnswers[idx]].isCorrect;
+                    base += isCorrect ? "bg-emerald-500 text-white " : "bg-rose-500 text-white ";
+                } else {
+                    base += "bg-brand-600 text-white ";
+                }
+            } else {
+                base += "bg-slate-100 text-slate-600 hover:bg-slate-200 ";
+            }
+
+            return base;
+        }
+
+        // Update Progress Bar & Score
+        function updateProgress() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            const percent = Math.round((answeredCount / questionsData.length) * 100);
+            
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('progressPercent').innerText = `${percent}% concluído`;
+
+            // Calculate score
+            let correctCount = 0;
+            userAnswers.forEach((ans, i) => {
+                if (ans !== null && questionsData[i].options[ans].isCorrect) {
+                    correctCount++;
+                }
+            });
+
+            document.getElementById('scoreDisplay').innerText = `${correctCount} / ${questionsData.length}`;
+        }
+
+        // Load Question Data
+        function loadQuestion(idx) {
+            currentQuestionIdx = idx;
+            const q = questionsData[idx];
+
+            // Update Header Info
+            document.getElementById('questionCategory').innerText = q.category;
+            document.getElementById('questionNumberBadge').innerText = `Questão ${idx + 1} de ${questionsData.length}`;
+            document.getElementById('questionTitle').innerText = q.question;
+
+            // Update Bookmark Button
+            const btnBookmark = document.getElementById('btnBookmark');
+            if (bookmarked[idx]) {
+                btnBookmark.className = "text-amber-500 font-medium text-sm transition flex items-center gap-1.5";
+                btnBookmark.innerHTML = `<i class="fa-solid fa-bookmark"></i> <span class="hidden sm:inline">Marcada</span>`;
+            } else {
+                btnBookmark.className = "text-slate-400 hover:text-amber-500 text-sm font-medium transition flex items-center gap-1.5";
+                btnBookmark.innerHTML = `<i class="fa-regular fa-bookmark"></i> <span class="hidden sm:inline">Revisar</span>`;
+            }
+
+            // Render Options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const selectedOpt = userAnswers[idx];
+            const showFeedback = isSubmitted || (quizMode === 'study' && selectedOpt !== null);
+
+            q.options.forEach((opt, optIdx) => {
+                const optBtn = document.createElement('button');
+                optBtn.className = getOptionClass(idx, optIdx, selectedOpt, showFeedback);
+                optBtn.onclick = () => selectOption(optIdx);
+                if (showFeedback || isSubmitted) {
+                    // Disable changing if already answered in study mode or if quiz is finished
+                    if (quizMode === 'study' || isSubmitted) {
+                        optBtn.disabled = true;
+                    }
+                }
+
+                const letter = String.fromCharCode(65 + optIdx); // A, B, C, D
+
+                let iconHtml = '';
+                if (showFeedback) {
+                    if (opt.isCorrect) {
+                        iconHtml = `<i class="fa-solid fa-circle-check text-emerald-600 text-lg ml-auto"></i>`;
+                    } else if (selectedOpt === optIdx) {
+                        iconHtml = `<i class="fa-solid fa-circle-xmark text-rose-600 text-lg ml-auto"></i>`;
+                    }
+                }
+
+                optBtn.innerHTML = `
+                    <div class="flex items-start gap-3 text-left w-full">
+                        <span class="w-6 h-6 rounded-full border border-current flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
+                            ${letter}
+                        </span>
+                        <span class="text-sm font-medium leading-relaxed flex-1">${opt.text}</span>
+                        ${iconHtml}
+                    </div>
+                `;
+
+                optionsContainer.appendChild(optBtn);
+            });
+
+            // Handle Explanation Box
+            const explanationBox = document.getElementById('explanationBox');
+            const explanationHeader = document.getElementById('explanationHeader');
+            const explanationText = document.getElementById('explanationText');
+
+            if (showFeedback && selectedOpt !== null) {
+                explanationBox.classList.remove('hidden');
+                const chosenOptObj = q.options[selectedOpt];
+                const correctOptObj = q.options.find(o => o.isCorrect);
+
+                if (chosenOptObj.isCorrect) {
+                    explanationHeader.className = "flex items-center gap-2 font-bold mb-1 text-emerald-700";
+                    explanationHeader.innerHTML = `<i class="fa-solid fa-circle-check"></i> Correto!`;
+                    explanationText.innerText = chosenOptObj.rationale;
+                } else {
+                    explanationHeader.className = "flex items-center gap-2 font-bold mb-1 text-rose-700";
+                    explanationHeader.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Incorreto.`;
+                    explanationText.innerText = `${chosenOptObj.rationale} (Gabarito: ${correctOptObj.text})`;
+                }
+            } else {
+                explanationBox.classList.add('hidden');
+            }
+
+            // Navigation Buttons State
+            document.getElementById('btnPrev').disabled = (idx === 0);
+            
+            const btnNext = document.getElementById('btnNext');
+            if (idx === questionsData.length - 1) {
+                btnNext.innerHTML = `Finalizar <i class="fa-solid fa-flag-checkered ml-1"></i>`;
+            } else {
+                btnNext.innerHTML = `Próxima <i class="fa-solid fa-chevron-right ml-1"></i>`;
+            }
+
+            renderGrid();
+        }
+
+        function getOptionClass(qIdx, optIdx, selectedOpt, showFeedback) {
+            let base = "w-full p-4 rounded-xl border text-left transition-all flex items-center ";
+
+            if (showFeedback) {
+                const isCorrect = questionsData[qIdx].options[optIdx].isCorrect;
+                if (isCorrect) {
+                    return base + "bg-emerald-50 border-emerald-300 text-emerald-950 font-medium ";
+                } else if (selectedOpt === optIdx) {
+                    return base + "bg-rose-50 border-rose-300 text-rose-950 ";
+                } else {
+                    return base + "bg-slate-50 border-slate-200 text-slate-400 opacity-60 ";
+                }
+            } else {
+                if (selectedOpt === optIdx) {
+                    return base + "bg-brand-50 border-brand-500 text-brand-900 shadow-sm ";
+                } else {
+                    return base + "bg-white border-slate-200 text-slate-700 hover:border-brand-300 hover:bg-slate-50 ";
+                }
+            }
+        }
+
+        // Action Handlers
+        function selectOption(optIdx) {
+            if (isSubmitted) return;
+            userAnswers[currentQuestionIdx] = optIdx;
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function toggleBookmark() {
+            bookmarked[currentQuestionIdx] = !bookmarked[currentQuestionIdx];
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function jumpToQuestion(idx) {
+            loadQuestion(idx);
+        }
+
+        function navigateQuestion(direction) {
+            const nextIdx = currentQuestionIdx + direction;
+            if (nextIdx >= 0 && nextIdx < questionsData.length) {
+                loadQuestion(nextIdx);
+            } else if (nextIdx >= questionsData.length) {
+                finishQuiz();
+            }
+        }
+
+        // Finish Quiz & Show Results
+        function finishQuiz() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            if (unanswered > 0 && !isSubmitted) {
+                const confirmSubmit = confirm(`Você ainda tem ${unanswered} questão(ões) não respondida(s). Deseja realmente finalizar?`);
+                if (!confirmSubmit) return;
+            }
+
+            isSubmitted = true;
+            document.getElementById('quizCard').classList.add('hidden');
+            document.getElementById('resultsCard').classList.remove('hidden');
+
+            // Calculate final statistics
+            let correctCount = 0;
+            userAnswers.forEach((ans, i) => {
+                if (ans !== null && questionsData[i].options[ans].isCorrect) {
+                    correctCount++;
+                }
+            });
+
+            const percent = Math.round((correctCount / questionsData.length) * 100);
+
+            document.getElementById('finalScore').innerText = `${correctCount} / ${questionsData.length}`;
+            document.getElementById('finalPercent').innerText = `${percent}%`;
+
+            let feedbackText = "Insuficiente";
+            let feedbackColor = "text-rose-600";
+            if (percent >= 85) {
+                feedbackText = "Excelente!";
+                feedbackColor = "text-emerald-600";
+            } else if (percent >= 70) {
+                feedbackText = "Muito Bom!";
+                feedbackColor = "text-brand-600";
+            } else if (percent >= 50) {
+                feedbackText = "Regular";
+                feedbackColor = "text-amber-600";
+            }
+
+            const feedbackElem = document.getElementById('finalFeedback');
+            feedbackElem.innerText = feedbackText;
+            feedbackElem.className = `text-sm font-bold mt-1 block ${feedbackColor}`;
+
+            renderGrid();
+        }
+
+        function restartQuiz() {
+            userAnswers = new Array(questionsData.length).fill(null);
+            bookmarked = new Array(questionsData.length).fill(false);
+            isSubmitted = false;
+            currentQuestionIdx = 0;
+
+            document.getElementById('resultsCard').classList.add('hidden');
+            document.getElementById('quizCard').classList.remove('hidden');
+
+            renderGrid();
+            loadQuestion(0);
+        }
+
+        function reviewQuiz() {
+            document.getElementById('resultsCard').classList.add('hidden');
+            document.getElementById('quizCard').classList.remove('hidden');
+            loadQuestion(0);
+        }
+    </script>
+</body>
+</html>
