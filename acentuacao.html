@@ -219,248 +219,368 @@
     <!-- JavaScript Quiz Logic -->
     <script>
         // Database of 20 Portuguese Questions
-        const questionsData = [
-            {
-                id: 1,
-                category: "Demonstrativos & Referência",
-                question: "Considere a frase: \"A honestidade e a impunidade coexistem na sociedade; esta gera indignação, aquela garante a paz social.\" Os pronomes demonstrativos 'esta' e 'aquela' exercem, respectivamente, função anafórica referente a:",
-                options: [
-                    { text: "impunidade e honestidade.", isCorrect: true, rationale: "O demonstrativo 'esta' refere-se ao elemento mencionado por último (mais próximo: impunidade), enquanto 'aquela' recupera o elemento mencionado em primeiro lugar (mais distante: honestidade)." },
-                    { text: "honestidade e impunidade.", isCorrect: false, rationale: "'Esta' recupera o termo mais próximo antecedente (impunidade) e não o primeiro." },
-                    { text: "sociedade e indignação.", isCorrect: false, rationale: "'Sociedade' e 'indignação' não constituem o par coordenado que está sendo polarizado pelos demonstrativos." },
-                    { text: "impunidade e paz social.", isCorrect: false, rationale: "'Paz social' é consequência da honestidade, e não o termo referente direto retomado." }
-                ],
-                hint: "Lembre-se da regra de proximidade dos demonstrativos no texto: 'este/esta' retoma o termo mais recente e 'aquele/aquela' retoma o mais antigo."
-            },
-            {
-                id: 2,
-                category: "Anáfora vs Catáfora",
-                question: "Em qual das passagens a seguir o pronome destacado exerce função CATA FÓRICA na articulação do texto?",
-                options: [
-                    { text: "Desejo apenas isto: que todos alcancem a aprovação.", isCorrect: true, rationale: "O pronome 'isto' antecipa uma informação que ainda será declarada na oração seguinte ('que todos alcancem...'), caracterizando o recurso catafórico." },
-                    { text: "A aprovação chegou rápida; isso nos motivou bastante.", isCorrect: false, rationale: "O pronome 'isso' retoma a afirmação anterior ('A aprovação chegou rápida'), tratando-se de anáfora." },
-                    { text: "O aluno estudou muito, por isso obteve êxito.", isCorrect: false, rationale: "'Por isso' estabelece coesão anafórica de valor conclusivo/causal recuperando o fato antecedente." },
-                    { text: "Aquele foi o melhor dia de nossas vidas.", isCorrect: false, rationale: "'Aquele' funciona aqui com valor exofórico/dêitico ou anafórico em relação ao tempo vivido." }
-                ],
-                hint: "A catáfora projeta o texto para a frente, anunciando algo que ainda vai ser dito."
-            },
-            {
-                id: 3,
-                category: "Pronome Relativo e Regência",
-                question: "Assinale a alternativa que preenche corretamente a lacuna mantendo a norma-padrão da coesão relacional: \"O ideal ____ tanto lutamos exige sacrifícios diários.\"",
-                options: [
-                    { text: "pelo qual", isCorrect: true, rationale: "Quem luta, luta 'por' algo. A preposição 'por' exige fusão com o artigo do pronome relativo ('por + o qual' = 'pelo qual') ou 'por que'." },
-                    { text: "que", isCorrect: false, rationale: "A omissão da preposição 'por' exigida pela regência do verbo 'lutar' gera desvio gramatical." },
-                    { text: "ao qual", isCorrect: false, rationale: "A preposição 'a' não atende à regência do verbo 'lutar' neste contexto." },
-                    { text: "cujo", isCorrect: false, rationale: "O pronome 'cujo' exige relação de posse entre dois substantivos, inexistente aqui." }
-                ],
-                hint: "Observe a regência do verbo que vem depois do pronome relativo: quem 'luta', luta ___ algo."
-            },
-            {
-                id: 4,
-                category: "Emprego de 'Cujo'",
-                question: "Identifique a opção em que o uso do pronome relativo 'cujo' apresenta incorreção de acordo com a norma gramatical:",
-                options: [
-                    { text: "O autor cujo o livro foi premiado não compareceu.", isCorrect: true, rationale: "É proibido usar artigo definido imediatamente após o pronome 'cujo' (não se diz 'cujo o' nem 'cuja a'). O correto é 'cujo livro'." },
-                    { text: "O professor cujas aulas eram excelentes aposentou-se.", isCorrect: false, rationale: "Uso correto: 'cujas' concorda em gênero e número com o consequente 'aulas' e estabelece posse." },
-                    { text: "A árvore cujos frutos colhemos é centenária.", isCorrect: false, rationale: "Uso correto: concordância correta com 'frutos' e vínculo de posse com 'árvore'." },
-                    { text: "A empresa a cujos diretores nos dirigimos aprovou o projeto.", isCorrect: false, rationale: "Uso correto: a preposição 'a' foi devidamente anteposta por regência de 'nos dirigimos'." }
-                ],
-                hint: "Nunca se coloca artigo (o, a, os, as) logo após o pronome relativo 'cujo'."
-            },
-            {
-                id: 5,
-                category: "Expressões Referenciais",
-                question: "No trecho: \"O Cerrado vem sofrendo contínuo desmatamento. O bioma, contudo, abriga nascentes cruciais para o país.\" A expressão 'O bioma' funciona como:",
-                options: [
-                    { text: "expressão hiperonímica de caráter anafórico.", isCorrect: true, rationale: "'Bioma' é um termo de sentido mais amplo (hiperônimo) que retoma 'Cerrado' (hipônimo), garantindo a coesão sequencial sem repetição." },
-                    { text: "expressão hiponímica de caráter catafórico.", isCorrect: false, rationale: "'Bioma' não é hipônimo de Cerrado nem antecipa termo futuro." },
-                    { text: "substituição por antonímia contextual.", isCorrect: false, rationale: "Não há relação de sentidos opostos (antônimos) entre as palavras." },
-                    { text: "elipse verbal antecedente.", isCorrect: false, rationale: "Trata-se de coesão lexical por anáfora, não omissão de verbo (elipse)." }
-                ],
-                hint: "Considere se 'bioma' é um termo mais geral ou mais específico em relação a 'Cerrado'."
-            },
-            {
-                id: 6,
-                category: "Nexos Adversativos vs Concessivos",
-                question: "Em: \"Embora os custos fossem elevados, a diretoria aprovou a modernização.\" Se substituirmos a conjunção 'Embora' mantendo o sentido de oposição, mas alterando a estrutura para a coordenação adversativa, a reescrita correta é:",
-                options: [
-                    { text: "Os custos eram elevados, contudo a diretoria aprovou a modernização.", isCorrect: true, rationale: "'Contudo' é conjunção adversativa e exige o verbo no modo indicativo ('eram'), estabelecendo relação de oposição de forma coordenada." },
-                    { text: "Ainda que os custos eram elevados, a diretoria aprovou a modernização.", isCorrect: false, rationale: "'Ainda que' exige verbo no subjuntivo ('fossem') e mantém valor subordinativo concessivo." },
-                    { text: "Os custos fossem elevados, porquanto a diretoria aprovou a modernização.", isCorrect: false, rationale: "'Porquanto' é explicativo/causal e não adversativo." },
-                    { text: "Posto que os custos fossem elevados, logo a diretoria aprovou.", isCorrect: false, rationale: "'Logo' introduz conclusão, alterando a articulação semântica da frase." }
-                ],
-                hint: "Conjunções adversativas (mas, porém, contudo) coordenam orações com verbo no indicativo."
-            },
-            {
-                id: 7,
-                category: "Nexos Causais e Consecutivos",
-                question: "Assinale a alternativa em que a oração introduzida pela palavra 'que' possui valor semântico CONSECUTIVO:",
-                options: [
-                    { text: "A chuva foi tão intensa que as ruas do centro alagaram.", isCorrect: true, rationale: "A estrutura correlativa 'tão... que' expressa a consequência direta da intensidade da chuva." },
-                    { text: "É necessário que todos cumpram seus horários.", isCorrect: false, rationale: "Aqui o 'que' é conjunção integrante, introduzindo oração subordinada substantiva subjetiva." },
-                    { text: "Fique em casa, que a tempestade se aproxima.", isCorrect: false, rationale: "Neste caso, 'que' possui valor explicativo (equivalente a 'pois')." },
-                    { text: "O livro que comprei ontem é esclarecedor.", isCorrect: false, rationale: "O 'que' é pronome relativo introduzindo oração adjetiva." }
-                ],
-                hint: "Procure por termos intensificadores no antecedente como 'tão', 'tanto', 'tamanho' que levam a um resultado/consequência."
-            },
-            {
-                id: 8,
-                category: "Operador 'Pois'",
-                question: "Na frase: \"O projeto exige alto investimento; não devemos, pois, agir sem planejamento prévio.\" O operador argumentativo 'pois' assume valor:",
-                options: [
-                    { text: "conclusivo, por estar posposto ao verbo.", isCorrect: true, rationale: "Quando o 'pois' surge posposto ao verbo (entre vírgulas), sua função coesiva é estritamente conclusiva (sinônimo de 'portanto')." },
-                    { text: "causal, por relacionar dois fatos.", isCorrect: false, rationale: "O 'pois' só é causal se anteceder o verbo e não for deslocado." },
-                    { text: "explicativo, por esclarecer uma ordem.", isCorrect: false, rationale: "O 'pois' explicativo vem no início da oração coordenada, antes do verbo." },
-                    { text: "concessivo, por ponderar um obstáculo.", isCorrect: false, rationale: "'Pois' não possui valor concessivo na língua portuguesa." }
-                ],
-                hint: "Atente para a posição do 'pois' na oração: antes do verbo é causal/explicativo; depois do verbo é conclusivo."
-            },
-            {
-                id: 9,
-                category: "Uso de 'Onde'",
-                question: "De acordo com a norma-padrão de coesão referencial, o pronome 'onde' foi empregado CORRETAMENTE em:",
-                options: [
-                    { text: "A biblioteca do bairro é o local onde os estudantes se reúnem.", isCorrect: true, rationale: "O pronome 'onde' só deve ser empregado para retomar lugares físicos e concretos (como 'biblioteca')." },
-                    { text: "Aquele foi um período difícil onde todos sofreram.", isCorrect: false, rationale: "Incorreto: 'período' é indicação de tempo; deveria usar-se 'em que' ou 'no qual'." },
-                    { text: "Li um artigo onde o autor criticava a economia.", isCorrect: false, rationale: "Incorreto: 'artigo' é texto; o adequado seria 'em que' ou 'no qual'." },
-                    { text: "Houve uma reunião onde se discutiu o orçamento.", isCorrect: false, rationale: "Incorreto: 'reunião' é um evento; o correto seria 'em que' ou 'na qual'." }
-                ],
-                hint: "O pronome 'onde' deve ser reservado estritamente para lugares físicos/espaciais."
-            },
-            {
-                id: 10,
-                category: "Coesão por Elipse",
-                question: "No trecho: \"Alguns cientistas defendem a transição energética imediata; outros, a gradual.\" O mecanismo de coesão que consiste na omissão do verbo 'defendem' na segunda oração chama-se:",
-                options: [
-                    { text: "elipse (ou zeugma).", isCorrect: true, rationale: "Zeugma é o tipo específico de elipse em que se omite um termo (neste caso, o verbo 'defendem') que já foi mencionado anteriormente no texto." },
-                    { text: "catafórico nominal.", isCorrect: false, rationale: "Não há projeção catafórica, mas omissão gramatical de termo antecedente." },
-                    { text: "paráfrase explicativa.", isCorrect: false, rationale: "Paráfrase consiste na reescrita com outras palavras, e não na omissão verbal." },
-                    { text: "encapsulamento textual.", isCorrect: false, rationale: "Encapsulamento é o resumo de ideias por meio de um substantivo sintético." }
-                ],
-                hint: "Como se chama a figura de linguagem/coesão na qual se omite um termo antecedente subentendido (marcado por vírgula)?"
-            },
-            {
-                id: 11,
-                category: "Operadores de Gradação e Força",
-                question: "Na frase: \"O candidato conquistou o apoio de líderes comunitários, de empresários e até de seus opositores mais ferrenhos.\" O operador 'até' atua como:",
-                options: [
-                    { text: "operador argumentativo que introduz o argumento mais forte de uma escala ascendente.", isCorrect: true, rationale: "'Até' (assim como 'inclusive' e 'mesmo') assinala o argumento de maior força ou topo da escala argumentativa." },
-                    { text: "conjunção subordinativa temporal que indica limite de tempo.", isCorrect: false, rationale: "Neste contexto, 'até' não marca tempo limite, mas inclusão e gradação argumentativa." },
-                    { text: "elemento de coesão conclusiva de efeito restritivo.", isCorrect: false, rationale: "Não possui valor de síntese conclusiva nem restringe, mas amplia a gradação." },
-                    { text: "preposição de afastamento e exclusão temática.", isCorrect: false, rationale: "Pelo contrário, é um marcador de inclusão extensiva." }
-                ],
-                hint: "Considere a intenção do autor em colocar 'opositores mais ferrenhos' por último acompanhado de 'até'."
-            },
-            {
-                id: 12,
-                category: "Nexos Condicionais e Temporais",
-                question: "Analise a frase: \"____ assumiu o cargo de chefia, o executivo reestruturou toda a equipe.\" A locução que preenche a lacuna atribuindo sentido TEMPORAL é:",
-                options: [
-                    { text: "Assim que", isCorrect: true, rationale: "'Assim que' introduz oração subordinada adverbial temporal de imediatez no tempo." },
-                    { text: "Desde que", isCorrect: false, rationale: "Embora 'desde que' possa indicar tempo inicial, com o verbo no passado sem continuidade soa ambíguo ou condicional. 'Assim que' marca a temporalidade pontual perfeita." },
-                    { text: "Contanto que", isCorrect: false, rationale: "'Contanto que' expressa exclusivamente condição (com verbo no subjuntivo)." },
-                    { text: "A fim de que", isCorrect: false, rationale: "'A fim de que' expressa finalidade." }
-                ],
-                hint: "Qual locução marca que a ação de reestruturar ocorreu imediatamente no momento em que ele assumiu o cargo?"
-            },
-            {
-                id: 13,
-                category: "Operador 'Posto que'",
-                question: "Assinale a opção em que a locução 'posto que' foi empregada de acordo com o seu sentido escorreito de CONCESSÃO:",
-                options: [
-                    { text: "Posto que a decisão fosse impopular, manteve-se firme na sua aplicação.", isCorrect: true, rationale: "Na tradição culta da língua, 'posto que' é conectivo concessivo (sinônimo de 'embora', 'ainda que') e rege verbo no modo subjuntivo." },
-                    { text: "Não foi trabalhar hoje posto que estava muito doente.", isCorrect: false, rationale: "Uso considerado inadequado/desviante na norma culta tradicional (uso de 'posto que' como causal)." },
-                    { text: "Posto que estudou bastante, foi aprovado com louvor.", isCorrect: false, rationale: "Uso causal desviante; a relação aqui é de causa e efeito, não de concessão." },
-                    { text: "Posto que cheguei cedo, consegui o melhor assento.", isCorrect: false, rationale: "Trata-se de relação de causa/tempo, desvirtuando o caráter concessivo." }
-                ],
-                hint: "Lembre-se de que, gramaticalmente, 'posto que' equivale a 'embora' e exige verbo no subjuntivo."
-            },
-            {
-                id: 14,
-                category: "Encapsulamento Anafórico",
-                question: "Considere o texto: \"A inflação subiu, as taxas de juros dispararam e a produção industrial caiu. Esse cenário alarmante exige medidas urgentes.\" A expressão 'Esse cenário alarmante' cumpre o papel de:",
-                options: [
-                    { text: "rótulo/encapsulador anafórico que sintetiza os fatos expressos anteriormente.", isCorrect: true, rationale: "Coesão por encapsulamento (ou rótulo) ocorre quando uma expressão nominal resume e condensa todo um bloco de informações pregressas." },
-                    { text: "catáfora restritiva que antecipa as medidas urgentes.", isCorrect: false, rationale: "A expressão retoma o conjunto de fatos passados (anáfora) e não antecipa a lista de medidas." },
-                    { text: "substituição sinonímica de um único vocábulo.", isCorrect: false, rationale: "Não retoma apenas uma palavra, mas toda uma proposição complexa." },
-                    { text: "anáfora associativa por elipse de substantivo.", isCorrect: false, rationale: "Não há omissão, mas síntese explícita via nome rotulador." }
-                ],
-                hint: "O substantivo 'cenário' funciona como uma 'caixa' que sintetiza e empacota as três frases anteriores."
-            },
-            {
-                id: 15,
-                category: "Demonstrativos no Tempo",
-                question: "Indique a alternativa que preenche corretamente a lacuna, considerando o emprego dos pronomes demonstrativos para indicação temporal no momento da fala: \"____ ano de 2026 está sendo marcado por grandes inovações tecnológicas.\"",
-                options: [
-                    { text: "Este", isCorrect: true, rationale: "Para o tempo presente/vigente em relação ao momento do discurso, utiliza-se o demonstrativo 'este' (este ano = o ano atual)." },
-                    { text: "Esse", isCorrect: false, rationale: "'Esse' refere-se a um passado ou futuro relativamente próximo do momento da fala." },
-                    { text: "Aquele", isCorrect: false, rationale: "'Aquele' refere-se a um tempo distante e remoto no passado." },
-                    { text: "Aquilo", isCorrect: false, rationale: "'Aquilo' é pronome neutro e não acompanha o substantivo 'ano'." }
-                ],
-                hint: "Para o ano presente em que se fala, qual é a forma correta do pronome demonstrativo?"
-            },
-            {
-                id: 16,
-                category: "Operadores de Retificação",
-                question: "Qual dos seguintes conectivos/expressões possui a função primária de introduzir uma RETIFICAÇÃO ou correção do que foi dito anteriormente?",
-                options: [
-                    { text: "ou melhor", isCorrect: true, rationale: "A expressão 'ou melhor' (assim como 'aliás', 'digo') serve para corrigir ou reformular de modo mais preciso um enunciado prévio." },
-                    { text: "isto é", isCorrect: false, rationale: "'Isto é' e 'ou seja' possuem função de explicação, esclarecimento ou síntese, e não de retificação." },
-                    { text: "por conseguinte", isCorrect: false, rationale: "'Por conseguinte' indica conclusão/consequência." },
-                    { text: "além disso", isCorrect: false, rationale: "'Além disso' indica acréscimo/adição de argumentos." }
-                ],
-                hint: "Qual destas expressões é usada quando o falante quer corrigir formalmente uma palavra ou ideia recém-emitida?"
-            },
-            {
-                id: 17,
-                category: "Proporção vs Causa",
-                question: "Assinale a opção gramaticalmente correta em que a locução expressa ideia de PROPORCIONALIDADE:",
-                options: [
-                    { text: "À medida que os estudos avançam, as dúvidas diminuem.", isCorrect: true, rationale: "'À medida que' é a locução conjuntiva proporcional correta. (Atenção: a forma 'na medida em que' expressa causa)." },
-                    { text: "Na medida que os estudos avançam, as dúvidas diminuem.", isCorrect: false, rationale: "Incorreto: a forma 'na medida que' sem preposição 'em' é considerada gramaticalmente inexistente/híbrida." },
-                    { text: "À medida em que os estudos avançam, as dúvidas diminuem.", isCorrect: false, rationale: "Incorreto: misturou-se 'à medida que' com 'na medida em que'." },
-                    { text: "Em medida que os estudos avançam, as dúvidas diminuem.", isCorrect: false, rationale: "Forma inexistente na norma-padrão." }
-                ],
-                hint: "A locução correta de proporção é 'À medida que' (com crase e sem a preposição 'em')."
-            },
-            {
-                id: 18,
-                category: "Anáfora Associativa",
-                question: "Em: \"Chegamos a um vilarejo histórico. As casas tinham fachadas preservadas e os moradores eram acolhedores.\" O termo 'As casas' estabelece coesão com 'vilarejo' por meio de:",
-                options: [
-                    { text: "anáfora associativa (ou inferencial).", isCorrect: true, rationale: "A anáfora associativa ocorre quando o referente não foi mencionado explicitamente antes, mas é introduzido como parte integrante do conhecimento de mundo sobre o antecedente ('vilarejo' pressupõe 'casas')." },
-                    { text: "repetição lexical estrita.", isCorrect: false, rationale: "A palavra 'casas' não é repetição da palavra 'vilarejo'." },
-                    { text: "catáfora explicativa com pronome relativo.", isCorrect: false, rationale: "Não há pronome relativo nem antecipação catafórica." },
-                    { text: "elipse da expressão antecedente.", isCorrect: false, rationale: "O termo 'casas' está explicitado, não havendo omissão." }
-                ],
-                hint: "Como se chama a conexão em que o leitor deduce que 'casas' fazem parte de 'vilarejo' com base no conhecimento de mundo?"
-            },
-            {
-                id: 19,
-                category: "Ambiguidade Referencial",
-                question: "Identifique a alternativa que apresenta AMBIGUIDADE referente ao uso do pronome possessivo:",
-                options: [
-                    { text: "O gerente conversou com o funcionário sobre o seu relatório.", isCorrect: true, rationale: "Há ambiguidade: o pronome 'seu' pode se referir ao relatório do gerente ou ao relatório do funcionário. A correção exigiria 'o relatório deste' ou 'o relatório dele'." },
-                    { text: "O gerente conversou com o funcionário sobre o relatório deste.", isCorrect: false, rationale: "Sem ambiguidade: 'deste' refere-se com clareza ao termo mais próximo ('funcionário')." },
-                    { text: "O gerente disse que o relatório do funcionário estava excelente.", isCorrect: false, rationale: "Sem ambiguidade: a referência nominal 'do funcionário' é direta." },
-                    { text: "Conversamos com o gerente a respeito de suas metas.", isCorrect: false, rationale: "Não há duplo sujeito masculino para gerar dúvida sobre a quem pertence as metas." }
-                ],
-                hint: "Procure a frase em que o pronome 'seu' deixa dúvida sobre a qual das duas pessoas o objeto pertence."
-            },
-            {
-                id: 20,
-                category: "Pronomes Oblíquos Anafóricos",
-                question: "Na reescrita da frase \"O diretor convocou os assessores e apresentou as propostas aos assessores\", a substituição dos termos repetidos por pronomes oblíquos anafóricos adequados resulta em:",
-                options: [
-                    { text: "O diretor convocou-os e apresentou-lhes as propostas.", isCorrect: true, rationale: "O verbo 'convocar' é transitivo direto (exige 'os'); o verbo 'apresentar' rege complemento indireto com preposição 'a' para pessoas (exige 'lhes')." },
-                    { text: "O diretor convocou-lhes e apresentou-lhes as propostas.", isCorrect: false, rationale: "'Convocar' não rege objeto indireto 'lhes'." },
-                    { text: "O diretor convocou-os e apresentou-os as propostas.", isCorrect: false, rationale: "'Apresentou-os as propostas' é incorreto pois 'apresentar algo a alguém' exige 'lhes' para o destinatário." },
-                    { text: "O diretor convocou-nos e apresentou-os as propostas.", isCorrect: false, rationale: "Altera a pessoa gramatical ('nos' em vez de 3ª pessoa do plural)." }
-                ],
-                hint: "Diferencie a transitividade: 'convocar alguém' (VTD -> os) versus 'apresentar algo a alguém' (VTDI -> lhes)."
-            }
-        ];
+       const questionsData = [
+    {
+        id: 1,
+        category: "Acentuação de Oxítonas",
+        question: "Assinale a alternativa em que todas as palavras oxítonas devem ser acentuadas graficamente:",
+        options: [
+            { text: "Café, cipó, xará, armazém.", isCorrect: true, rationale: "Acentuam-se as palavras oxítonas terminadas em 'a', 'e', 'o' (seguidos ou não de 's') e 'em'/'ens'." },
+            { text: "Caju, saci, abacaxi, urubu.", isCorrect: false, rationale: "Oxítonas terminadas em 'u' e 'i' não são acentuadas em regra geral." },
+            { text: "Rapaz, talvez, arroz, veloz.", isCorrect: false, rationale: "Oxítonas terminadas em 'z' não recebem acento gráfico." },
+            { text: "Ninguém, parabéns, item, jovem.", isCorrect: false, rationale: "'Item' e 'jovem' são paroxítonas e não recebem acento." }
+        ],
+        hint: "Lembre-se da regra geral de acentuação das palavras oxítonas: terminadas em A, E, O (S) e EM/ENS."
+    },
+    {
+        id: 2,
+        category: "Acentuação de Paroxítonas",
+        question: "Assinale a opção em que NENHUMA das palavras paroxítonas deve receber acento gráfico:",
+        options: [
+            { text: "Item, nuvem, hifens, imagem.", isCorrect: true, rationale: "Paroxítonas terminadas em 'em' ou 'ens' não levam acento gráfico." },
+            { text: "Lápis, álbum, caráter, tórax.", isCorrect: false, rationale: "Todas essas palavras são paroxítonas acentuadas (terminadas em -is, -um, -r, -x)." },
+            { text: "Bônus, júri, fácil, orfã.", isCorrect: false, rationale: "Todas são paroxítonas e devem receber acento gráfico." },
+            { text: "Açúcar, cadáver, repórter, bênção.", isCorrect: false, rationale: "Todas são paroxítonas acentuadas pelas regras do -r e do -ão." }
+        ],
+        hint: "As paroxítonas terminadas na sequência EM/ENS não recebem acento gráfico."
+    },
+    {
+        id: 3,
+        category: "Acentuação de Proparoxítonas",
+        question: "Assinale a afirmativa CORRETA a respeito das palavras proparoxítonas:",
+        options: [
+            { text: "Todas as palavras proparoxítonas são obrigatoriamente acentuadas na língua portuguesa.", isCorrect: true, rationale: "A regra das proparoxítonas é absoluta e universal na norma-padrão: 100% delas são acentuadas." },
+            { text: "Apenas as palavras proparoxítonas terminadas em vogal aberta recebem acento.", isCorrect: false, rationale: "Incorreto: a terminação é irrelevante para a acentuação das proparoxítonas." },
+            { text: "Com a Reforma Ortográfica, as proparoxítonas perderam seus acentos gráficos.", isCorrect: false, rationale: "Incorreto: o Novo Acordo Ortográfico não alterou a regra das proparoxítonas." },
+            { text: "Proparoxítonas terminadas em R, L e Z não levam acento.", isCorrect: false, rationale: "Incorreto: independentemente da terminação, todas são acentuadas." }
+        ],
+        hint: "Pense na regra mais simples e sem exceções da língua portuguesa sobre acentuação."
+    },
+    {
+        id: 4,
+        category: "Acentuação dos Monossílabos Tônicos",
+        question: "Assinale a alternativa em que todos os monossílabos tônicos são acentuados gramaticalmente:",
+        options: [
+            { text: "Pá, pé, nó, três.", isCorrect: true, rationale: "Monossílabos tônicos terminados em 'a', 'e', 'o' (seguidos ou não de 's') são sempre acentuados." },
+            { text: "Nu, tu, vi, fiz.", isCorrect: false, rationale: "Monossílabos tônicos terminados em 'u' e 'i' não levam acento." },
+            { text: "Dor, sol, mar, luz.", isCorrect: false, rationale: "Monossílabos terminados em R, L, Z não são acentuados." },
+            { text: "Lá, fé, sim, bem.", isCorrect: false, rationale: "Monossílabos terminados em M/N não são acentuados pela regra do monossílabo." }
+        ],
+        hint: "Acentuam-se os monossílabos tônicos terminados em A, E e O (seguidos ou não de S)."
+    },
+    {
+        id: 5,
+        category: "Acentuação dos Hiatos",
+        question: "Assinale a alternativa em que as palavras são acentuadas devido à regra do hiato:",
+        options: [
+            { text: "Saúde, baú, saída.", isCorrect: true, rationale: "As vogais 'i' e 'u' tônicas, quando formam hiato com a vogal anterior e ficam sozinhas (ou com 's') na sílaba, recebem acento." },
+            { text: "Pai, mãe, meio.", isCorrect: false, rationale: "Apresentam ditongos, não hiatos acentuados." },
+            { text: "Rainha, moinho, bainha.", isCorrect: false, rationale: "O 'i' tônico seguido do dígrafo 'nh' não recebe acento gráfico." },
+            { text: "Feiura, bocaiuva, cauila.", isCorrect: false, rationale: "Paroxítonas com 'i' ou 'u' tônico após ditongo perderam o acento com o Novo Acordo." }
+        ],
+        hint: "Busque a regra em que as vogais 'I' e 'U' tônicas ficam isoladas na sílaba do hiato sem serem seguidas por 'nh'."
+    },
+    {
+        id: 6,
+        category: "Ditongos Abertos no Novo Acordo",
+        question: "De acordo com o Novo Acordo Ortográfico, assinale a opção em que a palavra PERDEU o acento gráfico:",
+        options: [
+            { text: "Assembleia", isCorrect: true, rationale: "Os ditongos abertos 'ei' e 'oi' nas palavras paroxítonas deixaram de ser acentuados (ex: assembleia, ideia, jiboia)." },
+            { text: "Herói", isCorrect: false, rationale: "Manteve o acento por ser uma palavra oxítona terminada em ditongo aberto 'ói'." },
+            { text: "Papéis", isCorrect: false, rationale: "Oxítona terminada no ditongo aberto 'éis' mantém o acento." },
+            { text: "Troféu", isCorrect: false, rationale: "Oxítona terminada no ditongo aberto 'éu' mantém o acento." }
+        ],
+        hint: "A perda do acento nos ditongos abertos 'EI' e 'OI' ocorreu apenas nas palavras paroxítonas."
+    },
+    {
+        id: 7,
+        category: "Acento Diferencial",
+        question: "Assinale a alternativa que apresenta o par de palavras em que o acento diferencial foi MANTIDO após o Novo Acordo Ortográfico:",
+        options: [
+            { text: "Pôde (pretérito) / Pode (presente)", isCorrect: true, rationale: "O acento diferencial manteve-se obrigatoriamente na forma verbal 'pôde' (passado) para diferenciar de 'pode' (presente)." },
+            { text: "Pára (verbo) / Para (preposição)", isCorrect: false, rationale: "O acento diferencial do verbo parar foi abolido." },
+            { text: "Pêlo (substantivo) / Pelo (preposição)", isCorrect: false, rationale: "O acento diferencial em 'pêlo' foi extinto." },
+            { text: "Pólo (substantivo) / Polo (combinação)", isCorrect: false, rationale: "O acento diferencial de 'pólo' foi abolido." }
+        ],
+        hint: "Dentre os antigos acentos diferenciais, a distinção entre passado e presente do verbo 'poder' continuou valendo."
+    },
+    {
+        id: 8,
+        category: "Acento Diferencial Verbal (Pôr / Por)",
+        question: "Assinale a opção em que o uso do acento gráfico no termo destacado está CORRETO:",
+        options: [
+            { text: "Vou *pôr* os documentos sobre a mesa imediatamente.", isCorrect: true, rationale: "O verbo 'pôr' mantém obrigatoriamente o acento circunflexo para se diferenciar da preposição 'por'." },
+            { text: "Fiz o trajeto *pôr* onde me indicaram.", isCorrect: false, rationale: "Neste caso trata-se da preposição 'por', devendo ser grafada sem acento." },
+            { text: "Eles *vêm* ontem para a apresentação.", isCorrect: false, rationale: "Uso temporal e conjugação inadequada; no passado seria 'vieram'." },
+            { text: "Ela não *pôde* vir amanhã.", isCorrect: false, rationale: "'Pôde' com acento indica pretérito; para o presente/futuro usa-se 'pode'." }
+        ],
+        hint: "O verbo 'pôr' (ação de colocar) exige acento circunflexo para diferir da preposição 'por'."
+    },
+    {
+        id: 9,
+        category: "Acentuação da Terceira Pessoa do Plural (Ter / Vir)",
+        question: "Assinale a frase que apresenta a concordância e acentuação verbal CORRETAS segundo a norma-padrão:",
+        options: [
+            { text: "Os diretores *têm* muitas dúvidas sobre a nova portaria.", isCorrect: true, rationale: "As formas 'têm' e 'vêm' (3ª pessoa do plural do presente do indicativo) usam acento circunflexo diferencial." },
+            { text: "O aluno *têm* que entregar o trabalho hoje.", isCorrect: false, rationale: "'Ele tem' (singular) não leva acento gráfico." },
+            { text: "Muitos turistas *vem* visitar a cidade durante as férias.", isCorrect: false, rationale: "'Eles vêm' (plural) exige o acento circunflexo." },
+            { text: "Eles *maintêm* a mesma opinião há anos.", isCorrect: false, rationale: "A forma correta derivada do plural de manter é 'mantêm' (com acento circunflexo)." }
+        ],
+        hint: "Ele tem / Eles têm. Ele vem / Eles vêm. Lembre-se do acento circunflexo no plural."
+    },
+    {
+        id: 10,
+        category: "Verbos Derivados de Ter e Vir",
+        question: "Assinale a frase em que a acentuação do verbo derivado está INCORRETA:",
+        options: [
+            { text: "O juiz *intervem* nas negociações entre as partes.", isCorrect: true, rationale: "Incorreto: na 3ª pessoa do singular, os derivados de ter/vir recebem acento agudo ('intervém')." },
+            { text: "O policial *mantém* a ordem no local.", isCorrect: false, rationale: "Correto: 3ª pessoa do singular de verbo derivado recebe acento agudo (-ém)." },
+            { text: "Os guardas *mantenham* a postura.", isCorrect: false, rationale: "Forma correta do subjuntivo/imperativo." },
+            { text: "Os ministros *obtm* apoio da maioria.", isCorrect: false, rationale: "Grafia corrompida. O correto no plural seria 'obtêm'." }
+        ],
+        hint: "Derivados de 'ter' e 'vir' levam acento agudo no singular (-ém) e circunflexo no plural (-êm)."
+    },
+    {
+        id: 11,
+        category: "Paroxítonas Terminadas em Ditongo",
+        question: "Assinale a alternativa que contém apenas palavras acentuadas por serem paroxítonas terminadas em ditongo oral:",
+        options: [
+            { text: "História, água, colégio, violência.", isCorrect: true, rationale: "Palavras paroxítonas terminadas em ditongo crescente ou decrescente são obrigatoriamente acentuadas." },
+            { text: "Café, cipó, maracujá, vatapá.", isCorrect: false, rationale: "São palavras oxítonas." },
+            { text: "Lâmpada, câmara, médico, trágico.", isCorrect: false, rationale: "São palavras proparoxítonas." },
+            { text: "Irmã, orfão, bênção, órgão.", isCorrect: false, rationale: "Acentuadas pelo til/regra do -ão." }
+        ],
+        hint: "Identifique as palavras cuja sílaba tônica é a penúltima e terminam por duas vogais juntas (ditongo)."
+    },
+    {
+        id: 12,
+        category: "Vogais Dobradas no Novo Acordo",
+        question: "Assinale a opção em que a acentuação das vogais dobradas segue a norma ortográfica vigente:",
+        options: [
+            { text: "Eles leem os relatórios todas as manhãs.", isCorrect: true, rationale: "O Novo Acordo Ortográfico removeu o acento circunflexo do hiato 'oo' e da terminação 'eem' (ex: leem, veem, creem, doem, voos)." },
+            { text: "Eles lêem os relatórios todas as manhãs.", isCorrect: false, rationale: "Incorreto: o acento gráfico na forma 'lêem' foi abolido." },
+            { text: "Os vôos internacionais foram cancelados.", isCorrect: false, rationale: "Incorreto: a palavra 'voos' não recebe mais acento circunflexo no 'o'." },
+            { text: "Espero que eles crêem na palavra das testemunhas.", isCorrect: false, rationale: "Incorreto: a forma atual é 'creem' sem acento." }
+        ],
+        hint: "Palavras com vogais dobradas como OO e EEM perderam totalmente os acentos gráficos."
+    },
+    {
+        id: 13,
+        category: "Hiato 'I' e 'U' Seguidos de 'S'",
+        question: "Assinale a palavra em que a vogal 'i' ou 'u' tônica DEVE ser acentuada por formar hiato acompanhada de 's':",
+        options: [
+            { text: "Egoísmo", isCorrect: true, rationale: "O 'i' tônico forma hiato com a vogal anterior e está seguido de 's' na mesma sílaba (e-go-ís-mo), devendo ser acentuado." },
+            { text: "Juiz", isCorrect: false, rationale: "O 'i' tônico está seguido da letra 'z' na mesma sílaba (ju-iz), por isso não se acentua." },
+            { text: "Raiz", isCorrect: false, rationale: "O 'i' está acompanhado de 'z' na sílaba (ra-iz), portanto não leva acento." },
+            { text: "Ruim", isCorrect: false, rationale: "A sílaba tônica é 'im', acompanhada da letra 'm' (ru-im), sem acento." }
+        ],
+        hint: "O 'I' ou 'U' tônico do hiato só se acentua se estiver sozinho na sílaba ou seguido da letra S."
+    },
+    {
+        id: 14,
+        category: "Exceção do Hiato Pré-NH",
+        question: "Assinale a alternativa cuja palavra NÃO recebe acento gráfico pela regra do hiato devido à presença do dígrafo 'NH':",
+        options: [
+            { text: "Rainha", isCorrect: true, rationale: "Apesar de o 'i' formar hiato com a vogal anterior (ra-i-nha), o dígrafo 'nh' na sílaba seguinte impede o acento." },
+            { text: "Caído", isCorrect: false, rationale: "Acentua-se o 'i' tônico em hiato (ca-í-do)." },
+            { text: "Baú", isCorrect: false, rationale: "Acentua-se o 'u' tônico em hiato (ba-ú)." },
+            { text: "Viúvo", isCorrect: false, rationale: "Acentua-se o 'u' tônico em hiato (vi-ú-vo)." }
+        ],
+        hint: "Identifique a palavra que possui a sequência tônica com 'I' isolado antecedendo o som de 'NH'."
+    },
+    {
+        id: 15,
+        category: "Acentuação das Paroxítonas em -X e -PS",
+        question: "Assinale a alternativa que apresenta duas palavras paroxítonas acentuadas pelas regras específicas das terminações em -X e -PS:",
+        options: [
+            { text: "Tórax / Bízeps", isCorrect: true, rationale: "Paroxítonas terminadas em 'x' (tórax) e 'ps' (bízeps) são obrigatoriamente acentuadas." },
+            { text: "Fênix / Inox", isCorrect: false, rationale: "'Inox' é oxítona terminada em X e não recebe acento gráfico." },
+            { text: "Tênis / Vírus", isCorrect: false, rationale: "Acentuadas pelas regras das terminações em -is e -us." },
+            { text: "Álbum / Fórum", isCorrect: false, rationale: "Acentuadas pela regra da terminação em -um." }
+        ],
+        hint: "Busque a dupla cujos finais sejam as consoantes X e a combinação PS."
+    },
+    {
+        id: 16,
+        category: "Paroxítonas com Ditongo Aberto Pós-Novo Acordo",
+        question: "Assinale a palavra paroxítona que perdeu o acento gráfico com as novas regras ortográficas:",
+        options: [
+            { text: "Jiboia", isCorrect: true, rationale: "A palavra 'jiboia' continha o ditongo aberto 'oi' na penúltima sílaba tônica (paroxítona), tendo seu acento abolido." },
+            { text: "Móvel", isCorrect: false, rationale: "Mantém acento por ser paroxítona terminada em -l." },
+            { text: "Heróico", isCorrect: false, rationale: "Grafia desatualizada; com a regra atual escreve-se 'heroico' sem acento." },
+            { text: "Cipó", isCorrect: false, rationale: "Oxítona terminada em -o, mantém o acento gráfico." }
+        ],
+        hint: "Pense na palavra da família dos répteis que continha o ditongo 'oi' na sílaba do meio."
+    },
+    {
+        id: 17,
+        category: "Acentuação Facultativa (Fôrma / Forma)",
+        question: "Assinale a alternativa que indica o vocábulo cujo acento gráfico tornou-se FACULTATIVO segundo o Novo Acordo Ortográfico:",
+        options: [
+            { text: "Fôrma (substantivo / recipiente)", isCorrect: true, rationale: "O acento circunflexo na palavra 'fôrma' (recipiente) passou a ser opcional/facultativo para diferenciar de 'forma' (feitio/verbo)." },
+            { text: "Pôde (pretérito perfeito)", isCorrect: false, rationale: "O acento em 'pôde' continua sendo obrigatório." },
+            { text: "Pôr (verbo)", isCorrect: false, rationale: "O acento em 'pôr' continua sendo obrigatório." },
+            { text: "Têm (plural)", isCorrect: false, rationale: "O acento em 'têm' continua sendo obrigatório." }
+        ],
+        hint: "Existe apenas um caso de acento diferencial que se tornou opcional para esclarecer o sentido de recipiente de bolo/pão."
+    },
+    {
+        id: 18,
+        category: "Grafia e Acentuação de 'Para' e 'Parar'",
+        question: "Assinale a frase gramaticalmente CORRETA em relação às regras ortográficas vigentes de acentuação:",
+        options: [
+            { text: "O motorista para o carro imediatamente para a travessia de pedestres.", isCorrect: true, rationale: "O verbo 'para' perdeu o acento gráfico diferencial, ficando idêntico em grafia à preposição 'para'." },
+            { text: "O motorista pára o carro imediatamente para a travessia de pedestres.", isCorrect: false, rationale: "Incorreto: o acento diferencial do verbo 'parar' foi extinto." },
+            { text: "O motorista para o carro imediatamente pára a travessia de pedestres.", isCorrect: false, rationale: "A preposição nunca levou acento; erro grave." },
+            { text: "O motorista pára o carro imediatamente pára a travessia de pedestres.", isCorrect: false, rationale: "Forma duplamente desatualizada e incorreta." }
+        ],
+        hint: "O verbo 'parar' na 3ª pessoa do singular (ele para) perdeu o acento acento agudo."
+    },
+    {
+        id: 19,
+        category: "Proparoxítonas Aparentes / Eventuais",
+        question: "Palavras como 'história', 'família' e 'série' são classificadas tradicionalmente como paroxítonas terminadas em ditongo, mas também podem ser consideradas:",
+        options: [
+            { text: "Proparoxítonas aparentes ou eventuais.", isCorrect: true, rationale: "Na separação silábica erudita ou fonética (his-tó-ri-a), a terminação '-ia' se separa formando hiato, originando proparoxítonas aparentes." },
+            { text: "Oxítonas de dupla acentuação.", isCorrect: false, rationale: "A sílaba tônica nunca recai na última sílaba dessas palavras." },
+            { text: "Monossílabos compostos.", isCorrect: false, rationale: "Possuem duas ou mais sílabas, não se enquadrando como monossílabos." },
+            { text: "Palavras isentas de regras de acentuação.", isCorrect: false, rationale: "Possuem regras gramaticais claras e consolidadas." }
+        ],
+        hint: "Qual o nome dado às palavras paroxítonas terminadas em ditongo quando a vogal final é pronunciada em separação silábica secundária?"
+    },
+    {
+        id: 20,
+        category: "Trema e Ortografia",
+        question: "Em relação ao uso do TREMA após a implementação do Novo Acordo Ortográfico, é CORRETO afirmar:",
+        options: [
+            { text: "Foi totalmente abolido das palavras portuguesas e aportuguesadas, mantendo-se apenas em nomes próprios estrangeiros e seus derivados.", isCorrect: true, rationale: "O trema desapareceu da língua portuguesa (ex: linguiça, cinquenta), exceto em nomes próprios e derivados (ex: Müller, mülleriano)." },
+            { text: "Permanece sendo usado em palavras como 'lingüística' e 'agüentar'.", isCorrect: false, rationale: "Incorreto: o trema foi eliminado destas palavras." },
+            { text: "Tornou-se um sinal opcional em sílabas tônicas com a letra U.", isCorrect: false, rationale: "Incorreto: foi inteiramente extinto no vocabulário comum." },
+            { text: "Foi substituído pelo acento agudo em todas as palavras que o utilizavam.", isCorrect: false, rationale: "Nenhum acento substituiu o trema." }
+        ],
+        hint: "O trema sumiu de todas as palavras comuns da língua portuguesa, restando apenas em nomes e termos estrangeiros."
+    },
+    {
+        id: 21,
+        category: "Acentuação das Palavras Oxítonas Terminadas em -I e -U",
+        question: "Assinale a opção em que a palavra oxítona é Acentuada CORRETAMENTE segundo a regra geral:",
+        options: [
+            { text: "Tuiuiú", isCorrect: true, rationale: "Acentua-se o 'u' tônico em posição oxítona quando este forma hiato ou traz repetição da vogal em tônica final." },
+            { text: "Urubú", isCorrect: false, rationale: "Oxítonas terminadas em 'u' simples não levam acento (ex: urubu, caju)." },
+            { text: "Abacaxí", isCorrect: false, rationale: "Oxítonas terminadas em 'i' simples não levam acento (ex: abacaxi, saci)." },
+            { text: "Bauru", isCorrect: false, rationale: "Escreve-se sem acento no 'u' final." }
+        ],
+        hint: "Oxítonas puras terminadas em I ou U não recebem acento gráfico salvo quando se enquadram na regra do hiato."
+    },
+    {
+        id: 22,
+        category: "Palavras Paroxítonas Terminadas em -N e -ENS",
+        question: "Análise a acentuação do par de palavras: 'Hífen' e 'Hifens'. Assinale a justificativa gramatical CORRETA:",
+        options: [
+            { text: "'Hífen' recebe acento por ser paroxítona terminada em -n, enquanto 'hifens' não recebe por ser paroxítona terminada em -ens.", isCorrect: true, rationale: "Paroxítonas terminadas em -n são acentuadas; no entanto, no plural terminadas em -ens perdem a condição de acento." },
+            { text: "Ambas deveriam ser acentuadas graficamente por terem o mesmo radical.", isCorrect: false, rationale: "A terminação da palavra no singular/plural altera a regra de acentuação." },
+            { text: "Nenhuma das duas deve receber acento segundo o Novo Acordo.", isCorrect: false, rationale: "'Hífen' no singular permanece obrigatoriamente acentuado." },
+            { text: "'Hifens' recebe acento circunflexo no 'e' por estar no plural.", isCorrect: false, rationale: "A forma 'hífens' com acento é incorreta na norma normativa brasileira." }
+        ],
+        hint: "A terminação em -N exige acento na paroxítona, mas a terminação em -ENS proíbe o acento."
+    },
+    {
+        id: 23,
+        category: "Palavras Homógrafas sem Acento",
+        question: "Assinale a alternativa em que a perda do acento diferencial nas palavras homógrafas está de acordo com a regra atual:",
+        options: [
+            { text: "Ele cometeu um erro ao *pelo* cão no pet shop.", isCorrect: true, rationale: "Os substantivos 'pelo', 'pela' e as formas do verbo pelar perderam o acento gráfico diferencial." },
+            { text: "Ele cometeu um erro ao *pêlo* cão no pet shop.", isCorrect: false, rationale: "Uso de acento gráfico extinto pela reforma ortográfica." },
+            { text: "O país atravessa o *pólo* norte.", isCorrect: false, rationale: "A palavra 'polo' não leva mais acento." },
+            { text: "Ela gosta de jogar *pára-quedas*.", isCorrect: false, rationale: "Incorreto: o verbo 'para' não é acentuado e paraquedas perdeu o hífen." }
+        ],
+        hint: "As palavras homógrafas (pelo, pela, polo) perderam seus acentos distintivos."
+    },
+    {
+        id: 24,
+        category: "Regra das Paroxítonas Terminadas em -UM / -UNS",
+        question: "Assinale a opção em que a palavra paroxítona está grafada INCORRETAMENTE quanto à acentuação:",
+        options: [
+            { text: "Album", isCorrect: true, rationale: "Incorreto: paroxítonas terminadas em -um e -uns levam acento gráfico obrigatoriamente (ex: álbum, álbuns)." },
+            { text: "Fórum", isCorrect: false, rationale: "Acentuada corretamente pela terminação em -um." },
+            { text: "Médiuns", isCorrect: false, rationale: "Acentuada corretamente pela terminação em -uns." },
+            { text: "Próton", isCorrect: false, rationale: "Acentuada corretamente pela terminação em -on." }
+        ],
+        hint: "Paroxítonas terminadas em -UM ou -UNS (como fórum e álbuns) obrigatoriamente exigem acento."
+    },
+    {
+        id: 25,
+        category: "Paroxítonas após Ditongo (Novo Acordo)",
+        question: "Análise a palavra 'Feiura'. Assinale a alternativa que explica corretamente a sua ausência de acento gráfico:",
+        options: [
+            { text: "O 'u' tônico em hiato vem precedido de ditongo em uma palavra paroxítona.", isCorrect: true, rationale: "Com o Novo Acordo Ortográfico, as vogais 'i' e 'u' tônicas das paroxítonas perdem o acento de hiato se vierem após um ditongo." },
+            { text: "Trata-se de uma palavra oxítona terminada em vogal.", isCorrect: false, rationale: "'Feiura' é uma palavra paroxítona (fei-u-ra)." },
+            { text: "O 'u' tônico está seguido pela letra R na sílaba seguinte.", isCorrect: false, rationale: "O 'u' forma sílaba sozinho; a regra é a presença do ditongo anterior em paroxítonas." },
+            { text: "Foi classificada como proparoxítona aparente sem vogal tônica.", isCorrect: false, rationale: "A palavra é nitidamente paroxítona." }
+        ],
+        hint: "Observe o que vem imediatamente antes do 'U' tônico na palavra fei-u-ra (o ditongo 'ei')."
+    },
+    {
+        id: 26,
+        category: "Sufixos e Perda de Acento",
+        question: "Ao adicionar o sufixo '-mente' ou sufixos iniciados por '-zi-' a uma palavra acentuada, o acento gráfico original:",
+        options: [
+            { text: "É eliminado, pois a sílaba tônica desloca-se para o sufixo.", isCorrect: true, rationale: "Palavras derivadas com sufixos como '-mente' ou '-zinho' tornam-se paroxítonas com tônica no sufixo (ex: rápido -> rapidamente; café -> cafezinho)." },
+            { text: "É mantido em todas as situações da escrita formal.", isCorrect: false, rationale: "O acento gráfico desaparece na derivação." },
+            { text: "Transforma-se obrigatoriamente em acento circunflexo.", isCorrect: false, rationale: "Não ocorre troca de acento gráfico na derivação sufixal." },
+            { text: "É substituído por um hífen antes do sufixo.", isCorrect: false, rationale: "Os sufixos '-mente' e '-zinho' não exigem hífen." }
+        ],
+        hint: "Pense no que acontece com a palavra 'fácil' quando viramos 'facilmente': o acento permanece ou desaparece?"
+    },
+    {
+        id: 27,
+        category: "Distinção entre Oxítonas e Paroxítonas",
+        question: "Assinale a alternativa que traz um par de palavras cuja sílaba tônica recai em posições DIFERENTES (uma é oxítona e a outra paroxítona):",
+        options: [
+            { text: "Ruim / Caráter", isCorrect: true, rationale: "'Ruim' é oxítona (ru-im) e 'Caráter' é paroxítona (ca-rá-ter)." },
+            { text: "Cipó / Café", isCorrect: false, rationale: "Ambas são oxítonas." },
+            { text: "Mágico / Médico", isCorrect: false, rationale: "Ambas são proparoxítonas." },
+            { text: "Móvel / Lápis", isCorrect: false, rationale: "Ambas são paroxítonas." }
+        ],
+        hint: "Procure a dupla em que a primeira palavra tem a sílaba forte no final e a segunda na penúltima sílaba."
+    },
+    {
+        id: 28,
+        category: "Prefixos e Acentuação Gráfica",
+        question: "A respeito da acentuação de prefixos oxítonos ou paroxítonos terminados em -i ou -r (como *anti-*, *super-* ou *inter-*), é CORRETO afirmar:",
+        options: [
+            { text: "Prefixos não recebem acento gráfico por serem formas presas e atônicas na estrutura da palavra.", isCorrect: true, rationale: "Prefixos isolados não são acentuados graficamente na língua portuguesa segundo as regras ortográficas." },
+            { text: "Recebem acento agudo se terminarem na consoante R.", isCorrect: false, rationale: "Prefixos como 'super' ou 'inter' não recebem acento." },
+            { text: "São todos acentuados segundo a regra das paroxítonas.", isCorrect: false, rationale: "Prefixos não seguem a regra geral de acentuação de palavras autônomas." },
+            { text: "Levam acento apenas quando unidos por hífen.", isCorrect: false, rationale: "Mesmo com hífen o prefixo não é acentuado (ex: anti-inflamatório)." }
+        ],
+        hint: "Prefixos como 'micro-', 'super-', 'anti-' isoladamente não recebem acentos gráficos."
+    },
+    {
+        id: 29,
+        category: "Uso Ortográfico da Crase e Acentuação",
+        question: "Assinale a frase em que o acento grave indicador da crase foi utilizado INCORRETAMENTE:",
+        options: [
+            { text: "O pagamento foi efetuado *à prazo* na loja comercial.", isCorrect: true, rationale: "A crase é proibida antes de palavras masculinas ('prazo')." },
+            { text: "O aluno foi *à* biblioteca consultar os livros.", isCorrect: false, rationale: "Uso correto da crase (preposição a + artigo definido a)." },
+            { text: "As aulas ocorrem de segunda *às* sextas-feiras.", isCorrect: false, rationale: "Uso correto indicando intervalo e hora/dia delimitado." },
+            { text: "Ele ficou *à* espera de uma resposta conclusiva.", isCorrect: false, rationale: "Locução conjuntiva/adverbial feminina exige acento grave." }
+        ],
+        hint: "Verifique qual das opções traz o acento grave diante de uma palavra do gênero masculino."
+    },
+    {
+        id: 30,
+        category: "Acentuação de Formas Verbais com Pronominais",
+        question: "Assinale a alternativa que apresenta a acentuação CORRETA da forma verbal acompanhada de pronome enclítico:",
+        options: [
+            { text: "Vou encontrá-lo na saída da escola.", isCorrect: true, rationale: "Ao perder o 'r' final do verbo 'encontrar', a palavra torna-se oxítona terminada em 'a' (encontrá), devendo ser acentuada." },
+            { text: "Vou encontrar-lo na saída da escola.", isCorrect: false, rationale: "O R final cai diante do pronome 'lo'." },
+            { text: "Vou encontra-lo na saída da escola.", isCorrect: false, rationale: "Falta o acento obrigatório na oxítona terminada em A." },
+            { text: "Vou encontrâ-lo na saída da escola.", isCorrect: false, rationale: "O acento correto para a vogal A aberta é o agudo." }
+        ],
+        hint: "Com a queda das consoantes R, S ou Z antes dos pronomes lo/la, analisa-se a regra de acentuação da oxítona resultante."
+    }
+];
 
         // State Management
         let currentQuestionIdx = 0;
