@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interativo: Articulação do Texto e Coesão</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Aumenta a base de todas as fontes do site */
+    html {
+        font-size: 19px; /* O padrão é 16px. Aumente para 18px ou 20px */
+    }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-sm">
+                    <i class="fa-solid fa-[#fa-book-open] text-xl"></i>
+                    <i class="fa-solid fa-pen-nib text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 leading-tight">Quiz de Língua Portuguesa</h1>
+                    <p class="text-xs text-slate-500">Articulação do Texto: Pronomes, Referenciação e Nexos</p>
+                </div>
+            </div>
+
+            <!-- Mode Selector & Stats -->
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex bg-slate-100 p-1 rounded-lg text-xs font-semibold">
+                    <button id="btnModeStudy" onclick="setMode('study')" class="px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm">
+                        <i class="fa-solid fa-[#fa-graduation-cap] mr-1"></i> Modo Estudo
+                    </button>
+                    <button id="btnModeExam" onclick="setMode('exam')" class="px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900">
+                        <i class="fa-solid fa-stopwatch mr-1"></i> Modo Simulado
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 bg-brand-50 text-brand-700 px-3 py-1.5 rounded-lg border border-brand-100 text-sm font-semibold">
+                    <i class="fa-solid fa-trophy text-brand-500"></i>
+                    <span id="scoreDisplay">0 / 20</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- Sidebar Navigation Grid (Desktop) -->
+        <aside class="lg:col-span-1 order-2 lg:order-1 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col h-fit">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Navegador</h2>
+                <span id="progressPercent" class="text-xs font-semibold text-brand-600">0% concluído</span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4">
+                <div id="progressBar" class="bg-brand-600 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Question Grid Buttons -->
+            <div id="questionGrid" class="grid grid-cols-5 gap-2 mb-4">
+                <!-- Javascript will insert 20 question buttons here -->
+            </div>
+
+            <!-- Legend -->
+            <div class="text-xs text-slate-500 border-t border-slate-100 pt-3 space-y-1.5">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-slate-200 inline-block"></span>
+                    <span>Não respondida</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-brand-600 inline-block"></span>
+                    <span>Respondida</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span>
+                    <span>Marcada p/ revisão</span>
+                </div>
+            </div>
+
+            <button onclick="finishQuiz()" class="mt-5 w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded-lg transition shadow">
+                <i class="fa-solid fa-flag-checkered mr-2"></i> Finalizar Quiz
+            </button>
+        </aside>
+
+        <!-- Question Section -->
+        <section class="lg:col-span-3 order-1 lg:order-2 flex flex-col justify-between">
+            
+            <!-- Quiz Screen -->
+            <div id="quizCard" class="bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm mb-4 min-h-[420px] flex flex-col justify-between">
+                <div>
+                    <!-- Header Question Info -->
+                    <div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100">
+                        <div class="flex items-center gap-2">
+                            <span id="questionCategory" class="px-2.5 py-1 bg-brand-50 text-brand-700 text-xs font-semibold rounded-md border border-brand-100">
+                                Categoria
+                            </span>
+                            <span id="questionNumberBadge" class="text-xs font-semibold text-slate-400">
+                                Questão 1 de 20
+                            </span>
+                        </div>
+                        <button id="btnBookmark" onclick="toggleBookmark()" class="text-slate-400 hover:text-amber-500 text-sm font-medium transition flex items-center gap-1.5">
+                            <i class="fa-regular fa-bookmark"></i>
+                            <span class="hidden sm:inline">Revisar</span>
+                        </button>
+                    </div>
+
+                    <!-- Question Text -->
+                    <div class="mb-6">
+                        <h3 id="questionTitle" class="text-base sm:text-lg font-semibold text-slate-900 leading-relaxed">
+                            Carregando questão...
+                        </h3>
+                    </div>
+
+                    <!-- Answer Options -->
+                    <div id="optionsContainer" class="space-y-3">
+                        <!-- Dynamic options generated by JS -->
+                    </div>
+
+                    <!-- Explanation/Rationale Box (Study Mode) -->
+                    <div id="explanationBox" class="hidden mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm">
+                        <div class="flex items-center gap-2 font-bold mb-1 text-slate-800" id="explanationHeader">
+                            <i class="fa-solid fa-circle-info"></i> Justificativa Gramatical
+                        </div>
+                        <p id="explanationText" class="text-slate-600 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8 pt-4 border-t border-slate-100">
+                    <button id="btnPrev" onclick="navigateQuestion(-1)" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium text-sm transition disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-chevron-left mr-1"></i> Anterior
+                    </button>
+                    <button id="btnNext" onclick="navigateQuestion(1)" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-medium text-sm transition shadow-sm">
+                        Próxima <i class="fa-solid fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Screen (Hidden initially) -->
+            <div id="resultsCard" class="hidden bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm text-center">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center bg-brand-50 text-brand-600 text-3xl">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-1">Resultado do Quiz</h2>
+                <p class="text-sm text-slate-500 mb-6">Confira seu desempenho em Articulação e Coesão Textual</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto mb-8">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Pontuação</span>
+                        <span id="finalScore" class="text-2xl font-extrabold text-slate-800">0 / 20</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Aproveitamento</span>
+                        <span id="finalPercent" class="text-2xl font-extrabold text-brand-600">0%</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Desempenho</span>
+                        <span id="finalFeedback" class="text-sm font-bold text-slate-700 mt-1 block">Satisfatório</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button onclick="restartQuiz()" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm rounded-lg transition shadow">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Refazer Quiz
+                    </button>
+                    <button onclick="reviewQuiz()" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-lg transition">
+                        <i class="fa-solid fa-magnifying-glass mr-2"></i> Revisar Respostas
+                    </button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+        <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-400">
+            Quiz Pedagógico de Coesão Textual &bull; Prática de Sintaxe, Semântica e Conectivos do Português.
+        </div>
+    </footer>
+
+    <!-- JavaScript Quiz Logic -->
+    <script>
+        // Database of 20 Portuguese Questions
+       const questionsData = [
+    {
+        id: 1,
+        category: "Interdição de Vírgula entre Sujeito e Predicado",
+        question: "Assinale a opção em que a pontuação respeita estritamente a norma-padrão quanto à relação entre o sujeito e o predicado:",
+        options: [
+            { text: "A contratação dos novos especialistas em auditoria fiscal ocorreu sem sobressaltos.", isCorrect: true, rationale: "Correto: Não se deve separar por vírgula o sujeito ('A contratação dos novos especialistas em auditoria fiscal') do seu verbo/predicado ('ocorreu...'), mesmo quando o sujeito for extenso." },
+            { text: "A contratação dos novos especialistas em auditoria fiscal, ocorreu sem sobressaltos.", isCorrect: false, rationale: "Incorreto: Separa-se indevidamente o sujeito do verbo principal por meio de uma vírgula simples." },
+            { text: "Todos os candidatos que obtiveram a pontuação mínima necessária, serão convocados.", isCorrect: false, rationale: "Incorreto: A oração adjetiva restritiva não fecha com vírgula isolada separando o sujeito do predicado ('serão convocados')." },
+            { text: "Os diretores de departamento, reuniram-se logo cedo para definir o planejamento.", isCorrect: false, rationale: "Incorreto: Há vírgula proibida entre o sujeito ('Os diretores de departamento') e o verbo ('reuniram-se')." }
+        ],
+        hint: "Lembre-se de que a extensão do sujeito não justifica a introdução de uma vírgula entre ele e o verbo."
+    },
+    {
+        id: 2,
+        category: "Adjunto Adverbial Deslocado (Longo)",
+        question: "Assinale a alternativa em que o adjunto adverbial deslocado foi pontuado corretamente segundo a norma culta:",
+        options: [
+            { text: "Durante as reuniões extraordinárias do conselho administrativo, os diretores mantiveram-se irredutíveis.", isCorrect: true, rationale: "Correto: O adjunto adverbial de grande extensão ('Durante as reuniões extraordinárias do conselho administrativo') anteposto à oração principal exige o uso da vírgula." },
+            { text: "Durante as reuniões extraordinárias do conselho administrativo os diretores mantiveram-se irredutíveis.", isCorrect: false, rationale: "Incorreto: A omissão da vírgula após adjunto adverbial extenso e deslocado afronta a norma-padrão." },
+            { text: "Os diretores, durante as reuniões extraordinárias do conselho administrativo mantiveram-se irredutíveis.", isCorrect: false, rationale: "Incorreto: Por estar intercalado, o adjunto adverbial deveria vir isolado por duas vírgulas (uma antes e outra depois)." },
+            { text: "Durante, as reuniões extraordinárias do conselho administrativo os diretores mantiveram-se irredutíveis.", isCorrect: false, rationale: "Incorreto: A vírgula foi inserida de forma descabida imediatamente após a preposição 'Durante'." }
+        ],
+        hint: "Adjuntos adverbiais de grande extensão, quando deslocados para o início da frase, exigem o uso da vírgula."
+    },
+    {
+        id: 3,
+        category: "Uso do Vocativo",
+        question: "Assinale a frase em que o vocativo apresenta a pontuação gramaticalmente correta:",
+        options: [
+            { text: "Senhores jurados, analisem as provas com a devida imparcialidade.", isCorrect: true, rationale: "Correto: O vocativo ('Senhores jurados') deve ser obrigatoriamente isolado por vírgula do restante da oração." },
+            { text: "Senhores jurados analisem as provas com a devida imparcialidade.", isCorrect: false, rationale: "Incorreto: A ausência de vírgula após o vocativo gera erro gramatical de pontuação." },
+            { text: "Analisem senhores jurados, as provas com a devida imparcialidade.", isCorrect: false, rationale: "Incorreto: O vocativo intercalado exige dupla pontuação ('Analisem, senhores jurados, as provas...')." },
+            { text: "Analisem as provas, com a devida imparcialidade senhores jurados.", isCorrect: false, rationale: "Incorreto: Faltou a vírgula antecedendo o vocativo posposto ao final da frase." }
+        ],
+        hint: "O vocativo (termo que chama ou interpela o interlocutor) deve estar sempre isolado por vírgula(s)."
+    },
+    {
+        id: 4,
+        category: "Aposto Explicativo vs. Especificativo",
+        question: "Considere o emprego do aposto nas frases abaixo e assinale a opção inteiramente correta quanto à pontuação:",
+        options: [
+            { text: "Brasília, a capital do Brasil, sediará a conferência internacional sobre transição energética.", isCorrect: true, rationale: "Correto: O aposto explicativo ('a capital do Brasil') vem necessariamente entre vírgulas." },
+            { text: "O poeta, Carlos Drummond de Andrade, escreveu obras fundamentais do modernismo.", isCorrect: false, rationale: "Incorreto: 'Carlos Drummond de Andrade' é um aposto especificativo/restritivo, o qual não deve vir isolado por vírgulas." },
+            { text: "O romance, Dom Casmurro, é amplamente estudado na literatura brasileira.", isCorrect: false, rationale: "Incorreto: 'Dom Casmurro' especifica o substantivo 'romance', devendo grafar-se sem vírgulas." },
+            { text: "Brasília a capital do Brasil sediará a conferência internacional sobre transição energética.", isCorrect: false, rationale: "Incorreto: A ausência das vírgulas isolando o aposto explicativo fere a norma culta." }
+        ],
+        hint: "Apostos explicativos exigem pontuação isolando o termo; apostos especificativos não admitem vírgulas."
+    },
+    {
+        id: 5,
+        category: "Vírgula Antes da Conjunção 'E'",
+        question: "Assinale a alternativa em que a vírgula antes da conjunção 'e' está empregada em conformidade com a gramática normativa:",
+        options: [
+            { text: "O juiz proferiu a sentença final, e o réu deixou o plenário sob forte comoção.", isCorrect: true, rationale: "Correto: Usa-se vírgula antes da conjunção 'e' quando as orações coordenadas possuem sujeitos diferentes ('O juiz' / 'o réu')." },
+            { text: "O aluno estudou durante meses, e obteve a primeira colocação no exame.", isCorrect: false, rationale: "Incorreto: Não se recomenda a vírgula antes de 'e' quando as orações compartilham o mesmo sujeito gramatical." },
+            { text: "Comprei livros, e cadernos na papelaria central.", isCorrect: false, rationale: "Incorreto: A vírgula separa indevidamente dois elementos coordenados aditivos simples de mesma função sintática." },
+            { text: "Ele levantou-se cedo, e tomou um café reforçado, e saiu rapidamente para o trabalho.", isCorrect: false, rationale: "Incorreto: A estrutura não caracteriza polissíndeto enfático nem mudança de sujeito nas orações." }
+        ],
+        hint: "A vírgula antes do 'e' é legítima quando conecta orações coordenadas com sujeitos gramaticais distintos."
+    },
+    {
+        id: 6,
+        category: "Orações Adjetivas: Explicativa vs. Restritiva",
+        question: "Assinale a frase em que a oração subordinada adjetiva é de natureza explicativa e está pontuada corretamente:",
+        options: [
+            { text: "O Sol, que é a estrela central do nosso sistema, fornece energia essencial à vida.", isCorrect: true, rationale: "Correto: Como o Sol é único, a oração adjetiva expressa um atributo geral e explicativo, devendo obrigatoriamente vir entre vírgulas." },
+            { text: "O Sol que é a estrela central do nosso sistema fornece energia essencial à vida.", isCorrect: false, rationale: "Incorreto: A omissão das vírgulas transforma erroneamente a oração em restritiva, sugerindo a existência de outros Soles." },
+            { text: "Os alunos, que faltaram à prova, realizarão o exame substitutivo na próxima semana.", isCorrect: false, rationale: "Incorreto: Se apenas parte dos alunos faltou, o correto é a forma restritiva (sem vírgulas)." },
+            { text: "Os carros, que ultrapassaram o limite de velocidade, foram multados pelo radar.", isCorrect: false, rationale: "Incorreto: Se nem todos os carros ultrapassaram o limite, o uso das vírgulas altera indevidamente o sentido para 'todos os carros'." }
+        ],
+        hint: "Informações explicativas sobre um ser único ou universalmente conhecido devem vir isoladas por vírgulas."
+    },
+    {
+        id: 7,
+        category: "Uso do Ponto e Vírgula",
+        question: "Assinale a opção em que o ponto e vírgula foi empregado corretamente de acordo com as normas gramaticais:",
+        options: [
+            { text: "O primeiro grupo analisará os dados estatísticos; o segundo, as entrevistas de campo; o terceiro, os relatórios financeiros.", isCorrect: true, rationale: "Correto: O ponto e vírgula é ideal para separar orações coordenadas extensas que já contêm divisões internas por vírgula (inclusive elipses verbais)." },
+            { text: "O candidato chegou; muito atrasado ao local da prova.", isCorrect: false, rationale: "Incorreto: O ponto e vírgula foi empregado indevidamente separando o adjunto/predicativo dentro da mesma oração." },
+            { text: "Embora estivesse chovendo muito; decidimos realizar a caminhada matinal.", isCorrect: false, rationale: "Incorreto: Não se usa ponto e vírgula para separar a oração subordinada da oração principal." },
+            { text: "Todos os cidadãos têm direitos; mas também têm deveres.", isCorrect: false, rationale: "Incorreto: Antes da conjunção adversativa simples em período curto, utiliza-se vírgula, e não ponto e vírgula." }
+        ],
+        hint: "Utilize ponto e vírgula para estruturar enumerações complexas cujos itens já possuem vírgulas internas."
+    },
+    {
+        id: 8,
+        category: "Uso dos Dois-Pontos",
+        question: "Assinale a alternativa em que o uso dos dois-pontos atende perfeitamente ao padrão culto da língua:",
+        options: [
+            { text: "A reunião abordou três pontos cruciais: a redução de custos, o aumento da produtividade e a expansão do mercado.", isCorrect: true, rationale: "Correto: Os dois-pontos introduzem de forma perfeita uma enumeração explicativa previamente anunciada." },
+            { text: "Os convocados para o projeto foram: Maria, João e Pedro.", isCorrect: false, rationale: "Incorreto: Não se deve colocar dois-pontos entre o verbo ('foram') e seus complementos/predicativos." },
+            { text: "Ele necessitava de: apoio financeiro, suporte técnico e orientação.", isCorrect: false, rationale: "Incorreto: É vedado utilizar dois-pontos entre a preposição e o complemento regido por ela." },
+            { text: "A cidade administrativa conta com: amplas avenidas e modernos edifícios.", isCorrect: false, rationale: "Incorreto: Interrompe-se indevidamente a transição entre o verbo transitivo direto e o objeto." }
+        ],
+        hint: "Não insira dois-pontos diretamente entre o verbo (ou preposição) e seus complementos."
+    },
+    {
+        id: 9,
+        category: "Omissão de Verbo (Zeugma/Elipse)",
+        question: "Assinale a frase em que a vírgula é usada corretamente para assinalar a elipse ou zeugma do verbo:",
+        options: [
+            { text: "A equipe de vendas prefere relatórios sucintos; a de diretoria, pareceres detalhados.", isCorrect: true, rationale: "Correto: A vírgula após 'diretoria' indica a omissão (zeugma) do verbo 'prefere', evitando repetição desnecessária." },
+            { text: "A equipe de vendas prefere relatórios sucintos, a de diretoria pareceres detalhados.", isCorrect: false, rationale: "Incorreto: Faltou a vírgula indicativa da elipse verbal na segunda oração coordenada." },
+            { text: "A equipe de vendas prefere relatórios sucintos; a de diretoria prefere, pareceres detalhados.", isCorrect: false, rationale: "Incorreto: Inseriu-se vírgula indevida entre o verbo 'prefere' e seu objeto direto 'pareceres detalhados'." },
+            { text: "A equipe de vendas, prefere relatórios sucintos; a de diretoria, pareceres detalhados.", isCorrect: false, rationale: "Incorreto: Erro de vírgula entre o sujeito 'A equipe de vendas' e o verbo 'prefere'." }
+        ],
+        hint: "A vírgula vicária é utilizada para assinalar o subentendimento (omissão) de um termo verbal citado anteriormente."
+    },
+    {
+        id: 10,
+        category: "Uso dos Travessões (Isolamento Explicativo)",
+        question: "Assinale a alternativa em que o uso dos travessões duplos está gramaticalmente correto e equivalente ao uso de vírgulas ou parênteses:",
+        options: [
+            { text: "As novas tecnologias — fundamentais para a modernização do setor — exigem alto investimento inicial.", isCorrect: true, rationale: "Correto: Os travessões duplos isolam perfeitamente a intercalação explicativa sem comprometer a sintaxe do período." },
+            { text: "As novas tecnologias — exigem alto investimento inicial para a modernização do setor.", isCorrect: false, rationale: "Incorreto: Usou-se apenas um travessão separando indevidamente o sujeito do verbo." },
+            { text: "As novas tecnologias fundamentais — para a modernização do setor — exigem alto investimento.", isCorrect: false, rationale: "Incorreto: O travessão inicial seccionou o adjetivo 'fundamentais' de forma inadequada." },
+            { text: "As novas tecnologias — fundamentais para a modernização do setor, exigem alto investimento.", isCorrect: false, rationale: "Incorreto: Não se deve abrir uma intercalação com travessão e fechá-la com vírgula (a assimetria é incorreta)." }
+        ],
+        hint: "Termos intercalados isolados por travessão devem abrir e fechar com o mesmo sinal (travessão duplo)."
+    },
+    {
+        id: 11,
+        category: "Pontuação de Conjunções Adversativas Deslocadas",
+        question: "Assinale a alternativa que apresenta a pontuação correta quando a conjunção adversativa aparece deslocada na oração:",
+        options: [
+            { text: "O projeto apresentava excelente viabilidade; sofreu, no entanto, forte oposição da bancada.", isCorrect: true, rationale: "Correto: Quando deslocada para o interior da oração, a conjunção 'no entanto' deve vir obrigatoriamente isolada entre vírgulas." },
+            { text: "O projeto apresentava excelente viabilidade, sofreu no entanto forte oposição da bancada.", isCorrect: false, rationale: "Incorreto: A conjunção 'no entanto' deslocada exige o isolamento por vírgulas." },
+            { text: "O projeto apresentava excelente viabilidade; sofreu no entanto, forte oposição da bancada.", isCorrect: false, rationale: "Incorreto: Faltou a vírgula antecedendo o conectivo deslocado ('sofreu, no entanto,')." },
+            { text: "O projeto apresentava excelente viabilidade, sofreu, no entanto forte oposição da bancada.", isCorrect: false, rationale: "Incorreto: Faltou a vírgula posterior ao conectivo para completar o duplo isolamento." }
+        ],
+        hint: "Conjunções adversativas ou conclusivas deslocadas da posição inicial da oração devem ser isoladas por vírgulas."
+    },
+    {
+        id: 12,
+        category: "Expressões Explicativas e Corretivas",
+        question: "Assinale a opção em que a expressão explicativa/retificativa apresenta a pontuação exigida pela norma-padrão:",
+        options: [
+            { text: "Os prazos regimentais devem ser cumpridos rigorosamente, isto é, sem qualquer tipo de prorrogação.", isCorrect: true, rationale: "Correto: Expressões explicativas ou corretivas como 'isto é', 'ou seja', 'por exemplo' devem vir antecedidas de vírgula e seguidas de vírgula." },
+            { text: "Os prazos regimentais devem ser cumpridos rigorosamente isto é sem qualquer tipo de prorrogação.", isCorrect: false, rationale: "Incorreto: A expressão 'isto é' não foi devidamente isolada por vírgulas." },
+            { text: "Os prazos regimentais devem ser cumpridos, rigorosamente isto é, sem qualquer tipo de prorrogação.", isCorrect: false, rationale: "Incorreto: A vírgula foi posicionada erroneamente antes do advérbio 'rigorosamente' e omitida antes de 'isto'." },
+            { text: "Os prazos regimentais devem ser cumpridos rigorosamente, isto é sem qualquer tipo de prorrogação.", isCorrect: false, rationale: "Incorreto: Faltou a vírgula obrigatoriamente colocada após 'isto é'." }
+        ],
+        hint: "Locuções como 'isto é', 'ou seja', 'por exemplo', 'ou melhor' devem vir isoladas por vírgulas."
+    },
+    {
+        id: 13,
+        category: "Orações Subordinadas Adverbiais Antepostas",
+        question: "Assinale a frase em que a oração subordinada adverbial anteposta à principal foi pontuada de acordo com a norma culta:",
+        options: [
+            { text: "Caso os laudos técnicos sejam homologados amanhã, assinaremos o contrato final.", isCorrect: true, rationale: "Correto: Orações subordinadas adverbiais antepostas à oração principal exigem o uso da vírgula separadora." },
+            { text: "Caso os laudos técnicos sejam homologados amanhã assinaremos o contrato final.", isCorrect: false, rationale: "Incorreto: É obrigatório o emprego da vírgula após a oração subordinada adverbial anteposta." },
+            { text: "Caso, os laudos técnicos sejam homologados amanhã assinaremos o contrato final.", isCorrect: false, rationale: "Incorreto: Uso indevido de vírgula logo após a conjunção condicional 'Caso'." },
+            { text: "Caso os laudos técnicos, sejam homologados amanhã, assinaremos o contrato final.", isCorrect: false, rationale: "Incorreto: Inseriu-se vírgula proibida entre o sujeito ('os laudos técnicos') e o verbo ('sejam homologados')." }
+        ],
+        hint: "A ordem indireta (oração adverbial antes da oração principal) exige a vírgula ao término da subordinada."
+    },
+    {
+        id: 14,
+        category: "Vírgula entre Verbo e Complemento",
+        question: "Assinale a opção que apresenta ERRO de pontuação por separar indevidamente o verbo de seu complemento:",
+        options: [
+            { text: "O diretor informou aos auditores, que os relatórios contábeis continham falhas graves.", isCorrect: true, rationale: "Incorreto (contém erro): A vírgula separa indevidamente o verbo transitivo 'informou' da oração subordinada substantiva objetiva direta ('que os relatórios...')." },
+            { text: "O diretor informou aos auditores que os relatórios contábeis continham falhas graves.", isCorrect: false, rationale: "Pontuação correta: Não há separação por vírgula entre o verbo e a oração integrante." },
+            { text: "Aos auditores, o diretor informou que os relatórios contábeis continham falhas graves.", isCorrect: false, rationale: "Pontuação correta: O objeto indireto anteposto ('Aos auditores') foi devidamente isolado por vírgula." },
+            { text: "O diretor, durante a reunião, informou aos auditores que os relatórios continham falhas.", isCorrect: false, rationale: "Pontuação correta: O adjunto adverbial intercalado ('durante a reunião') está entre vírgulas." }
+        ],
+        hint: "Não se coloca vírgula antes da conjunção integrante 'que' quando ela introduz objeto direto do verbo anterior."
+    },
+    {
+        id: 15,
+        category: "Pontuação com Conjunção Conclusiva Deslocada",
+        question: "Assinale a alternativa em que a conjunção conclusiva 'portanto' foi empregada e pontuada corretamente no interior do período:",
+        options: [
+            { text: "Os documentos apresentados eram insuficientes; o recurso foi, portanto, indeferido.", isCorrect: true, rationale: "Correto: A conjunção conclusiva pós-posta ao verbo ('foi, portanto,') fica isolada por vírgulas, antecedida por ponto e vírgula separando as orações." },
+            { text: "Os documentos apresentados eram insuficientes, o recurso foi portanto indeferido.", isCorrect: false, rationale: "Incorreto: A conjunção 'portanto' pós-posta ao verbo exige isolamento por vírgulas." },
+            { text: "Os documentos apresentados eram insuficientes; o recurso foi portanto, indeferido.", isCorrect: false, rationale: "Incorreto: Faltou a vírgula antes de 'portanto'." },
+            { text: "Os documentos apresentados eram insuficientes, o recurso, foi portanto indeferido.", isCorrect: false, rationale: "Incorreto: Posicionou-se a vírgula antes de 'foi', separando o sujeito do verbo." }
+        ],
+        hint: "Conclusivos pós-postos ao verbo (como 'portanto' ou 'por conseguinte') requerem dupla vírgula."
+    },
+    {
+        id: 16,
+        category: "Intercalação de Oração Adverbial",
+        question: "Assinale a alternativa em que a oração intercalada está pontuada em estrita observância às regras gramaticais:",
+        options: [
+            { text: "Os advogados, ainda que tivessem argumentos sólidos, não conseguiram reverter a decisão.", isCorrect: true, rationale: "Correto: A oração subordinada adverbial concessiva intercalada ('ainda que tivessem argumentos sólidos') está isolada por vírgulas." },
+            { text: "Os advogados ainda que tivessem argumentos sólidos, não conseguiram reverter a decisão.", isCorrect: false, rationale: "Incorreto: Faltou a vírgula de abertura da intercalação após 'advogados'." },
+            { text: "Os advogados, ainda que tivessem argumentos sólidos não conseguiram reverter a decisão.", isCorrect: false, rationale: "Incorreto: Faltou a vírgula de fechamento da intercalação antes de 'não'." },
+            { text: "Os advogados ainda que tivessem argumentos sólidos não conseguiram reverter a decisão.", isCorrect: false, rationale: "Incorreto: A oração intercalada exige duplo isolamento por vírgulas." }
+        ],
+        hint: "Orações intercaladas no meio da oração principal exigem isolamento duplo (vírgula antes e vírgula depois)."
+    },
+    {
+        id: 17,
+        category: "Citação Direta e Pontuação",
+        question: "Assinale a opção que pontua adequadamente a citação direta de acordo com as normas formais de escrita:",
+        options: [
+            { text: "O filósofo afirmou: \"A dúvida é o princípio da sabedoria.\"", isCorrect: true, rationale: "Correto: Usa-se dois-pontos antes do discurso direto citado entre aspas e o ponto final é mantido no local adequado." },
+            { text: "O filósofo afirmou \"A dúvida é o princípio da sabedoria.\"", isCorrect: false, rationale: "Incorreto: Omitiram-se os dois-pontos introduzindo a citação direta." },
+            { text: "O filósofo afirmou, \"A dúvida é o princípio da sabedoria\".", isCorrect: false, rationale: "Incorreto: Na norma culta tradicional de apresentação formal, utilizam-se dois-pontos para introduzir a fala/citação textual." },
+            { text: "O filósofo afirmou: — \"A dúvida é o princípio da sabedoria.\"", isCorrect: false, rationale: "Incorreto: O uso simultâneo de dois-pontos, travessão e aspas é redundante na norma-padrão." }
+        ],
+        hint: "Para introduzir formalmente uma citação textual entre aspas, utiliza-se dois-pontos."
+    },
+    {
+        id: 18,
+        category: "Polissíndeto e Emprego da Vírgula",
+        question: "Assinale a alternativa em que a pontuação do polissíndeto está empregada corretamente para conferir ênfase expressiva:",
+        options: [
+            { text: "O atleta correu, e saltou, e nadou, e venceu a competição com maestria.", isCorrect: true, rationale: "Correto: Na repetição estilística da conjunção aditiva (polissíndeto), a vírgula é recomendada para separar os elementos coordenados com ênfase." },
+            { text: "O atleta correu e, saltou e, nadou e, venceu a competição com maestria.", isCorrect: false, rationale: "Incorreto: A vírgula foi mal posicionada após as conjunções, rompendo a ligação com os verbos." },
+            { text: "O atleta, correu, e, saltou, e, nadou, e venceu a competição.", isCorrect: false, rationale: "Incorreto: O excesso desordenado de vírgulas fragmenta a frase de forma gramaticalmente errônea." },
+            { text: "O atleta correu e saltou, e nadou e venceu, a competição com maestria.", isCorrect: false, rationale: "Incorreto: Inseriu-se vírgula proibida antes do objeto direto 'a competição'." }
+        ],
+        hint: "No polissíndeto, a vírgula antecede as conjunções repetidas, demarcando as etapas da enumeração."
+    },
+    {
+        id: 19,
+        category: "Uso dos Parênteses",
+        question: "Assinale a frase em que o uso dos parênteses atende às normas gramaticais para inserção de comentário acessório:",
+        options: [
+            { text: "A inflação acumulada no período (segundo dados divulgados pelo IBGE) superou as metas projetadas.", isCorrect: true, rationale: "Correto: Os parênteses isolam perfeitamente a informação explicativa/acessória sobre a fonte dos dados." },
+            { text: "A inflação acumulada (no período segundo dados divulgados) pelo IBGE superou as metas.", isCorrect: false, rationale: "Incorreto: Os parênteses seccionaram o adjunto preposicionado de maneira semântica e sintaticamente incoerente." },
+            { text: "A inflação acumulada no período, (segundo dados divulgados pelo IBGE,) superou as metas.", isCorrect: false, rationale: "Incorreto: É redundante e incorreto colocar vírgulas coladas externamente e internamente aos parênteses nesse tipo de estrutura." },
+            { text: "A inflação (acumulada no período) superou, as metas projetadas pelo IBGE.", isCorrect: false, rationale: "Incorreto: Inseriu-se vírgula indevida entre o verbo 'superou' e o objeto 'as metas'." }
+        ],
+        hint: "Os parênteses servem prioritariamente para conter explicações, notas ou comentários à margem do texto principal."
+    },
+    {
+        id: 20,
+        category: "Adjunto Adverbial Curto (Vírgula Facultativa)",
+        question: "Assinale a alternativa em que a vírgula é facultativa devido à reduzida extensão do adjunto adverbial deslocado:",
+        options: [
+            { text: "Hoje à noite, realizaremos o julgamento dos recursos.", isCorrect: true, rationale: "Correto: Como 'Hoje à noite' é um adjunto adverbial de pequena extensão, o emprego da vírgula é facultativo segundo a norma-padrão." },
+            { text: "Durante o período de vigência das cláusulas contratuais extraordinárias, haverá auditoria.", isCorrect: false, rationale: "Incorreto: Trata-se de adjunto extenso, cuja vírgula é obrigatória." },
+            { text: "Sem que os relatórios contábeis fossem devidamente revisados pelos peritos, nada foi aprovado.", isCorrect: false, rationale: "Incorreto: Oração adverbial anteposta longa, exigindo vírgula obrigatória." },
+            { text: "Com a intenção declarada de resolver os conflitos existentes no setor administrativo, os diretores reuniram-se.", isCorrect: false, rationale: "Incorreto: Adjunto adverbial muito longo antecedendo o sujeito, tornando a vírgula obrigatória." }
+        ],
+        hint: "Adjuntos adverbiais de curta extensão (como advérbios simples de tempo ou lugar) tornam o uso da vírgula facultativo."
+    },
+    {
+        id: 21,
+        category: "Uso de Aspas (Estrangeirismo / Ironia / Citação)",
+        question: "Assinale a opção em que o uso das aspas está empregado adequadamente de acordo com o padrão culto:",
+        options: [
+            { text: "O gerente fez um \"excelente\" trabalho: conseguiu perder o maior cliente da empresa em dois dias.", isCorrect: true, rationale: "Correto: As aspas destacam a palavra 'excelente' para conferir um sentido irônico no contexto." },
+            { text: "A equipe pretendia fazer o \"download\", dos arquivos antes do término do expediente.", isCorrect: false, rationale: "Incorreto: Inseriu-se uma vírgula proibida imediatamente após a palavra entre aspas." },
+            { text: "Ele disse que: \"viria mais cedo hoje\".", isCorrect: false, rationale: "Incorreto: Não se combina a conjunção integrante 'que' do discurso indireto com dois-pontos e aspas em citação parcial sem adaptação." },
+            { text: "O \"relatório\" contábil foi aprovado sem restrições pelos conselheiros.", isCorrect: false, rationale: "Incorreto: Uso injustificado de aspas em uma palavra comum em sentido literal." }
+        ],
+        hint: "As aspas podem indicar sentido irônico, neologismos, estrangeirismos ou citações textuais."
+    },
+    {
+        id: 22,
+        category: "Vírgula em Orações Subordinadas Substantivas",
+        question: "Assinale a opção gramaticalmente CORRETA em relação à ausência ou presença de vírgula nas orações substantivas:",
+        options: [
+            { text: "Convém salientar que todos os prazos processuais continuam suspensos.", isCorrect: true, rationale: "Correto: Não se separa por vírgula a oração principal da oração subordinada substantiva subjetiva ('que todos os prazos...')." },
+            { text: "Convém salientar, que todos os prazos processuais continuam suspensos.", isCorrect: false, rationale: "Incorreto: A vírgula separa indevidamente a oração subordinada substantiva subjetiva de sua oração principal." },
+            { text: "Nossa esperança é, que as negociações terminem em acordo amigável.", isCorrect: false, rationale: "Incorreto: Não se usa vírgula antes da oração subordinada substantiva predicativa." },
+            { text: "O diretor necessita de, que os relatórios cheguem até o final da tarde.", isCorrect: false, rationale: "Incorreto: Colocou-se vírgula proibida entre a preposição 'de' e a oração objetiva indireta." }
+        ],
+        hint: "Orações subordinadas substantivas (subjetivas, objetivas, predicativas) não devem ser separadas da oração principal por vírgula."
+    },
+    {
+        id: 23,
+        category: "Orações Concessivas e Consecutivas",
+        question: "Assinale a opção em que a pontuação da oração subordinada adverbial está empregada com exatidão:",
+        options: [
+            { text: "A chuva foi tão intensa que as principais vias de acesso ficaram totalmente alagadas.", isCorrect: true, rationale: "Correto: Na oração consecutiva com a estrutura 'tão... que', não há necessidade de vírgula antes do 'que' consecutivo em períodos corridos." },
+            { text: "A chuva foi tão intensa, que as principais vias de acesso ficaram totalmente alagadas.", isCorrect: false, rationale: "Embora tolerado por alguns autores, a norma mais rígida prefere a ausência de vírgula por conta da correlação direta justa 'tão... que'." },
+            { text: "Embora, a proposta fosse vantajosa a assembleia votou contra a fusão das empresas.", isCorrect: false, rationale: "Incorreto: Colocou-se vírgula após 'Embora' e omitiu-se a vírgula obrigatória ao final da oração concessiva anteposta." },
+            { text: "Ainda que todos concordassem com as mudanças; o projeto precisava de aprovação formal.", isCorrect: false, rationale: "Incorreto: Usou-se ponto e vírgula indevidamente para separar a oração subordinada da principal." }
+        ],
+        hint: "A oração consecutiva introduzida por 'que' ligada ao intensificador 'tão' forma uma unidade sintática coesa sem interrupção."
+    },
+    {
+        id: 24,
+        category: "Pontuação em Endereços e Datas",
+        question: "Assinale a alternativa que apresenta a pontuação correta na indicação de datas e endereços:",
+        options: [
+            { text: "Avenida Paulista, 1000, apartamento 42.", isCorrect: true, rationale: "Correto: Os elementos do endereço (logradouro, número, complemento) devem ser devidamente separados por vírgulas." },
+            { text: "São Paulo 15 de novembro de 1889.", isCorrect: false, rationale: "Incorreto: Faltou a vírgula obrigatória separando o nome do local (topônimo) da data." },
+            { text: "Avenida Paulista 1000 apartamento 42.", isCorrect: false, rationale: "Incorreto: A ausência de vírgulas nos elementos do endereço viola a norma culta." },
+            { text: "São Paulo; 15 de novembro de 1889.", isCorrect: false, rationale: "Incorreto: Uso indevido de ponto e vírgula na separação do local e da data." }
+        ],
+        hint: "Nas datas e nos endereços, utiliza-se a vírgula para separar o topônimo (lugar) da data ou o nome da rua do número."
+    },
+    {
+        id: 25,
+        category: "Uso das Reticências",
+        question: "Assinale a alternativa em que as reticências são empregadas para indicar uma interrupção de pensamento ou hesitação:",
+        options: [
+            { text: "— Eu queria explicar... mas talvez seja melhor não dizer nada agora.", isCorrect: true, rationale: "Correto: As reticências marcam uma pausa suspensiva, hesitação ou interrupção do pensamento do falante." },
+            { text: "Comprei maçãs, bananas, laranjas... e fui para casa.", isCorrect: false, rationale: "Incorreto: Uso inadequado de reticências seguido de 'e' em enumeração incompleta." },
+            { text: "O resultado foi divulgado... ontem à noite.", isCorrect: false, rationale: "Incorreto: Interrupção artificial sem valor estilístico ou sintático dentro da oração." },
+            { text: "Conforme o artigo 5º... da Constituição Federal.", isCorrect: false, rationale: "Incorreto: Não se justifica o uso de reticências separando o número do artigo de seu complemento gramatical." }
+        ],
+        hint: "As reticências servem prioritariamente para assinalar suspensão do pensamento, dúvida ou tom emotivo."
+    },
+    {
+        id: 26,
+        category: "Vírgula com Sujeito Oracional",
+        question: "Assinale a opção em que a pontuação incorre no erro de separar o sujeito oracional de seu verbo:",
+        options: [
+            { text: "Saber aceitar as críticas construtivas do grupo, é fundamental para o crescimento profissional.", isCorrect: true, rationale: "Incorreto (contém erro): A vírgula após 'grupo' separa a oração subordinada substantiva subjetiva ('Saber aceitar as críticas...') do verbo 'é'." },
+            { text: "Saber aceitar as críticas construtivas do grupo é fundamental para o crescimento profissional.", isCorrect: false, rationale: "Pontuação correta: O sujeito oracional liga-se ao verbo sem qualquer interrupção por vírgula." },
+            { text: "Para o crescimento profissional, saber aceitar as críticas construtivas do grupo é fundamental.", isCorrect: false, rationale: "Pontuação correta: O adjunto adverbial de finalidade anteposto foi devidamente isolado por vírgula." },
+            { text: "É fundamental, para o crescimento profissional, saber aceitar as críticas construtivas do grupo.", isCorrect: false, rationale: "Pontuação correta: O adjunto adverbial intercalado está corretamente isolado por vírgulas." }
+        ],
+        hint: "Mesmo quando o sujeito é uma oração inteira (sujeito oracional), não se coloca vírgula entre ele e o verbo principal."
+    },
+    {
+        id: 27,
+        category: "Uso de Dois-Pontos Antes de Oração Apositiva",
+        question: "Assinale a frase em que os dois-pontos introduzem corretamente uma oração subordinada substantiva apositiva:",
+        options: [
+            { text: "Todos mantinham um único desejo: que a paz fosse restabelecida no território.", isCorrect: true, rationale: "Correto: Os dois-pontos introduzem a oração apositiva ('que a paz fosse restabelecida') esclarecendo o substantivo 'desejo'." },
+            { text: "O desejo de todos era: que a paz fosse restabelecida no território.", isCorrect: false, rationale: "Incorreto: Colocou-se dois-pontos entre o verbo de ligação ('era') e o predicativo do sujeito." },
+            { text: "Desejávamos apenas: paz no território nacional.", isCorrect: false, rationale: "Incorreto: Separação indevida entre o verbo transitivo direto e o objeto direto." },
+            { text: "A paz foi restabelecida: porque todos colaboraram.", isCorrect: false, rationale: "Incorreto: Os dois-pontos substituíram indevidamente a vírgula antes da oração causal sem valor apositivo." }
+        ],
+        hint: "Os dois-pontos introduzem com clareza uma oração apositiva que explica um substantivo anterior (como 'desejo', 'certeza', 'sinal')."
+    },
+    {
+        id: 28,
+        category: "Vírgula e a Conjunção 'Ou' (Alternância vs. Exclusão)",
+        question: "Assinale a alternativa que pontua corretamente as orações coordenadas correlativas disjuntivas (alternativas):",
+        options: [
+            { text: "Ou a empresa investe em modernização tecnológica, ou perderá competitividade no mercado.", isCorrect: true, rationale: "Correto: As conjunções alternativas correlativas ('Ou... ou...') exigem a separação das orações por vírgula." },
+            { text: "Ou a empresa investe em modernização tecnológica ou perderá competitividade no mercado.", isCorrect: false, rationale: "Incorreto: Omitiu-se a vírgula recomendada entre as orações coordenadas alternativas correlativas." },
+            { text: "Ou, a empresa investe em modernização tecnológica ou perderá competitividade.", isCorrect: false, rationale: "Incorreto: Inseriu-se vírgula indevida logo após o primeiro 'Ou'." },
+            { text: "A empresa investe em modernização, ou perderá competitividade no mercado.", isCorrect: false, rationale: "Estrutura com apenas uma conjunção em que a vírgula é comum, mas a primeira opção traz a correlação disjuntiva plena." }
+        ],
+        hint: "Orações coordenadas alternativas iniciadas por pares correlativos ('ou... ou', 'ora... ora', 'quer... quer') devem ser separadas por vírgulas."
+    },
+    {
+        id: 29,
+        category: "Orações Reduzidas de Gerúndio Antepostas",
+        question: "Assinale a frase em que a oração reduzida de gerúndio anteposta está pontuada em conformidade com a norma culta:",
+        options: [
+            { text: "Percebendo a gravidade da situação, o diretor convocou uma reunião de emergência.", isCorrect: true, rationale: "Correto: A oração reduzida de gerúndio anteposta à oração principal deve vir separada por vírgula." },
+            { text: "Percebendo a gravidade da situação o diretor convocou uma reunião de emergência.", isCorrect: false, rationale: "Incorreto: Faltou a vírgula obrigatória após a oração reduzida de gerúndio anteposta." },
+            { text: "Percebendo, a gravidade da situação o diretor convocou uma reunião de emergência.", isCorrect: false, rationale: "Incorreto: Colocou-se vírgula entre o gerúndio e seu complemento direto, omitindo-se a vírgula ao final da oração reduzida." },
+            { text: "O diretor convocou, uma reunião de emergência percebendo a gravidade da situação.", isCorrect: false, rationale: "Incorreto: Inseriu-se vírgula proibida entre o verbo 'convocou' e o objeto 'uma reunião'." }
+        ],
+        hint: "Orações reduzidas (de gerúndio, particípio ou infinitivo), quando colocadas no início do período, exigem vírgula."
+    },
+    {
+        id: 30,
+        category: "Ambiguidade e Pontuação",
+        question: "Assinale a opção em que a inclusão ou alteração da pontuação altera substancialmente o sentido da frase, gerando mudança sintática e semântica:",
+        options: [
+            { text: "1. \"Não, comi o bolo.\" / 2. \"Não comi o bolo.\"", isCorrect: true, rationale: "Correto: Na frase 1, 'Não' é um advérbio de negação isolado em resposta (negação de algo anterior + afirmação de que comeu o bolo); na frase 2, a negação incide diretamente sobre o verbo 'comi' (a ação de comer não ocorreu)." },
+            { text: "1. \"Ele disse que viria.\" / 2. \"Ele disse, que viria.\"", isCorrect: false, rationale: "A frase 2 possui apenas um erro gramatical, sem criar uma alternativa semântica válida na norma culta." },
+            { text: "1. \"São Paulo, 10 de maio.\" / 2. \"São Paulo 10 de maio.\"", isCorrect: false, rationale: "Trata-se apenas do contraste entre norma correta e erro de omissão de pontuação." },
+            { text: "1. \"Maria, João e Pedro saíram.\" / 2. \"Maria João e Pedro saíram.\"", isCorrect: false, rationale: "A frase 2 apresenta mero erro gramatical por falta de vírgula na enumeração." }
+        ],
+        hint: "A presença de vírgula após a palavra 'Não' no início de frase altera a função do vocábulo entre resposta antecedente e negação verbal."
+    }
+];
+
+        // State Management
+        let currentQuestionIdx = 0;
+        let userAnswers = new Array(questionsData.length).fill(null);
+        let bookmarked = new Array(questionsData.length).fill(false);
+        let quizMode = 'study'; // 'study' or 'exam'
+        let isSubmitted = false;
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGrid();
+            loadQuestion(0);
+        });
+
+        // Set Mode
+        function setMode(mode) {
+            if (isSubmitted) return;
+            quizMode = mode;
+            
+            const btnStudy = document.getElementById('btnModeStudy');
+            const btnExam = document.getElementById('btnModeExam');
+
+            if (mode === 'study') {
+                btnStudy.className = "px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm";
+                btnExam.className = "px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900";
+            } else {
+                btnExam.className = "px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm";
+                btnStudy.className = "px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900";
+            }
+
+            // Re-render current question view
+            loadQuestion(currentQuestionIdx);
+        }
+
+        // Render Side Navigation Grid
+        function renderGrid() {
+            const gridContainer = document.getElementById('questionGrid');
+            gridContainer.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `gridBtn-${idx}`;
+                btn.onclick = () => jumpToQuestion(idx);
+                btn.className = getGridBtnClass(idx);
+                btn.innerText = idx + 1;
+                gridContainer.appendChild(btn);
+            });
+
+            updateProgress();
+        }
+
+        function getGridBtnClass(idx) {
+            let base = "w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center transition-all ";
+            
+            if (idx === currentQuestionIdx) {
+                base += "ring-2 ring-brand-600 ring-offset-2 ";
+            }
+
+            if (bookmarked[idx]) {
+                base += "bg-amber-400 text-amber-950 font-extrabold ";
+            } else if (userAnswers[idx] !== null) {
+                if (isSubmitted || quizMode === 'study') {
+                    const isCorrect = questionsData[idx].options[userAnswers[idx]].isCorrect;
+                    base += isCorrect ? "bg-emerald-500 text-white " : "bg-rose-500 text-white ";
+                } else {
+                    base += "bg-brand-600 text-white ";
+                }
+            } else {
+                base += "bg-slate-100 text-slate-600 hover:bg-slate-200 ";
+            }
+
+            return base;
+        }
+
+        // Update Progress Bar & Score
+        function updateProgress() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            const percent = Math.round((answeredCount / questionsData.length) * 100);
+            
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('progressPercent').innerText = `${percent}% concluído`;
+
+            // Calculate score
+            let correctCount = 0;
+            userAnswers.forEach((ans, i) => {
+                if (ans !== null && questionsData[i].options[ans].isCorrect) {
+                    correctCount++;
+                }
+            });
+
+            document.getElementById('scoreDisplay').innerText = `${correctCount} / ${questionsData.length}`;
+        }
+
+        // Load Question Data
+        function loadQuestion(idx) {
+            currentQuestionIdx = idx;
+            const q = questionsData[idx];
+
+            // Update Header Info
+            document.getElementById('questionCategory').innerText = q.category;
+            document.getElementById('questionNumberBadge').innerText = `Questão ${idx + 1} de ${questionsData.length}`;
+            document.getElementById('questionTitle').innerText = q.question;
+
+            // Update Bookmark Button
+            const btnBookmark = document.getElementById('btnBookmark');
+            if (bookmarked[idx]) {
+                btnBookmark.className = "text-amber-500 font-medium text-sm transition flex items-center gap-1.5";
+                btnBookmark.innerHTML = `<i class="fa-solid fa-bookmark"></i> <span class="hidden sm:inline">Marcada</span>`;
+            } else {
+                btnBookmark.className = "text-slate-400 hover:text-amber-500 text-sm font-medium transition flex items-center gap-1.5";
+                btnBookmark.innerHTML = `<i class="fa-regular fa-bookmark"></i> <span class="hidden sm:inline">Revisar</span>`;
+            }
+
+            // Render Options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const selectedOpt = userAnswers[idx];
+            const showFeedback = isSubmitted || (quizMode === 'study' && selectedOpt !== null);
+
+            q.options.forEach((opt, optIdx) => {
+                const optBtn = document.createElement('button');
+                optBtn.className = getOptionClass(idx, optIdx, selectedOpt, showFeedback);
+                optBtn.onclick = () => selectOption(optIdx);
+                if (showFeedback || isSubmitted) {
+                    // Disable changing if already answered in study mode or if quiz is finished
+                    if (quizMode === 'study' || isSubmitted) {
+                        optBtn.disabled = true;
+                    }
+                }
+
+                const letter = String.fromCharCode(65 + optIdx); // A, B, C, D
+
+                let iconHtml = '';
+                if (showFeedback) {
+                    if (opt.isCorrect) {
+                        iconHtml = `<i class="fa-solid fa-circle-check text-emerald-600 text-lg ml-auto"></i>`;
+                    } else if (selectedOpt === optIdx) {
+                        iconHtml = `<i class="fa-solid fa-circle-xmark text-rose-600 text-lg ml-auto"></i>`;
+                    }
+                }
+
+                optBtn.innerHTML = `
+                    <div class="flex items-start gap-3 text-left w-full">
+                        <span class="w-6 h-6 rounded-full border border-current flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
+                            ${letter}
+                        </span>
+                        <span class="text-sm font-medium leading-relaxed flex-1">${opt.text}</span>
+                        ${iconHtml}
+                    </div>
+                `;
+
+                optionsContainer.appendChild(optBtn);
+            });
+
+            // Handle Explanation Box
+            const explanationBox = document.getElementById('explanationBox');
+            const explanationHeader = document.getElementById('explanationHeader');
+            const explanationText = document.getElementById('explanationText');
+
+            if (showFeedback && selectedOpt !== null) {
+                explanationBox.classList.remove('hidden');
+                const chosenOptObj = q.options[selectedOpt];
+                const correctOptObj = q.options.find(o => o.isCorrect);
+
+                if (chosenOptObj.isCorrect) {
+                    explanationHeader.className = "flex items-center gap-2 font-bold mb-1 text-emerald-700";
+                    explanationHeader.innerHTML = `<i class="fa-solid fa-circle-check"></i> Correto!`;
+                    explanationText.innerText = chosenOptObj.rationale;
+                } else {
+                    explanationHeader.className = "flex items-center gap-2 font-bold mb-1 text-rose-700";
+                    explanationHeader.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Incorreto.`;
+                    explanationText.innerText = `${chosenOptObj.rationale} (Gabarito: ${correctOptObj.text})`;
+                }
+            } else {
+                explanationBox.classList.add('hidden');
+            }
+
+            // Navigation Buttons State
+            document.getElementById('btnPrev').disabled = (idx === 0);
+            
+            const btnNext = document.getElementById('btnNext');
+            if (idx === questionsData.length - 1) {
+                btnNext.innerHTML = `Finalizar <i class="fa-solid fa-flag-checkered ml-1"></i>`;
+            } else {
+                btnNext.innerHTML = `Próxima <i class="fa-solid fa-chevron-right ml-1"></i>`;
+            }
+
+            renderGrid();
+        }
+
+        function getOptionClass(qIdx, optIdx, selectedOpt, showFeedback) {
+            let base = "w-full p-4 rounded-xl border text-left transition-all flex items-center ";
+
+            if (showFeedback) {
+                const isCorrect = questionsData[qIdx].options[optIdx].isCorrect;
+                if (isCorrect) {
+                    return base + "bg-emerald-50 border-emerald-300 text-emerald-950 font-medium ";
+                } else if (selectedOpt === optIdx) {
+                    return base + "bg-rose-50 border-rose-300 text-rose-950 ";
+                } else {
+                    return base + "bg-slate-50 border-slate-200 text-slate-400 opacity-60 ";
+                }
+            } else {
+                if (selectedOpt === optIdx) {
+                    return base + "bg-brand-50 border-brand-500 text-brand-900 shadow-sm ";
+                } else {
+                    return base + "bg-white border-slate-200 text-slate-700 hover:border-brand-300 hover:bg-slate-50 ";
+                }
+            }
+        }
+
+        // Action Handlers
+        function selectOption(optIdx) {
+            if (isSubmitted) return;
+            userAnswers[currentQuestionIdx] = optIdx;
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function toggleBookmark() {
+            bookmarked[currentQuestionIdx] = !bookmarked[currentQuestionIdx];
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function jumpToQuestion(idx) {
+            loadQuestion(idx);
+        }
+
+        function navigateQuestion(direction) {
+            const nextIdx = currentQuestionIdx + direction;
+            if (nextIdx >= 0 && nextIdx < questionsData.length) {
+                loadQuestion(nextIdx);
+            } else if (nextIdx >= questionsData.length) {
+                finishQuiz();
+            }
+        }
+
+        // Finish Quiz & Show Results
+        function finishQuiz() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            if (unanswered > 0 && !isSubmitted) {
+                const confirmSubmit = confirm(`Você ainda tem ${unanswered} questão(ões) não respondida(s). Deseja realmente finalizar?`);
+                if (!confirmSubmit) return;
+            }
+
+            isSubmitted = true;
+            document.getElementById('quizCard').classList.add('hidden');
+            document.getElementById('resultsCard').classList.remove('hidden');
+
+            // Calculate final statistics
+            let correctCount = 0;
+            userAnswers.forEach((ans, i) => {
+                if (ans !== null && questionsData[i].options[ans].isCorrect) {
+                    correctCount++;
+                }
+            });
+
+            const percent = Math.round((correctCount / questionsData.length) * 100);
+
+            document.getElementById('finalScore').innerText = `${correctCount} / ${questionsData.length}`;
+            document.getElementById('finalPercent').innerText = `${percent}%`;
+
+            let feedbackText = "Insuficiente";
+            let feedbackColor = "text-rose-600";
+            if (percent >= 85) {
+                feedbackText = "Excelente!";
+                feedbackColor = "text-emerald-600";
+            } else if (percent >= 70) {
+                feedbackText = "Muito Bom!";
+                feedbackColor = "text-brand-600";
+            } else if (percent >= 50) {
+                feedbackText = "Regular";
+                feedbackColor = "text-amber-600";
+            }
+
+            const feedbackElem = document.getElementById('finalFeedback');
+            feedbackElem.innerText = feedbackText;
+            feedbackElem.className = `text-sm font-bold mt-1 block ${feedbackColor}`;
+
+            renderGrid();
+        }
+
+        function restartQuiz() {
+            userAnswers = new Array(questionsData.length).fill(null);
+            bookmarked = new Array(questionsData.length).fill(false);
+            isSubmitted = false;
+            currentQuestionIdx = 0;
+
+            document.getElementById('resultsCard').classList.add('hidden');
+            document.getElementById('quizCard').classList.remove('hidden');
+
+            renderGrid();
+            loadQuestion(0);
+        }
+
+        function reviewQuiz() {
+            document.getElementById('resultsCard').classList.add('hidden');
+            document.getElementById('quizCard').classList.remove('hidden');
+            loadQuestion(0);
+        }
+    </script>
+</body>
+</html>
