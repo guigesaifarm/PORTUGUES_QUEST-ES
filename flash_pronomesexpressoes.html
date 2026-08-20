@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Articulação do Texto</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb; /* Ajustado para o azul padrão de português */
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        /* Fontes aumentadas para melhor legibilidade */
+        .card-content {
+            font-size: 1.7rem; 
+            line-height: 1.5;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.15rem; 
+            text-align: left;
+            color: #34495e;
+            overflow-y: auto;
+            max-height: 220px;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.4rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Articulação do Texto: Coesão, Pronomes e Nexos</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Coesão</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            {
+                category: "Conceito de Coesão",
+                front: "O que é a <b>coesão textual</b> e qual é a sua principal função em uma prova de concurso?",
+                back: "É a conexão material, visível e gramatical entre as palavras, frases e parágrafos de um texto. Sua função é garantir a fluidez e a interligação lógica por meio de conectivos e elementos referenciais."
+            },
+            {
+                category: "Coesão Referencial",
+                front: "O que diferencia a coesão <b>referencial</b> da coesão <b>sequencial</b>?",
+                back: "• <b>Referencial:</b> Evita repetições retomando ou antecipando elementos do texto (ex: uso de pronomes).<br>• <b>Sequencial:</b> Conecta as partes do texto fazendo o encadeamento lógico e o avanço dos argumentos (ex: conjunções)."
+            },
+            {
+                category: "Anafóra",
+                front: "O que é a <b>anáfora</b> na referência textual?",
+                back: "É o mecanismo coesivo em que um termo retoma outro elemento que já foi mencionado anteriormente no texto (ex: 'O livro chegou. <i>Ele</i> é excelente')."
+            },
+            {
+                category: " Catáfora",
+                front: "O que é a <b>catáfora</b> na referência textual?",
+                back: "É o mecanismo coesivo em que um termo antecipa ou aponta para algo que ainda será dito adiante no texto (ex: 'Quero dizer-lhe <i>isto</i>: estude muito')."
+            },
+            {
+                category: "Substituição Lexical",
+                front: "Como a <b>substituição lexical</b> atua na coesão referencial por sinônimos ou hiperônimos?",
+                back: "Evita a repetição exata de palavras trocando um termo por um sinônimo ou por um termo mais amplo (hiperônimo), mantendo o referente ativo (ex: 'O cachorro latiu. O <i>animal</i> assustou o vizinho')."
+            },
+            {
+                category: "Pronomes Relativos",
+                front: "Qual é o papel coesivo fundamental dos <b>pronomes relativos</b> (como 'que', 'o qual', 'cujo')?",
+                back: "Eles retomam um termo anterior (antecedente) e introduzem uma oração subordinada adjetiva, ligando duas frases em uma só e garantindo alta coesão."
+            },
+            {
+                category: "Uso do Cujo",
+                front: "Qual é a principal pegadinha das bancas envolvendo a coesão e o pronome relativo <b>cujo</b>?",
+                back: "O 'cujo' estabelece relação estritamente de <b>posse</b> entre o termo antecedente e o consequente, e ele <b>nunca</b> pode ser seguido de artigo (nunca diga 'cujo o' ou 'cuja a')."
+            },
+            {
+                category: "Pronomes Demonstrativos",
+                front: "Como os pronomes demonstrativos (<b>este, esse, aquele</b>) organizam a referência no espaço textual?",
+                back: "• <b>Este/Isto:</b> Aponta para o que está perto de quem fala ou será dito (catáfora).<br>• <b>Esse/Isso:</b> Retoma o que já foi dito (anáfora próxima).<br>• <b>Aquele/Aquilo:</b> Refere-se a elementos mais distantes no texto."
+            },
+            {
+                category: "Coesão por Elipse",
+                front: "O que é a <b>elipse</b> e como ela atua como recurso coesivo?",
+                back: "É a omissão intencional de um termo que pode ser facilmente deduzido pelo contexto (ex: 'João comprou frutas e Maria, legumes'). Evita redundâncias desnecessárias."
+            },
+            {
+                category: "Operadores Sequenciais",
+                front: "O que são <b>operadores argumentativos ou sequenciais</b>?",
+                back: "São palavras ou expressões (geralmente conjunções, advérbios ou locuções) que orientam o rumo do texto, indicando a conclusão, a oposição, a causa ou a consequência pretendida."
+            },
+            {
+                category: "Oposição / Adversidade",
+                front: "Quais são os principais nexos que expressam valor de <b>adversidade/contraste</b>?",
+                back: "Mas, porém, todavia, contudo, entretanto, no entanto. Eles introduzem uma ideia de oposição direta ou restrição ao argumento anterior."
+            },
+            {
+                category: "Concessão",
+                front: "Qual é a diferença de sentido coesivo entre um nexo <b>adversativo</b> (porém) e um <b>concessivo</b> (embora)?",
+                back: "• <i>Adversativo:</i> O segundo fato anula ou contrasta fortemente com o primeiro.<br>• <i>Concessivo:</i> Admite um fato contrário, mas que não é capaz de impedir a ação principal ('Embora chovessse, fui à aula')."
+            },
+            {
+                category: "Causa",
+                front: "Quais conectivos são usados para introduzir a <b>causa</b> de um acontecimento?",
+                back: "Porque, visto que, já que, visto como, dado que, pois, porquanto. Indicam a origem ou o motivo do fato enunciado na outra oração."
+            },
+            {
+                category: "Consequência",
+                front: "Como se articulam coesivamente as orações que exprimem <b>consequência</b>?",
+                back: "Geralmente vêm introduzidas por estruturas correlatas como <i>tão... que</i>, <i>tal... que</i>, <i>tamanho... que</i> ou conectivos como <i>de modo que</i>, <i>consequentemente</i>."
+            },
+            {
+                category: "Finalidade",
+                front: "Quais expressões funcionam como operadores de <b>finalidade</b> (objetivo)?",
+                back: "Para que, a fim de que, com o intuito de, com o objetivo de. Indicam a meta ou o propósito para o qual a ação principal foi realizada."
+            },
+            {
+                category: "Condição",
+                front: "Quais nexos introduzem ideias <b>condicionais</b> na articulação do texto?",
+                back: "Caso, contanto que, desde que, a menos que, a não ser que, salvo se. Estabelecem uma hipótese necessária para que o fato principal ocorra."
+            },
+            {
+                category: "Proporcionalidade",
+                front: "Como operam os nexos de <b>proporcionalidade</b> no texto? Dê exemplos.",
+                back: "Indicam simultaneidade ou variação proporcional de fatos. Principais operadores: <i>à medida que</i>, <i>à proporção que</i>, <i>ao passo que</i>."
+            },
+            {
+                category: "Conformidade",
+                front: "O que expressam os operadores de <b>conformidade</b> e quais são os mais comuns?",
+                back: "Indicam acordo, adequação ou consonância com um fato ou regra. Principais nexos: <i>conforme</i>, <i>segundo</i>, <i>consoante</i>, <i>como</i>."
+            },
+            {
+                category: "Explicação",
+                front: "Qual é a função coesiva dos nexos explicativos (como 'pois' anteposto ao verbo ou 'porque')?",
+                back: "Eles justificam ou fornecem uma razão lógica para uma ordem, pedido ou conclusão afirmada na oração anterior."
+            },
+            {
+                category: "Conclusão",
+                front: "Quais conectivos atuam tipicamente como operadores de <b>conclusão</b>?",
+                back: "Portanto, logo, por conseguinte, assim, por isso, pois (quando posposto ao verbo). Sintetizam o raciocínio construído ao longo dos argumentos anteriores."
+            },
+            {
+                category: "Substituição de Nexos",
+                front: "Em provas, é permitido substituir um 'portanto' por um 'contudo' sem alterar o sentido?",
+                back: "<b>Jamais!</b> 'Portanto' é conclusivo e 'contudo' é adversativo/opositivo. A troca altera completamente a lógica argumentativa e invalida a questão."
+            },
+            {
+                category: "Ambiguidade Referencial",
+                front: "Como o uso inadequado de pronomes pessoais (ele, o, a) pode prejudicar a coesão referencial?",
+                back: "Pode gerar ambiguidade se houver dois substantivos do mesmo gênero/número na frase anterior, deixando o leitor sem saber a qual elemento o pronome se refere."
+            },
+            {
+                category: "Coesão Interparágrafos",
+                front: "Qual é a importância dos elementos coesivos de abertura de parágrafo (como 'Além disso', 'Por outro lado')?",
+                back: "Eles funcionam como 'ganchos' lógicos que conectam a argumentação do parágrafo atual com a do anterior, guiando o leitor na progressão temática."
+            },
+            {
+                category: "Uso do Pronome 'O'",
+                front: "Como o pronome oblíquo 'o' (e variações lo, no) atua na coesão referencial?",
+                back: "Atua como objeto direto coesivo, retomando um substantivo já citado para evitar repetição (ex: 'Comprei o livro e <i>o</i> li')."
+            },
+            {
+                category: "Expressões de Transição",
+                front: "O que são expressões de transição do tipo 'em primeiro lugar', 'por fim', 'noutras palavras'?",
+                back: "São operadores metatextuais que organizam a macroestrutura do texto, sinalizando enumeração, reformulação ou encerramento de raciocínios."
+            },
+            {
+                category: "Coesão Sequencial por Tempo",
+                front: "Quais marcadores expressam coesão sequencial de base <b>temporal</b>?",
+                back: "Enquanto, quando, assim que, logo após, antes que, depois que. Situam os eventos em uma linha de tempo lógica dentro da narrativa ou exposição."
+            },
+            {
+                category: "Substituição de 'Visto que'",
+                front: "A expressão 'visto que' pode ser substituída por 'embora' sem prejuízo gramatical ou semântico?",
+                back: "<b>Não.</b> 'Visto que' é um operador de <b>causa</b>, enquanto 'embora' é de <b>concessão</b>. Trocá-los altera o sentido lógico da relação entre os fatos."
+            },
+            {
+                category: "Coesão por Campo Lexical",
+                front: "O que é coesão por <b>reiteração lexical através do campo semântico</b>?",
+                back: "É o uso de palavras que pertencem à mesma rede de significado (ex: hospital, médico, remédio, paciente) para manter a unidade temática do texto sem necessariamente repetir a mesma palavra."
+            },
+            {
+                category: "O Perigo do 'Onde'",
+                front: "O pronome relativo 'onde' pode ser usado para retomar qualquer termo coesivo?",
+                back: "<b>Não!</b> O 'onde' restringe-se estritamente a indicar <b>lugar físico</b> ou espaço geograficamente determinado. Usá-lo para retomar ideias abstratas é erro de coesão."
+            },
+            {
+                category: "Dica de Ouro para Provas",
+                front: "O que as bancas mais cobram sobre articulação textual e operadores em concursos públicos?",
+                back: "A capacidade de identificar se a substituição de um conectivo preserva a correção gramatical e a exata <b>relação lógico-semântica</b> original do texto (causa, oposição, conclusão, etc.)."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
