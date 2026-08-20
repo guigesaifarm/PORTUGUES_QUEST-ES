@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Domínio da Pontuação</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb;
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .card-content {
+            font-size: 1.6rem; 
+            line-height: 1.5;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.2rem; 
+            text-align: left;
+            color: #34495e;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.3rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Domínio Completo da Pontuação para Concursos</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Pontuação</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            {
+                category: "Regra de Ouro",
+                front: "É permitido separar o sujeito do predicado por meio de vírgula?",
+                back: "<b>Nunca!</b> A regra de ouro da pontuação proíbe o uso de vírgula entre o sujeito e o predicado (nem entre o verbo e seus complementos diretos/indiretos)."
+            },
+            {
+                category: "Adjunto Adverbial",
+                front: "Quando a vírgula é obrigatória com o adjunto adverbial deslocado?",
+                back: "Quando ele for <b>longo</b> (geralmente a partir de 3 palavras) ou para evitar duplo sentido. Se for de pequeno relevo/curto, a vírgula é facultativa."
+            },
+            {
+                category: "Vocativo",
+                front: "Qual é a regra de pontuação para o vocativo (termo de chamamento)?",
+                back: "O vocativo deve <b>sempre</b> vir isolado por vírgulas, independentemente de sua posição na frase (Ex: 'Alunos, prestem atenção' / 'Prestem atenção, alunos')."
+            },
+            {
+                category: "Aposto Explicativo",
+                front: "Como se pontua o aposto explicativo em uma oração?",
+                back: "Ele deve vir obrigatoriamente entre <b>vírgulas</b>, travessões ou parênteses, pois tem a função de explicar ou detalhar um termo anterior."
+            },
+            {
+                category: "Orações Coordenadas",
+                front: "Usa-se vírgula antes da conjunção coordenativa 'e'?",
+                back: "<b>Em regra, não.</b> Contudo, a vírgula torna-se obrigatória se houver <i>sujeitos diferentes</i> nas orações ou se a conjunção estiver deslocada."
+            },
+            {
+                category: "Orações Adversativas",
+                front: "Qual é a pontuação exigida antes de conjunções adversativas (mas, porém, contudo)?",
+                back: "Sempre precedidas de <b>vírgula obrigatória</b> (Ex: Estudou muito, <i>mas</i> não passou)."
+            },
+            {
+                category: "Orações Explicativas",
+                front: "Orações coordenadas explicativas (com 'pois', 'porque') exigem vírgula?",
+                back: "<b>Sim.</b> Devem vir sempre separadas por vírgula da oração anterior (Ex: Não saia de casa, <i>pois</i> está chovendo)."
+            },
+            {
+                category: "Orações Conclusivas",
+                front: "Como pontuar conjunções conclusivas (logo, portanto, por conseguinte) deslocadas?",
+                back: "Quando deslocadas no interior da oração, devem vir entre <b>vírgulas</b> (Ex: O aluno, <i>portanto</i>, foi aprovado)."
+            },
+            {
+                category: "Orações Subordinadas Adjetivas",
+                front: "Qual é a diferença de pontuação entre as orações adjetivas explicativas e restritivas?",
+                back: "• <b>Explicativas:</b> virão sempre isoladas por vírgulas.<br>• <b>Restritivas:</b> nunca são isoladas por vírgulas."
+            },
+            {
+                category: "Orações Subordinadas Adverbiais",
+                front: "Usa-se vírgula nas orações subordinadas adverbiais antepostas (antecipadas)?",
+                back: "<b>Sim!</b> Quando a oração adverbial vier antes da principal, a vírgula é <i>obrigatória</i> (Ex: Quando chegar, me ligue)."
+            },
+            {
+                category: "Orações Subordinadas Substantivas",
+                front: "Orações subordinadas substantivas (com 'que' ou 'se') admitem vírgula antes delas?",
+                back: "<b>Nunca!</b> Como funcionam como sujeito, objeto direto ou complemento nominal, não podem ser separadas da principal por vírgula."
+            },
+            {
+                category: "Conjunções Intercaladas",
+                front: "Como pontuar expressões ou conjunções explicativas intercaladas (isto é, ou seja, a saber)?",
+                back: "Devem vir sempre entre <b>vírgulas</b> por exercerem caráter explicativo ou retificativo (Ex: O projeto, <i>ou seja</i>, foi cancelado)."
+            },
+            {
+                category: "Ponto e Vírgula",
+                front: "Para que serve o ponto e vírgula (;)?",
+                back: "Serve para separar itens de uma enumeração longa, orações coordenadas extensas ou orações coordenadas que já possuem vírgulas internas."
+            },
+            {
+                category: "Dois-Pontos",
+                front: "Quando devemos utilizar os dois-pontos (:)?",
+                back: "Para introduzir uma citação, uma enumeração explicativa, um esclarecimento ou o discurso direto."
+            },
+            {
+                category: "Travessão",
+                front: "Quais são as principais funções do travessão na escrita?",
+                back: "1. Indicar a mudança de interlocutor no diálogo.<br>2. Isolar palavras, expressões ou orações explicativas (substituindo vírgulas ou parênteses)."
+            },
+            {
+                category: "Parênteses",
+                front: "Qual é o objetivo principal do uso de parênteses em um texto dissertativo?",
+                back: "Isolar informações acessórias, reflexões secundárias ou dados explicativos que se deseja manter marginais ao fluxo principal da leitura."
+            },
+            {
+                category: "Aspas",
+                front: "Quando o uso de aspas exige alteração na pontuação final da frase?",
+                back: "Se a citação dentro das aspas for uma frase completa com ponto final, o ponto fica dentro das aspas. Se for citação parcial integrada à frase, o ponto fica fora."
+            },
+            {
+                category: "Adjunto Adverbial de Lugar",
+                front: "Datas e lugares no cabeçalho ou início de frases exigem vírgula?",
+                back: "<b>Sim.</b> O adjunto adverbial de tempo ou lugar antecipado curto pode ter vírgula facultativa, mas se for data expressa, a vírgula separa o lugar da data (Ex: Brasília, 20 de agosto de 2026)."
+            },
+            {
+                category: "Zeugue / Omissão de Verbo",
+                front: "Usa-se vírgula para marcar a supressão (elipse) de um verbo já citado?",
+                back: "<b>Sim!</b> A vírgula vicária marca a omissão proposital de um termo para evitar repetição (Ex: Ele prefere matemática; eu, português)."
+            },
+            {
+                category: "Conectivo 'E' com Sujeitos Diferentes",
+                front: "Explique a pontuação com a conjunção 'e' quando os sujeitos das orações são diferentes.",
+                back: "A vírgula antes do 'e' passa a ser <b>obrigatória</b> para evitar ambiguidade (Ex: O professor explicou a matéria, e os alunos anotaram tudo)."
+            },
+            {
+                category: "Orações Intercaladas",
+                front: "Como pontuar orações intercaladas (ex: 'disse ele', 'afirmou o diretor')?",
+                back: "Devem vir obrigatoriamente entre <b>vírgulas</b> ou entre travessões (Ex: A proposta — <i>afirmou o gerente</i> — será revista)."
+            },
+            {
+                category: "Orações Reduzidas",
+                front: "Orações reduzidas de gerúndio ou particípio antepostas exigem vírgula?",
+                back: "<b>Sim.</b> Se estiverem deslocadas ou antecipadas (sentido adverbial), exigem isolamento por vírgula (Ex: Terminada a reunião, todos saíram)."
+            },
+            {
+                category: "Termos Repetidos",
+                front: "Como pontuar palavras idênticas repetidas com ênfase (ex: 'corria, corria e não chegava')?",
+                back: "Devem ser separadas por <b>vírgulas</b>, pois marcam ritmo expressivo ou gradação."
+            },
+            {
+                category: "Agentes da Passiva",
+                front: "O agente da passiva (ex: 'por João') pode ser isolado por vírgula?",
+                back: "<b>Não.</b> O agente da passiva integra o predicado e nunca pode ser separado por vírgula do verbo."
+            },
+            {
+                category: "Complemento Nominal",
+                front: "É correto separar o nome de seu complemento nominal por meio de vírgula?",
+                back: "<b>Jamais.</b> Da mesma forma que o objeto direto, o complemento nominal está ligado diretamente ao termo regente sem pontuação intermediária."
+            },
+            {
+                category: "Orações Coordenadas Assindéticas",
+                front: "Como se pontuam orações coordenadas assindéticas (sem conjunção)?",
+                back: "Devem ser separadas obrigatoriamente por <b>vírgula</b> (Ex: Vim, vi, venci)."
+            },
+            {
+                category: "Conjunção 'Portanto'",
+                front: "A conjunção 'portanto' no início absoluto de uma frase exige vírgula após ela?",
+                back: "<b>Sim.</b> Conectivos conclusivos no início absoluto recebem vírgula logo em seguida (Ex: Portanto, devemos agir rápido)."
+            },
+            {
+                category: "Orações Condicionais",
+                front: "Orações subordinadas adverbiais condicionais (com 'se') no início da frase pedem vírgula?",
+                back: "<b>Sim.</b> Toda oração adverbial (tempo, causa, condição, concessão) antecipada exige vírgula (Ex: Se chover, não iremos)."
+            },
+            {
+                category: "Reticências",
+                front: "Qual é o principal papel das reticências na coesão textual?",
+                back: "Indicar interrupção de pensamento, hesitação, suspensão do discurso ou continuidade implícita de uma ideia ou enumeração."
+            },
+            {
+                category: "Macete de Concurso",
+                front: "Qual é o erro mais comum que as bancas cobram sobre pontuação?",
+                back: "Separar o sujeito do verbo por vírgula usando a justificativa de que 'a frase é longa'. Lembre-se: por maior que seja o sujeito, <b>nunca</b> leva vírgula antes do verbo!"
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
