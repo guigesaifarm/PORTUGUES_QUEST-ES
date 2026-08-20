@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Concordância Nominal e Verbal</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb;
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .card-content {
+            font-size: 1.6rem; 
+            line-height: 1.5;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.2rem; 
+            text-align: left;
+            color: #34495e;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.3rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Domínio Completo de Concordância Nominal e Verbal</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Concordância</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            // --- CONCORDÂNCIA VERBAL ---
+            {
+                category: "Verbo Haver",
+                front: "Qual é a regra de concordância do verbo <b>haver</b> no sentido de existir ou ocorrer?",
+                back: "É <b>impessoal</b> (fica sempre na 3ª pessoa do singular), logo seus complementos formam objeto direto e não sujeito (Ex: <i>Havia</i> muitos problemas / <i>Houve</i> reuniões)."
+            },
+            {
+                category: "Verbo Existir",
+                front: "O verbo <b>existir</b> é impessoal como o verbo haver?",
+                back: "<b>Não!</b> O verbo existir é pessoal e concorda normalmente com o seu sujeito (Ex: <i>Existem</i> muitos problemas / <i>Existem</i> soluções)."
+            },
+            {
+                category: "Verbo Fazer (Tempo)",
+                front: "Como o verbo <b>fazer</b> concorda ao indicar tempo decorrido ou clima?",
+                back: "É <b>impessoal</b>, ficando sempre na 3ª pessoa do singular (Ex: <i>Faz</i> anos que não nos vemos / <i>Fazia</i> dias quentes)."
+            },
+            {
+                category: "Verbo Ser (Horas/Distância)",
+                front: "Como o verbo <b>ser</b> concorda ao indicar horas, datas e distâncias?",
+                back: "Concorda com o predicativo (o número). Ex: <i>São</i> duas horas / <i>É</i> uma hora / Hoje <i>são</i> 25 de agosto."
+            },
+            {
+                category: "Sujeito Composto Anteposto",
+                front: "Qual é a regra geral para um sujeito composto que vem <b>antes</b> do verbo?",
+                back: "O verbo vai obrigatoriamente para o <b>plural</b> (Ex: O aluno e o professor <i>chegaram</i>)."
+            },
+            {
+                category: "Sujeito Composto Posposto",
+                front: "O que acontece com o verbo se o sujeito composto estiver <b>depois</b> dele?",
+                back: "O verbo pode ir para o <b>plural</b> ou concordar com o núcleo mais próximo (Ex: <i>Chegou</i> o aluno e o professor / <i>Chegaram</i> o aluno e o professor)."
+            },
+            {
+                category: "Núcleos Sinônimos",
+                front: "Como fica o verbo se o sujeito composto possui núcleos sinônimos ou em gradação?",
+                back: "O verbo pode ficar no plural ou concordar no singular com o núcleo mais próximo (Ex: A calma e a tranquilidade <i>imperava</i> ou <i>imperavam</i>)."
+            },
+            {
+                category: "Expressões Partitivas",
+                front: "Qual a concordância com expressões como 'a maioria de', 'grande parte de' seguidas de plural?",
+                back: "O verbo aceita as duas formas: singular (concordando com o núcleo 'maioria') ou plural (concordando com o especificador). Ex: <i>A maioria dos alunos faltou</i> ou <i>faltaram</i>."
+            },
+            {
+                category: "Percentuais e Números",
+                front: "Como concordar o verbo com expressões percentuais (ex: '20% dos candidatos')?",
+                back: "O verbo concorda com o número ou com o especificador. Ex: <i>20% da turma faltou</i> / <i>20% dos alunos faltaram</i>."
+            },
+            {
+                category: "Pronome 'Quem'",
+                front: "Qual é a concordância do verbo quando o sujeito é o pronome relativo <b>'quem'</b>?",
+                back: "Pode concordar com a terceira pessoa do singular ou com o antecedente do pronome (Ex: Fui eu <i>quem paguei</i> / Fui eu <i>quem pagou</i>)."
+            },
+            {
+                category: "Pronome 'Que'",
+                front: "Como o verbo concorda quando o sujeito é o pronome relativo <b>'que'</b>?",
+                back: "Concorda sempre com o antecedente do pronome 'que' (Ex: Fui eu <i>que paguei</i> / Foram eles <i>que fizeram</i>)."
+            },
+            {
+                category: "Partícula 'Se' (APIS)",
+                front: "Como funciona a concordância com o 'se' apassivador (VTI/VTD + Se)?",
+                back: "O verbo concorda em número com o sujeito paciente (Ex: <i>Aluga-se</i> casa / <i>Alugam-se</i> casas)."
+            },
+            {
+                category: "Índice de Indeterminação",
+                front: "Como fica o verbo com o índice de indeterminação do sujeito (VI, VTI ou VL + Se)?",
+                back: "Fica obrigatoriamente na 3ª pessoa do <b>singular</b> (Ex: <i>Precisa-se</i> de funcionários / <i>Vive-se</i> bem aqui)."
+            },
+            {
+                category: "Nomes Plurais Próprios",
+                front: "Como o verbo concorda com nomes próprios no plural (ex: Estados Unidos, Minas Gerais)?",
+                back: "• Sem artigo: verbo no singular (Minas Gerais <i>produz</i> queijo).<br>• Com artigo plural: verbo no plural (Os Estados Unidos <i>declararam</i>)."
+            },
+            {
+                category: "Verbos Dar, Soar e Bater",
+                front: "Nos verbos <b>dar, soar e bater</b> indicando horas, quem é o sujeito?",
+                back: "O relógio, a torre ou o sino. Logo, o verbo concorda com as horas (Ex: O relógio <i>deu</i> duas horas / <i>Bateram</i> duas horas no sino)."
+            },
+
+            // --- CONCORDÂNCIA NOMINAL ---
+            {
+                category: "Adjetivo Anteposto",
+                front: "Quando um único adjetivo vem <b>antes</b> de vários substantivos, com quem ele concorda?",
+                back: "Concorda preferencialmente com o substantivo mais próximo (Ex: Linda <i>casa e jardim</i> / Ótimo <i>livro e apostila</i>)."
+            },
+            {
+                category: "Adjetivo Posposto",
+                front: "Quando o adjetivo vem <b>depois</b> de vários substantivos, como ele concorda?",
+                back: "Vai para o <b>plural</b> (concordando com o gênero predominante ou masculino geral) ou concorda com o mais próximo. Ex: Casa e carro <i>novos</i> / Carro e casa <i>nova</i>."
+            },
+            {
+                category: "Anexo / Incluso",
+                front: "As palavras <b>anexo</b> e <b>incluso</b> variam em gênero e número?",
+                back: "<b>Sim!</b> Funcionam como adjetivos e concordam com o substantivo a que se referem (Ex: Segue <i>anexa</i> a carta / Seguem <i>inclusos</i> os documentos)."
+            },
+            {
+                category: "Obrigado / Muito Obrigada",
+                front: "Como a palavra <b>obrigado</b> deve concordar na fala e na escrita?",
+                back: "Deve concordar em gênero e número com a pessoa que pronuncia a frase (Ex: Disse o homem: 'Muito <i>obrigado</i>' / Disse a mulher: 'Muito <i>obrigada</i>')."
+            },
+            {
+                category: "Meio (Advérbio x Adjetivo)",
+                front: "A palavra <b>meio</b> varia quando significa metade ou um pouco?",
+                back: "• Como advérbio (significa 'um pouco'): é invariável (Ex: Ela estava <i>meio</i> cansada).<br>• Como numeral/adjetivo (metade): varia (Ex: Comprou <i>meia</i> dúzia)."
+            },
+            {
+                category: "Menos / Alerta / Pseudo",
+                front: "As palavras <b>menos, alerta e pseudo</b> variam em plural ou gênero?",
+                back: "São invariáveis! Não existe 'menas' nem plural para alerta ou pseudo (Ex: Havia <i>menos</i> pessoas / Fiquem <i>alerta</i> / Eram <i>pseudo</i> intelectuais)."
+            },
+            {
+                category: "Proibido / É bom / É necessário",
+                front: "Expressões como <b>é proibido, é bom, é necessário</b> variam se o substantivo não tiver artigo?",
+                back: "Se o substantivo vier sem artigo determinativo, a expressão fica no masculino singular (Ex: Cerveja é <i>proibido</i>). Com artigo, varia (Ex: <i>A</i> cerveja é <i>proibida</i>)."
+            },
+            {
+                category: "Bastante",
+                front: "Como saber se <b>bastante</b> varia ou fica invariável?",
+                back: "• Se equivaler a 'muito' (modificando adjetivo/advérbio), é invariável (Ex: Eles estavam <i>bastante</i> felizes).<br>• Se equivaler a 'muitos/muitas' (modificando substantivo), varia (Ex: Havia <i>bastantes</i> livros)."
+            },
+            {
+                category: "Caro / Barato",
+                front: "As palavras <b>caro e barato</b> variam ao indicar preços?",
+                back: "Variam se forem adjetivos ligados a substantivos (Ex: Os carros custam caro? Não, os carros são <i>caros</i> / Os livros saíram <i>baratos</i>)."
+            },
+            {
+                category: "Só / Sós",
+                front: "A palavra <b>só</b> varia quando equivale a sozinho?",
+                back: "<b>Sim!</b> Varia para o plural 'sós' (Ex: Os rapazes ficaram <i>sós</i>). Quando equivale a 'somente/apenas', é invariável."
+            },
+            {
+                category: "Proprio / Mesmo",
+                front: "Os pronomes <b>próprio</b> e <b>mesmo</b> variam ao reforçar um substantivo?",
+                back: "<b>Sim!</b> Concordam com a pessoa a que se referem (Ex: Os <i>próprios</i> alunos fizeram / Elas <i>mesmas</i> resolveram)."
+            },
+            {
+                category: "Tal qual",
+                front: "Como funciona a concordância da expressão comparativa <b>tal qual</b>?",
+                back: "O 'tal' concorda com o termo anterior e o 'qual' concorda com o termo posterior (Ex: O filho é <i>tal qual</i> o pai / Os filhos são <i>tais quais</i> os pais)."
+            },
+            {
+                category: "Haja vista",
+                front: "Qual é a regra de concordância para a expressão <b>haja vista</b> (tendo em vista)?",
+                back: "O verbo 'haja' permanece invariável e o substantivo 'vista' também não flexiona no padrão tradicional (Ex: Haja vista os resultados / Haja vista as provas)."
+            },
+            {
+                category: "Partícula 'Quite'",
+                front: "A palavra <b>quite</b> (em dia com obrigações) varia em número?",
+                back: "<b>Sim!</b> Vai para o plural se o sujeito for plural (Ex: Nós estamos <i>quites</i> com o clube / Estou <i>quite</i> com a tesouraria)."
+            },
+            {
+                category: "Macete de Concurso",
+                front: "Qual é o erro clássico de concordância verbal que as bancas adoram em provas?",
+                back: "Colocar o verbo no plural concordando com o adjunto adnominal da frase em vez do verdadeiro núcleo do sujeito (Ex: 'A folha de pagamento dos servidores <b>causou</b> polêmica', e não 'causaram')."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
