@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Tempos e Modos Verbais</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb;
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .card-content {
+            font-size: 1.7rem; 
+            line-height: 1.5;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.25rem; 
+            text-align: left;
+            color: #34495e;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.4rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.15rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Emprego de Tempos e Modos Verbais para Concursos</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Modos Verbais</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            {
+                category: "Modo Indicativo",
+                front: "O que exprime essencialmente o modo indicativo?",
+                back: "Exprime uma certeza, um fato real, uma ocorrência certa ou um estado positivo no momento em que se fala (Ex: <i>Ele estuda</i> para o concurso)."
+            },
+            {
+                category: "Modo Subjuntivo",
+                front: "Qual é a principal função do modo subjuntivo nas orações?",
+                back: "Indica dúvida, hipótese, possibilidade, desejo ou condição que depende de outro fato (Ex: <i>Caso ele estude</i>, passará)."
+            },
+            {
+                category: "Modo Imperativo",
+                front: "Para que serve o modo imperativo e quais são suas formas?",
+                back: "Serve para expressar ordem, pedido, conselho, convite ou súplica. Divide-se em <b>Imperativo Afirmativo</b> e <b>Imperativo Negativo</b>."
+            },
+            {
+                category: "Presente do Indicativo",
+                front: "Além de indicar o momento atual, que outro valor expressa o presente do indicativo?",
+                back: "Expressa verdades universais, ações habituais e fatos atemporais (Ex: <i>A Terra gira</i> em torno do Sol / <i>Acordo</i> cedo todos os dias)."
+            },
+            {
+                category: "Pretérito Perfeito",
+                front: "Qual é o conceito do pretérito perfeito do indicativo?",
+                back: "Indica um fato totalmente concluído no passado, que aconteceu e terminou em um momento específico (Ex: <i>Ontem estudei</i> crase)."
+            },
+            {
+                category: "Pretérito Imperfeito (Indicativo)",
+                front: "Qual é a ideia central transmitida pelo pretérito imperfeito do indicativo?",
+                back: "Indica uma ação passada que era habitual, contínua ou que estava em andamento no passado quando outra a interrompeu (Ex: <i>Eu lia</i> quando ele chegou)."
+            },
+            {
+                category: "Pretérito Mais-que-perfeito",
+                front: "O que expressa o pretérito mais-que-perfeito do indicativo?",
+                back: "Expressa uma ação passada que ocorreu <i>antes de outra ação também no passado</i> (Ex: Quando cheguei, o trem já <i>partira</i>)."
+            },
+            {
+                category: "Futuro do Presente",
+                front: "Em que contexto se emprega o futuro do presente do indicativo?",
+                back: "Indica um fato certo que acontecerá em um momento posterior ao atual (Ex: <i>Viajaremos</i> nas férias)."
+            },
+            {
+                category: "Futuro do Pretérito",
+                front: "Quais são os principais empregos do futuro do pretérito do indicativo?",
+                back: "Expressa uma ação incerta que dependeria de uma condição, um pedido educado ou uma suposição no passado (Ex: <i>Eu compraria</i> o livro se tivesse dinheiro)."
+            },
+            {
+                category: "Formação do Imperativo",
+                front: "De onde vêm as formas do imperativo afirmativo e negativo?",
+                back: "• <b>Afirmativo:</b> Tu e Vós vêm do Presente do Indicativo sem o 's'; as demais (Você, Nós, Vocês) vêm do Presente do Subjuntivo.<br>• <b>Negativo:</b> Todas as pessoas vêm integralmente do Presente do Subjuntivo precedidas de 'não'."
+            },
+            {
+                category: "Corredor Temporal (Subjuntivo)",
+                front: "Qual tempo do subjuntivo completa logicamente a oração: 'Se ele ___ (fazer) isso agora, teremos problemas'?",
+                back: "O <b>Pretérito Imperfeito do Subjuntivo</b> preenche a lacuna corretamente: 'Se ele <i>fizesse</i> isso agora...' (expressa condição hipotética no presente)."
+            },
+            {
+                category: "Futuro do Subjuntivo",
+                front: "Como se emprega o futuro do subjuntivo nas orações condicionais ou temporais?",
+                back: "Indica uma eventualidade futura. É muito cobrado em provas com o verbo 'pôr', 'vir', 'ter' (Ex: Quando você <i>vier</i>, traga o documento)."
+            },
+            {
+                category: "Futuro do Subjuntivo vs Infinitivo",
+                front: "Qual é o erro clássico de prova na confusão entre futuro do subjuntivo e infinitivo?",
+                back: "Confundir verbos irregulares. Ex: O correto é 'Caso você <i>vir</i> (ver)' ou 'Caso você <i>vier</i> (vir)'? O correto do verbo ver no futuro do subjuntivo é <b>vir</b> (Quando você vir o resultado), e do verbo vir é <b>vier</b>."
+            },
+            {
+                category: "Infinitivo Pessoal",
+                front: "Quando o infinitivo pessoal deve ser flexionado (conjugado)?",
+                back: "Quando possui um sujeito próprio e explícito ou diferente da oração principal, para dar clareza ao agente da ação (Ex: Para <i>estudarmos</i> melhor, silêncio)."
+            },
+            {
+                category: "Infinitivo Impessoal",
+                front: "Em que situações o infinitivo permanece invariável (impessoal)?",
+                back: "Quando tem sentido genérico, integra uma locução verbal ou se liga a verbos causativos/sensitivos (Ex: É proibido <i>fumar</i> / Deixei-os <i>entrar</i>)."
+            },
+            {
+                category: "Concordância Verbal de Tempo",
+                front: "Como articular corretamente o subjuntivo com o passado: 'Queria que ele ___ (estudar) mais'?",
+                back: "Usa-se o pretérito imperfeito do subjuntivo para harmonizar com o verbo principal no passado: 'Queria que ele <i>estudasse</i> mais'."
+            },
+            {
+                category: "Modo Indicativo na Hipótese",
+                front: "O presente do indicativo pode ser usado para expressar o futuro em frases do dia a dia?",
+                back: "<b>Sim!</b> É comum na linguagem coloquial e aceita em contextos informais substituir o futuro do presente pelo presente do indicativo (Ex: Amanhã <i>vou</i> ao médico em vez de 'irei')."
+            },
+            {
+                category: "Uso do Pretérito Mais-que-perfeito",
+                front: "Como a forma sintética do mais-que-perfeito (ex: 'farára') é mais substituída no português moderno?",
+                back: "É amplamente substituída pela forma composta equivalente: <i>tinha feito</i> ou <i>havia feito</i> (Ex: Quando cheguei, ele já <i>tinha saído</i>)."
+            },
+            {
+                category: "Locuções Verbais de Futuro",
+                front: "Como o futuro do pretérito pode ser substituído em locuções de intenção passada?",
+                back: "Pode ser substituído pelo pretérito imperfeito do indicativo para indicar uma ação planejada que acabou não ocorrendo (Ex: Eu <i>viajaria</i> amanhã = Eu <i>viajava</i> amanhã)."
+            },
+            {
+                category: "Imperativo e Pronomes",
+                front: "Qual é a regra de colocação pronominal com o imperativo afirmativo?",
+                back: "Com o imperativo afirmativo, a ênclise é <b>obrigatória</b> (o pronome vem depois do verbo). Ex: <i>Faça-o</i> agora / <i>Dize-me</i> a verdade."
+            },
+            {
+                category: "Imperativo Negativo e Próclise",
+                front: "Onde o pronome deve ficar obrigatoriamente no imperativo negativo?",
+                back: "Devido à presença da palavra negativa 'não', ocorre próclise obrigatória (o pronome vem antes do verbo). Ex: <i>Não o faça</i> / <i>Não me digas</i>."
+            },
+            {
+                category: "Haver Impessoal no Passado",
+                front: "Qual tempo e modo verbal assume o verbo 'haver' no sentido de existir ou tempo decorrido?",
+                back: "Permanece sempre na <b>3ª pessoa do singular</b> (invariável). Ex: <i>Houve</i> muitos acidentes / <i>Faz</i> muitos anos que não o vejo."
+            },
+            {
+                category: "Particípio Regular e Irregular",
+                front: "O que são verbos abundantes no particípio e como usá-los corretamente?",
+                back: "São verbos que possuem duas formas de particípio. Em regra, usa-se a forma <b>regular</b> (-ado/-ido) com os verbos auxiliares <i>ter e haver</i>, e a forma <b>irregular</b> com <i>ser e estar</i> (Ex: Tinha <i>imprimido</i> / Foi <i>impresso</i>)."
+            },
+            {
+                category: "Verbos Anômalos",
+                front: "O que caracteriza os verbos 'ser' e 'ir' quanto aos seus radicais nos tempos verbais?",
+                back: "Eles sofrem radicais totalmente diferentes ao longo da conjugação (ex: <i>fui</i> pode vir do verbo ser ou do verbo ir, dependendo inteiramente do contexto da frase)."
+            },
+            {
+                category: "Futuro do Pretérito na Incerteza",
+                front: "Qual é o valor expressivo do futuro do pretérito ao indicar uma dúvida ou rumor jornalístico?",
+                back: "É usado para expressar um boato ou informação cuja veracidade não foi confirmada pelo emissor (Ex: O parlamentar <i>renunciaria</i> caso fosse investigado)."
+            },
+            {
+                category: "Presente Histórico",
+                front: "O que é o 'Presente Histórico' (ou atemporal) cobrado em provas de interpretação?",
+                back: "É o uso do presente do indicativo para narrar fatos passados, aproximando o leitor da ação para dar maior vivacidade ao texto (Ex: Em 1500, Cabral <i>chega</i> ao Brasil)."
+            },
+            {
+                category: "Condicional Irreal (Se + Subjuntivo)",
+                front: "Qual é a estrutura clássica de tempo verbal para expressar uma condição impossível no passado?",
+                back: "Usa-se o <b>Pretérito Mais-que-perfeito do Subjuntivo</b> na oração condicional combinado com o <b>Futuro do Pretérito Composto</b> na principal (Ex: Se eu <i>tivesse estudado</i>, teria passado)."
+            },
+            {
+                category: "Subjuntivo em Orações Independentes",
+                front: "O modo subjuntivo pode aparecer em frases isoladas sem conjunção?",
+                back: "<b>Sim!</b> Nesses casos, expressa um desejo intenso ou praga (Ex: <i>Viva</i> a pátria! / <i>Consiga</i> você o que quiser!)."
+            },
+            {
+                category: "Infinitivo com Preposição 'a'",
+                front: "O infinitivo regido pela preposição 'a' deve ser flexionado se o sujeito for indeterminado?",
+                back: "Se o sujeito for o mesmo da oração principal ou indeterminado em sentido geral, costuma ficar no infinitivo impessoal (Ex: Começaram <i>a protestar</i>)."
+            },
+            {
+                category: "Macete Geral de Prova",
+                front: "Como diferenciar rapidamente o pretérito imperfeito (-va/-ia) do futuro do pretérito (-ria)?",
+                back: "• O imperfeito indica continuidade/hábito no passado (eu estud<i>ava</i>).<br>• O futuro do pretérito indica incerteza, dúvida ou consequência condicionada (eu estud<i>aria</i> se pudesse)."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
