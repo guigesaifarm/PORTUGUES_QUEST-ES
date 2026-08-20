@@ -219,7 +219,368 @@
     <!-- JavaScript Quiz Logic -->
     <script>
         // Database of 20 Portuguese Questions
-        
+        const questionsData = [
+    {
+        id: 1,
+        category: "Colocação Pronominal: Próclise Obrigatória",
+        question: "Assinale a alternativa em que a colocação pronominal obedece à norma-padrão devido à presença de fator de atração:",
+        options: [
+            { text: "Não se resolverão os problemas sem um planejamento adequado.", isCorrect: true, rationale: "A palavra de sentido negativo ('Não') é fator de atração obrigatório para a próclise." },
+            { text: "Não resolverão-se os problemas sem um planejamento adequado.", isCorrect: false, rationale: "Incorreto: a presença da palavra negativa 'Não' impede a ênclise." },
+            { text: "Resolverão-se os problemas assim que houver planejamento.", isCorrect: false, rationale: "Incorreto: o verbo no futuro do presente não admite ênclise na norma culta." },
+            { text: "Se resolverão os problemas com o tempo.", isCorrect: false, rationale: "Incorreto: não se deve iniciar frases com pronome oblíquo átono na norma-padrão." }
+        ],
+        hint: "Palavras de sentido negativo atraem o pronome oblíquo para antes do verbo (próclise)."
+    },
+    {
+        id: 2,
+        category: "Colocação Pronominal: Mesóclise",
+        question: "Considere a oração: 'O diretor *apresentará* os novos projetos amanhã.' A substituição do termo 'os novos projetos' pelo pronome correspondente na norma-padrão resulta em:",
+        options: [
+            { text: "O diretor apresentá-los-á amanhã.", isCorrect: true, rationale: "Com o verbo no futuro do presente no início ou meio da frase sem fator atrativo, emprega-se a mesóclise. O pronome 'os' vira '-los' após verbo terminado em 'r'." },
+            { text: "O diretor apresentará-os amanhã.", isCorrect: false, rationale: "Incorreto: o verbo no futuro do presente não admite ênclise." },
+            { text: "O diretor os apresentará amanhã.", isCorrect: false, rationale: "Incorreto segundo a norma estrita sem palavra atrativa prévia, embora aceito na linguagem informal; a regra clássica exige mesóclise." },
+            { text: "O diretor apresentará-lhes amanhã.", isCorrect: false, rationale: "Incorreto: 'os novos projetos' é objeto direto, exigindo 'os/los', e não 'lhes'." }
+        ],
+        hint: "Verbos no futuro sem palavra atrativa antes exigem o pronome intercalado (mesóclise)."
+    },
+    {
+        id: 3,
+        category: "Formas de Tratamento: Concordância",
+        question: "Assinale a alternativa que apresenta a concordância correta ao empregar o pronome de tratamento 'Vossa Excelência':",
+        options: [
+            { text: "Vossa Excelência encaminhará seus relatórios ao plenário.", isCorrect: true, rationale: "Os pronomes de tratamento exigem concordância verbal e pronominal de 3ª pessoa (sua/seu/ele/se), embora se refiram à 2ª pessoa do discurso." },
+            { text: "Vossa Excelência encaminhará vossos relatórios ao plenário.", isCorrect: false, rationale: "Incorreto: misturou-se a 3ª pessoa com o pronome possessivo de 2ª pessoa do plural ('vossos')." },
+            { text: "Vossa Excelência encaminhareis vossos relatórios ao plenário.", isCorrect: false, rationale: "Incorreto: flexionou-se o verbo na 2ª pessoa do plural ('encaminhareis')." },
+            { text: "Vossa Excelência encaminharás teus relatórios ao plenário.", isCorrect: false, rationale: "Incorreto: usou-se a 2ª pessoa do singular ('encaminharás/teus')." }
+        ],
+        hint: "Pronomes de tratamento exigem verbos e pronomes possessivos sempre em 3ª pessoa."
+    },
+    {
+        id: 4,
+        category: "Emprego de Pronomes Pessoais: Mim vs. Eu",
+        question: "Assinale a alternativa em que o emprego dos pronomes pessoais está em conformidade com a norma-padrão:",
+        options: [
+            { text: "Entregaram os documentos para eu analisar antes da reunião.", isCorrect: true, rationale: "'Eu' funciona como sujeito do verbo no infinitivo ('analisar'). Pronomes do caso reto exercem função de sujeito." },
+            { text: "Entregaram os documentos para mim analisar antes da reunião.", isCorrect: false, rationale: "Incorreto: 'mim' é pronome oblíquo e não pode exercer a função de sujeito de um verbo." },
+            { text: "Entre eu e você não deve haver qualquer mal-entendido.", isCorrect: false, rationale: "Incorreto: após preposição ('entre'), utiliza-se a forma oblíqua 'mim' ('entre mim e você')." },
+            { text: "Nada de grave ocorreu entre tu e eu.", isCorrect: false, rationale: "Incorreto: rege-se 'entre ti e mim' devido à presença da preposição." }
+        ],
+        hint: "Use 'eu' quando o pronome for o sujeito que pratica a ação do verbo a seguir; use 'mim' após preposição quando não houver verbo praticado por ele."
+    },
+    {
+        id: 5,
+        category: "Formas de Tratamento: Vossa vs. Sua",
+        question: "Na redação de um ofício dirigido a um Governador de Estado, o emprego correto dos pronomes de tratamento ao se falar COM e SOBRE a autoridade é, respectivamente:",
+        options: [
+            { text: "Vossa Excelência (com quem se fala) e Sua Excelência (de quem se fala).", isCorrect: true, rationale: "Usa-se 'Vossa' ao dirigir-se diretamente à autoridade (2ª pessoa) e 'Sua' ao referir-se a ela em terceira pessoa." },
+            { text: "Sua Excelência (com quem se fala) e Vossa Excelência (de quem se fala).", isCorrect: false, rationale: "Incorreto: os papéis estão invertidos." },
+            { text: "Vossa Senhoria (com quem se fala) e Sua Excelência (de quem se fala).", isCorrect: false, rationale: "Incorreto: governadores exigem o tratamento 'Excelência', e não 'Senhoria'." },
+            { text: "Vossa Magnificência (com quem se fala) e Sua Magnificência (de quem se fala).", isCorrect: false, rationale: "Incorreto: 'Magnificência' é exclusivo para reitores de universidades." }
+        ],
+        hint: "'Vossa' é para falar diretamente COM a pessoa; 'Sua' é para falar SOBRE a pessoa."
+    },
+    {
+        id: 6,
+        category: "Colocação Pronominal: Orações Subordinadas",
+        question: "Na frase 'Exijo que ________ acerca dos fatos ocorridos', a lacuna deve ser preenchida, segundo a norma-padrão, por:",
+        options: [
+            { text: "me informem", isCorrect: true, rationale: "A conjunção subordinativa 'que' atua como fator de atração obrigatório da próclise." },
+            { text: "informem-me", isCorrect: false, rationale: "Incorreto: a conjunção subordinativa impede o uso da ênclise." },
+            { text: "informem-se-me", isCorrect: false, rationale: "Incorreto: construção inexistente no português padrão." },
+            { text: "me informem-se", isCorrect: false, rationale: "Incorreto: duplicação indevida de pronomes." }
+        ],
+        hint: "Conjunções subordinativas (como 'que', 'se', 'porque') atram o pronome para antes do verbo."
+    },
+    {
+        id: 7,
+        category: "Uso de Pronomes Oblíquos: O/A vs. Lhe",
+        question: "Assinale a frase em que o pronome destacado foi utilizado incorretamente de acordo com a regência do verbo:",
+        options: [
+            { text: "O advogado informou-lhe sobre o andamento do processo.", isCorrect: false, rationale: "Incorreto: no sentido tradicional de avisar, 'informar' é VTD ou VTDI. Ao usar a preposição 'sobre', o complemento direto deve ser a pessoa ('informou-o sobre')." },
+            { text: "Respeito-o por sua integridade profissional.", isCorrect: true, rationale: "'Respeitar' é VTD, exigindo pronome de objeto direto ('o')." },
+            { text: "A resposta do candidato não lhe agradou.", isCorrect: true, rationale: "'Agradar' no sentido de ser agradável é VTI, regendo objeto indireto ('lhe')." },
+            { text: "Entregou-lhe os documentos assinados.", isCorrect: true, rationale: "'Entregar' é VTDI, exigindo 'lhe' para o objeto indireto (pessoa)." }
+        ],
+        hint: "Pronomes 'o/a' substituem objetos diretos (sem preposição); 'lhe' substitui objetos indiretos (com preposição exigida pelo verbo)."
+    },
+    {
+        id: 8,
+        category: "Pronomes Demonstrativos: Este, Esse e Aquele",
+        question: "Assinale a alternativa que emprega corretamente os pronomes demonstrativos no espaço e no tempo:",
+        options: [
+            { text: "Este ano em que estamos tem sido de intensos aprendizados.", isCorrect: true, rationale: "'Este' refere-se ao tempo presente/atual no qual o falante se encontra." },
+            { text: "Esse ano em que estamos tem sido de intensos aprendizados.", isCorrect: false, rationale: "Incorreto: 'esse' refere-se a um passado ou futuro próximo, não ao momento presente exato." },
+            { text: "Pegue esse livro que está aqui na minha mão.", isCorrect: false, rationale: "Incorreto: para objetos próximos do falante, usa-se 'este'." },
+            { text: "Esta caneta aí com você é muito boa.", isCorrect: false, rationale: "Incorreto: para objetos próximos do ouvinte, usa-se 'essa'." }
+        ],
+        hint: "'Este' usa-se para o presente/perto de quem fala; 'Esse' para o perto de quem ouve; 'Aquele' para o distante de ambos."
+    },
+    {
+        id: 9,
+        category: "Pronomes Demonstrativos: Anáfora e Catáfora",
+        question: "Analise a frase: 'Saúde e educação são prioritárias: ____ garante a formação humana; ____, a qualidade de vida.' As lacunas são preenchidas corretamente por:",
+        options: [
+            { text: "esta / aquela", isCorrect: true, rationale: "'Esta' retoma o elemento mencionado por último ('educação'); 'aquela' retoma o primeiro elemento mencionado ('saúde')." },
+            { text: "aquela / esta", isCorrect: false, rationale: "Incorreto: inverteu-se a ordem de referência anafórica." },
+            { text: "essa / esta", isCorrect: false, rationale: "Incorreto: para contrastar dois elementos já ditos, usa-se o par 'este/aquele'." },
+            { text: "esta / essa", isCorrect: false, rationale: "Incorreto: não faz a distinção correta entre o termo mais próximo e o mais distante." }
+        ],
+        hint: "Em citações duplas: 'este' retoma o elemento mais próximo (último dito); 'aquele' retoma o mais distante (primeiro dito)."
+    },
+    {
+        id: 10,
+        category: "Pronomes Relativos: Regência e Preposição",
+        question: "Assinale a opção em que a preposição antes do pronome relativo 'cujo' foi empregada de forma correta:",
+        options: [
+            { text: "Este é o autor de cuja obra todos gostam.", isCorrect: true, rationale: "O verbo 'gostar' exige a preposição 'de' ('gostam de algo'), que deve anteceder o pronome relativo 'cujo'." },
+            { text: "Este é o autor cuja a obra todos gostam.", isCorrect: false, rationale: "Incorreto: não se usa artigo após o pronome 'cujo' e faltou a preposição exigida por 'gostar'." },
+            { text: "Este é o autor que a cuja obra todos gostam.", isCorrect: false, rationale: "Incorreto: pleonasmo pronominal inadequado." },
+            { text: "Este é o autor em cuja obra todos simpatizam.", isCorrect: false, rationale: "Incorreto: 'simpatizar' exige a preposição 'com' ('com cuja obra')." }
+        ],
+        hint: "Se o verbo da oração relativa exigir preposição, ela deve ser colocada IMEDIATAMENTE ANTES do pronome relativo."
+    },
+    {
+        id: 11,
+        category: "Colocação Pronominal: Advérbios sem Vírgula",
+        question: "Considere a frase: 'Sempre ________ com dedicação aos estudos.' A boa norma gramatical determina o preenchimento por:",
+        options: [
+            { text: "se dedicou", isCorrect: true, rationale: "O advérbio 'Sempre' (sem pausa/vírgula) atua como fator de atração atrativo, impondo a próclise." },
+            { text: "dedicou-se", isCorrect: false, rationale: "Incorreto: o advérbio atrativo impede a ênclise." },
+            { text: "dedicar-se-á", isCorrect: false, rationale: "Incorreto: havendo palavra atrativa, a próclise prevalece até sobre a mesóclise." },
+            { text: "se dedicará-se", isCorrect: false, rationale: "Incorreto: redundância pronominal." }
+        ],
+        hint: "Advérbios não seguidos de vírgula atraem o pronome oblíquo obrigatoriamente."
+    },
+    {
+        id: 12,
+        category: "Pronomes Oblíquos com Terminações Verbais (-r, -s, -z)",
+        question: "Ao substituir a expressão em destaque em 'Precisamos *fazer os relatórios*', obtém-se a forma correta:",
+        options: [
+            { text: "Precisamos fazê-los.", isCorrect: true, rationale: "Verbos terminados em -r, -s ou -z perdem essa consoante final ao se unirem aos pronomes o, a, os, as, transformando-os em lo, la, los, las." },
+            { text: "Precisamos fazer-os.", isCorrect: false, rationale: "Incorreto: mantém a consoante final sem a devida assimilação fonética." },
+            { text: "Precisamos fazê-nos.", isCorrect: false, rationale: "Incorreto: uso de pronome inapropriado para a 3ª pessoa do plural." },
+            { text: "Precisamos fazer-lhes.", isCorrect: false, rationale: "Incorreto: 'os relatórios' é objeto direto, rejeitando 'lhes'." }
+        ],
+        hint: "Verbos terminados em R, S ou Z perdem a letra final e o pronome ganha a letra 'L' (lo, la, los, las)."
+    },
+    {
+        id: 13,
+        category: "Pronomes Oblíquos com Terminações Nasais",
+        question: "A substituição do complemento na frase 'Os diretores *entregaram os prêmios* aos vencedores' gera a seguinte forma:",
+        options: [
+            { text: "Os diretores entregaram-nos aos vencedores.", isCorrect: true, rationale: "Verbos terminados em som nasal (~, m, ão, õe) exigem as formas no, na, nos, nas para o objeto direto." },
+            { text: "Os diretores entregaram-los aos vencedores.", isCorrect: false, rationale: "Incorreto: 'los' é usado apenas após verbos terminados em -r, -s ou -z." },
+            { text: "Os diretores entregaram-os aos vencedores.", isCorrect: false, rationale: "Incorreto: falta a consoante de ligação nasal ('n')." },
+            { text: "Os diretores entregaram-lhes aos vencedores.", isCorrect: false, rationale: "Incorreto: 'os prêmios' é objeto direto; 'lhes' seria o objeto indireto." }
+        ],
+        hint: "Após verbos com terminação nasal (como 'entregaram'), acrescenta-se a letra 'N' ao pronome (no, na, nos, nas)."
+    },
+    {
+        id: 14,
+        category: "Colocação Pronominal: Locuções Verbais com Gerúndio",
+        question: "Assinale a alternativa com colocação pronominal INCORRETA na locução verbal:",
+        options: [
+            { text: "Não devemos se afastar dos nossos objetivos.", isCorrect: false, rationale: "Incorreto: o pronome 'se' não pode ficar solto entre o verbo auxiliar e o principal sem hífem ou sem ser atraído pela palavra negativa 'Não' ('Não nos devemos afastar' ou 'Não devemos afastar-nos')." },
+            { text: "O professor estava-nos explicando a matéria.", isCorrect: true, rationale: "Correto: ênclise ao verbo auxiliar em locução verbal." },
+            { text: "Não nos tínhamos preparado para o exame.", isCorrect: true, rationale: "Correto: palavra negativa atrai o pronome para antes do verbo auxiliar." },
+            { text: "Eles foram-se retirando lentamente.", isCorrect: true, rationale: "Correto: pronome enclítico ao verbo auxiliar." }
+        ],
+        hint: "Em locuções verbais com palavra negativa antes, o pronome atrai-se para antes do auxiliar ou une-se por hífem ao verbo principal."
+    },
+    {
+        id: 15,
+        category: "Pronome Possessivo e Ambiguidade",
+        question: "Na frase 'O chefe conversou com o funcionário sobre *seu* rendimento', ocorre ambiguidade. A reescrita que elimina totalmente o problema mantendo o sentido é:",
+        options: [
+            { text: "O chefe conversou com o funcionário sobre o rendimento deste.", isCorrect: true, rationale: "O uso de 'deste' (ou 'daquele') especifica exatamente a quem pertence o rendimento (no caso, ao funcionário)." },
+            { text: "O chefe conversou com o funcionário sobre o seu próprio rendimento.", isCorrect: false, rationale: "Incorreto: a expressão 'seu próprio' ainda pode se referir tanto ao chefe quanto ao funcionário." },
+            { text: "O chefe conversou, sobre seu rendimento, com o funcionário.", isCorrect: false, rationale: "Incorreto: a alteração de ordem não resolve a dúvida sobre a posse." },
+            { text: "O chefe, sobre o seu rendimento, conversou com o funcionário.", isCorrect: false, rationale: "Incorreto: embora incline o sentido para o chefe, gramaticalmente mantém margem à dúvida." }
+        ],
+        hint: "Para eliminar a ambiguidade do pronome 'seu', utilize expressões explicativas como 'dele', 'dela' ou 'deste'."
+    },
+    {
+        id: 16,
+        category: "Pronomes Relativos: Emprego de 'Onde'",
+        question: "Assinale a alternativa em que o pronome relativo 'onde' está empregado de acordo com a norma culta:",
+        options: [
+            { text: "A biblioteca da faculdade é um local onde encontro paz para estudar.", isCorrect: true, rationale: "O pronome relativo 'onde' deve ser utilizado exclusivamente para indicar lugar físico concreto." },
+            { text: "Vivemos uma época onde as informações circulam muito rápido.", isCorrect: false, rationale: "Incorreto: 'época' é conceito temporal, devendo-se usar 'em que' ou 'na qual'." },
+            { text: "Ele apresentou um projeto onde constavam várias falhas.", isCorrect: false, rationale: "Incorreto: 'projeto' não é lugar físico; deve-se usar 'no qual' ou 'em que'." },
+            { text: "Foi aprovada uma lei onde se proibiu o fumo em locais fechados.", isCorrect: false, rationale: "Incorreto: 'lei' não é espaço físico; o correto é 'pela qual' ou 'na qual'." }
+        ],
+        hint: "O pronome 'onde' só pode ser usado para se referir a LUGARES FÍSICOS concretos."
+    },
+    {
+        id: 17,
+        category: "Formas de Tratamento: Uniformidade de Tratamento",
+        question: "Assinale a frase que respeita a uniformidade de tratamento ao longo do período:",
+        options: [
+            { text: "Se tu quiseres vencer, cumpre os teus deveres diários.", isCorrect: true, rationale: "Mantida a 2ª pessoa do singular em toda a estrutura ('tu quiseres', imperativo 'cumpre', 'teus')." },
+            { text: "Se tu quiseres vencer, cumpra os teus deveres diários.", isCorrect: false, rationale: "Incorreto: misturou 2ª pessoa do singular ('tu/teus') com imperativo de 3ª pessoa ('cumpra')." },
+            { text: "Se você quiser vencer, cumpre os seus deveres diários.", isCorrect: false, rationale: "Incorreto: 'você' exige imperativo de 3ª pessoa ('cumpra'), e não de 2ª pessoa ('cumpre')." },
+            { text: "Faze o teu trabalho e você alcançará o sucesso.", isCorrect: false, rationale: "Incorreto: mistura da 2ª pessoa ('faze/teu') com a 3ª pessoa ('você')." }
+        ],
+        hint: "Não misture as pessoas do discurso: se começar com 'tu/teu', mantenha verbos e pronomes em 2ª pessoa; se usar 'você/seu', use 3ª pessoa."
+    },
+    {
+        id: 18,
+        category: "Colocação Pronominal: Orações Optativas/Exclamativas",
+        question: "Na frase 'Que Deus nos abençoe!', a próclise é obrigatória porque:",
+        options: [
+            { text: "Trata-se de oração optativa (que exprime desejo), que atrai o pronome para antes do verbo.", isCorrect: true, rationale: "Orações optativas iniciadas por palavras de sentido exclamativo ou de desejo exigem próclise." },
+            { text: "O verbo está no modo imperativo afirmativo.", isCorrect: false, rationale: "Incorreto: o verbo 'abençoe' está no presente do subjuntivo exercendo valor optativo." },
+            { text: "O pronome funciona como sujeito da oração.", isCorrect: false, rationale: "Incorreto: o sujeito é 'Deus'; 'nos' é objeto direto." },
+            { text: "Trata-se de uma oração subordinada adjetiva restritiva.", isCorrect: false, rationale: "Incorreto: é uma oração absoluta optativa." }
+        ],
+        hint: "Frases que exprimem desejos (optativas) atraem o pronome para antes do verbo."
+    },
+    {
+        id: 19,
+        category: "Pronome Indefinido como Fator de Próclise",
+        question: "Assinale a opção em que a colocação pronominal está CORRETA devido à presença de pronome indefinido:",
+        options: [
+            { text: "Tudo me incomoda neste ambiente barulhento.", isCorrect: true, rationale: "O pronome indefinido 'Tudo' funciona como fator de atração obrigatório para o pronome oblíquo (próclise)." },
+            { text: "Tudo incomoda-me neste ambiente barulhento.", isCorrect: false, rationale: "Incorreto: a presença do pronome indefinido proíbe a ênclise." },
+            { text: "Alguém chamou-me na portaria do prédio.", isCorrect: false, rationale: "Incorreto: 'Alguém' é pronome indefinido e exige próclise ('Alguém me chamou')." },
+            { text: "Poucos apresentaram-se para o teste.", isCorrect: false, rationale: "Incorreto: 'Poucos' é pronome indefinido e atrai o pronome ('Poucos se apresentaram')." }
+        ],
+        hint: "Pronomes indefinidos (tudo, nada, alguém, poucos, todos, etc.) são fatores de atração da próclise."
+    },
+    {
+        id: 20,
+        category: "Emprego dos Pronomes Oblíquos Tônicos",
+        question: "Assinale a alternativa em que o pronome oblíquo tônico foi empregado de acordo com a norma culta:",
+        options: [
+            { text: "Ele trouxe o documento consigo para a reunião.", isCorrect: true, rationale: "'Consigo' é reflexivo; seu uso é correto quando o sujeito pratica e recebe a ação sobre si mesmo ('Ele... consigo')." },
+            { text: "Quero falar consigo sobre um assunto urgente.", isCorrect: false, rationale: "Incorreto na norma culta do Brasil: 'consigo' é estritamente reflexivo. O correto para 2ª pessoa/você é 'com o senhor' ou 'com você'." },
+            { text: "Nós gostamos muito de si.", isCorrect: false, rationale: "Incorreto: 'si' é pronomes reflexivo de 3ª pessoa, não devendo substituir 'você' ou 'nós'." },
+            { text: "A decisão depende de tu.", isCorrect: false, rationale: "Incorreto: após preposição, deve-se usar a forma oblíqua 'ti' ('depende de ti')." }
+        ],
+        hint: "'Consigo' e 'si' só devem ser usados quando forem reflexivos (quando a ação volta para o próprio sujeito)."
+    },
+    {
+        id: 21,
+        category: "Pronome Cujo e Propriedade",
+        question: "Assinale a frase em que o pronome 'cujo' apresenta emprego gramatical TOTALMENTE CORRETO:",
+        options: [
+            { text: "A empresa cujos diretores renunciaram passa por crise.", isCorrect: true, rationale: "'Cujos' concorda em gênero e número com o consequente ('diretores') e estabelece posse sem o uso indevido de artigo." },
+            { text: "A empresa cujos os diretores renunciaram passa por crise.", isCorrect: false, rationale: "Incorreto: é erro grave colocar artigo (o, a, os, as) logo após 'cujo'." },
+            { text: "A empresa cuja a diretoria renunciou passa por crise.", isCorrect: false, rationale: "Incorreto: presença inadequada do artigo 'a' após 'cuja'." },
+            { text: "A empresa cujo diretores renunciaram passa por crise.", isCorrect: false, rationale: "Incorreto: falta de concordância em número com 'diretores' ('cujos')." }
+        ],
+        hint: "O pronome 'cujo' flexiona em gênero e número com a coisa possuída e NUNCA aceita artigo depois dele."
+    },
+    {
+        id: 22,
+        category: "Colocação Pronominal: Infinitivo Flexionado ou Não",
+        question: "Na frase 'Ao ________ no recinto, os convidados mantiveram silêncio', o preenchimento aceito com ênclise é:",
+        options: [
+            { text: "sentarem-se", isCorrect: true, rationale: "Com verbo no infinitivo, a ênclise é sempre permitida segundo a norma-padrão, mesmo com preposição antecedente." },
+            { text: "se sentarem-se", isCorrect: false, rationale: "Incorreto: erro por duplicação do pronome." },
+            { text: "sentar-se-em", isCorrect: false, rationale: "Incorreto: desinência de plural colocada incorretamente após o pronome." },
+            { text: "se sentar-se", isCorrect: false, rationale: "Incorreto: repetição indevida." }
+        ],
+        hint: "Verbos no infinitivo aceitam ênclise de forma muito liberal na língua portuguesa."
+    },
+    {
+        id: 23,
+        category: "Pronomes Demonstrativos e Termos Já Ditos",
+        question: "Ao fazer referência a um pensamento ou fato inteiro que já foi mencionado no texto anterior, deve-se usar:",
+        options: [
+            { text: "Isso (ex: 'A inflação subiu no último trimestre. Isso preocupa os economistas.').", isCorrect: true, rationale: "'Isso' tem valor anafórico, servindo para resgatar uma informação, fato ou frase inteira já citada anteriormente." },
+            { text: "Isto (ex: 'A inflação subiu no último trimestre. Isto preocupa os economistas.').", isCorrect: false, rationale: "Incorreto: 'Isto' tem valor predominantemente catafórico (anuncia algo que ainda será dito)." },
+            { text: "Aquilo exclusivamente.", isCorrect: false, rationale: "Incorreto: 'Aquilo' refere-se a algo distante temporalmente ou no espaço, não sendo a escolha anafórica padrão imediata." },
+            { text: "Mesmo.", isCorrect: false, rationale: "Incorreto: 'mesmo' não deve ser usado como pronome pessoal/substantivo de retomada pura." }
+        ],
+        hint: "Para retomar algo já falado no texto (anáfora), utilize 'Isso'; para anunciar algo que vai falar (catáfora), use 'Isto'."
+    },
+    {
+        id: 24,
+        category: "Colocação Pronominal em Início de Frase",
+        question: "Assinale a opção que reescreve a frase 'Me empresta o livro de gramática?' de acordo com a norma-padrão:",
+        options: [
+            { text: "Empresta-me o livro de gramática.", isCorrect: true, rationale: "Na norma-padrão estrita, é proibido iniciar oração com pronome oblíquo átono, devendo-se usar a ênclise." },
+            { text: "Empresta me o livro de gramática.", isCorrect: false, rationale: "Incorreto: a ênclise exige a ligação por hífem." },
+            { text: "Me empresta, por favor, o livro de gramática.", isCorrect: false, rationale: "Incorreto: continua iniciando a frase com pronome átono." },
+            { text: "Lhe empresta o livro de gramática.", isCorrect: false, rationale: "Incorreto: além de iniciar com pronome átono, trocou-se o pronome e a regência." }
+        ],
+        hint: "Nunca inicie orações em norma-padrão com pronomes oblíquo átonos (me, te, se, nos, vos, lhe, os)."
+    },
+    {
+        id: 25,
+        category: "Pronomes Oblíquos Neutros (O, Isso) com Valor Conceitual",
+        question: "Na frase 'Eles pensavam que o projeto seria aprovado, mas não **o** foi', o pronome destacado funciona como:",
+        options: [
+            { text: "Pronome demonstrativo neutro, equivalendo a 'isso' ou 'tal'.", isCorrect: true, rationale: "O pronome 'o' (e suas variações) assume valor demonstrativo neutro antecedendo o verbo ser quando retoma um predicativo ('mas não foi isso/aprovado')." },
+            { text: "Pronome pessoal do caso reto funcionando como sujeito.", isCorrect: false, rationale: "Incorreto: 'o' não é pronome do caso reto." },
+            { text: "Artigo definido masculino singular.", isCorrect: false, rationale: "Incorreto: acompanha verbo e substitui uma ideia, não um substantivo." },
+            { text: "Pronome relativo posposto.", isCorrect: false, rationale: "Incorreto: não liga orações com valor relativo." }
+        ],
+        hint: "Quando 'o' significa 'isso' ou 'tal' (geralmente acompanhando o verbo ser), é um pronome demonstrativo neutro."
+    },
+    {
+        id: 26,
+        category: "Colocação Pronominal: Gerúndio Precedido de Preposição 'Em'",
+        question: "A frase que atende perfeitamente à regra gramatical referente ao gerúndio regido da preposição 'em' é:",
+        options: [
+            { text: "Em se tratando de investimentos, a cautela é fundamental.", isCorrect: true, rationale: "A construção 'Em + se + gerúndio' exige obrigatoriamente a próclise do pronome 'se'." },
+            { text: "Em tratando-se de investimentos, a cautela é fundamental.", isCorrect: false, rationale: "Incorreto: a estrutura 'Em + gerúndio' atrai obrigatoriamente o pronome para a posição proclítica." },
+            { text: "Em se tratar-se de investimentos, a cautela é fundamental.", isCorrect: false, rationale: "Incorreto: alteração indevida do tempo verbal e duplicação do pronome." },
+            { text: "Tratando-se em de investimentos, a cautela é fundamental.", isCorrect: false, rationale: "Incorreto: estrutura sintática totalmente desorganizada." }
+        ],
+        hint: "A estrutura fixa 'Em + gerúndio' exige obrigatoriamente o pronome no meio ('Em se tratando...')."
+    },
+    {
+        id: 27,
+        category: "Formas de Tratamento em Documentos Oficiais",
+        question: "De acordo com o Manual de Redação da Presidência da República, o vocativo correto a ser empregado em um expediente dirigido ao Presidente da República é:",
+        options: [
+            { text: "Excelentíssimo Senhor Presidente da República,", isCorrect: true, rationale: "O vocativo 'Excelentíssimo Senhor' é de uso exclusivo para os Chefes dos Poderes (Executivo, Legislativo e Judiciário)." },
+            { text: "Senhor Presidente da República,", isCorrect: false, rationale: "Incorreto: reservado aos demais cargos de nível elevado que usam tratamento de Excelência, mas não aos Chefes de Poder." },
+            { text: "Vossa Excelência o Presidente da República,", isCorrect: false, rationale: "Incorreto: 'Vossa Excelência' é pronome de tratamento dentro do texto, não a fórmula de vocativo inicial." },
+            { text: "Ilustríssimo Senhor Presidente da República,", isCorrect: false, rationale: "Incorreto: 'Ilustríssimo' é vocativo destinado a autoridades que não recebem o tratamento de Excelência." }
+        ],
+        hint: "Para os Chefes dos Três Poderes (Presidência, Congresso e STF), o vocativo exige 'Excelentíssimo Senhor'."
+    },
+    {
+        id: 28,
+        category: "Pronome Relativo 'Quem' e Regência Verbal",
+        question: "Assinale a alternativa em que a concordância do verbo com o pronome relativo 'quem' está em conformidade com a norma-padrão:",
+        options: [
+            { text: "Fui eu quem elaborou o parecer técnico.", isCorrect: true, rationale: "Com o pronome relativo 'quem', o verbo pode concordar na 3ª pessoa do singular ('elaborou') ou com o antecedente ('fui eu quem elaborei'). A 3ª pessoa do singular é a forma preferencial." },
+            { text: "Fomos nós quem elaboramos os pareceres técnicos obrigatoriamente.", isCorrect: false, rationale: "Embora aceito por alguns gramáticos, a norma clássica prefere a 3ª pessoa do singular com 'quem' ('quem elaborou')." },
+            { text: "Foram eles quem elaboraram os pareceres técnicos sem opções de variação.", isCorrect: false, rationale: "A concordância com o pronome 'quem' na 3ª pessoa do singular ('quem elaborou') é a mais tradicional." },
+            { text: "Sou eu quem elaborar o parecer técnico.", isCorrect: false, rationale: "Incorreto: o verbo deve ser flexionado adequadamente, não mantido no infinitivo." }
+        ],
+        hint: "Com o pronome 'quem', o verbo fica preferencialmente na 3ª pessoa do singular."
+    },
+    {
+        id: 29,
+        category: "Pronomes Oblíquos Possessivos",
+        question: "Na frase 'O vento forte **lhe** despenteou os cabelos', o pronome oblíquo destacado exerce valor sintático-semântico de:",
+        options: [
+            { text: "Pronome possessivo, equivalendo a 'despenteou os seus cabelos'.", isCorrect: true, rationale: "Os pronomes oblíquos átonos (me, te, lhe, nos, vos) podem atuar como adjuntos adnominais com sentido de posse ('seus cabelos' / 'os cabelos dele')." },
+            { text: "Objeto indireto tradicional de verbo de ligação.", isCorrect: false, rationale: "Incorreto: 'despentear' é VTD e não de ligação." },
+            { text: "Complemento nominal do substantivo 'vento'.", isCorrect: false, rationale: "Incorreto: refere-se ao substantivo 'cabelos' com ideia de posse." },
+            { text: "Agente da passiva da oração.", isCorrect: false, rationale: "Incorreto: o sujeito agente é 'O vento forte'." }
+        ],
+        hint: "Quando o pronome 'lhe'/'me' indicar posse ('meus/seus cabelos'), ele atua com valor possessivo."
+    },
+    {
+        id: 30,
+        category: "Pronomes Reflexivos e Recíprocos",
+        question: "Assinale a alternativa em que o pronome destacado expressa uma ideia de RECIPROCIDADE (ação mútua entre dois ou mais sujeitos):",
+        options: [
+            { text: "Os dois candidatos abraçaram-se cordialmente após o debate.", isCorrect: true, rationale: "O pronome 'se' indica reciprocidade quando a ação é praticada e recebida mutuamente por dois ou mais agentes ('um abraçou o outro')." },
+            { text: "O jovem cortou-se com o estilete durante o trabalho.", isCorrect: false, rationale: "Incorreto: indica ação reflexiva simples (o sujeito fez a ação contra si mesmo)." },
+            { text: "A candidata preparou-se exaustivamente para a prova.", isCorrect: false, rationale: "Incorreto: ao de ação reflexiva individual." },
+            { text: "Olhou-se no espelho e sorriu com satisfação.", isCorrect: false, rationale: "Incorreto: ao reflexiva praticada sobre o próprio sujeito." }
+        ],
+        hint: "Reciprocidade significa que 'um fez ao outro e vice-versa' simultaneamente."
+    }
+];
 
         // State Management
         let currentQuestionIdx = 0;
