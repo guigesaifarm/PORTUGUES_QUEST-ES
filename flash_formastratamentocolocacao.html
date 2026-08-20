@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Pronomes e Colocação Pronominal</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb;
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .card-content {
+            font-size: 1.7rem; 
+            line-height: 1.5;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.25rem; 
+            text-align: left;
+            color: #34495e;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.4rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.15rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Pronomes: Emprego, Tratamento e Colocação Pronominal</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Pronomes</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            // --- EMPREGO DE PRONOMES PESSOAIS (O, A, LHE, ME, TE, SE) ---
+            {
+                category: "Pronomes O / A / OS / AS",
+                front: "Qual é a função sintática básica dos pronomes oblíquos <b>o, a, os, as</b>?",
+                back: "Exercem a função de <b>Objetos Diretos (VTD)</b> (Ex: Encontrei <i>o</i> livro -> Encontrei-<i>o</i>)."
+            },
+            {
+                category: "Pronome LHE / LHES",
+                front: "Qual é a função sintática obrigatória dos pronomes oblíquos <b>lhe, lhes</b>?",
+                back: "Exercem a função de <b>Objetos Indiretos</b>, substituindo termos regidos pela preposição 'a' (Ex: Entreguei o documento <i>ao chefe</i> -> Entreguei-lhe o documento)."
+            },
+            {
+                category: "Uso Indevido do Lhe",
+                front: "Por que a frase 'Convidei-lhe para a festa' está incorreta segundo a norma culta?",
+                back: "Porque o verbo <b>convidar</b> é transitivo direto (VTD), exigindo o pronome <b>o/a</b>, e não 'lhe'. O correto é: 'Convidei-<i>o</i> para a festa'."
+            },
+            {
+                category: "Pronomes O/A com Verbos em R, S, Z",
+                front: "O que acontece com os pronomes <b>o, a, os, as</b> quando o verbo termina em <b>-R, -S ou -Z</b>?",
+                back: "As terminações sofrem elisão: o 'R', 'S' ou 'Z' cai e o pronome transforma-se em <b>lo, la, los, las</b> (Ex: Comprar o carro -> Compra-<i>lo</i>; Fiz o trabalho -> Fi-<i>lo</i>)."
+            },
+            {
+                category: "Pronomes O/A com Verbos em M, N, ÃO, ÕE",
+                front: "O que acontece com os pronomes <b>o, a, os, as</b> quando o verbo termina em som nasal (<b>-m, -ão, -õe</b>)?",
+                back: "O pronome ganha uma consoante nasal e transforma-se em <b>no, na, nos, nas</b> (Ex: Viram o filme -> Viram-<i>no</i>; Põem o casaco -> Põem-<i>no</i>)."
+            },
+
+            // --- PRONOMES DEMONSTRATIVOS E POSSESSIVOS ---
+            {
+                category: "Este x Ese x Aqueles",
+                front: "Qual é a regra básica de emprego para <b>este, esta, isto</b> em relação ao espaço/tempo?",
+                back: "Indicam o que está <b>perto de quem fala</b>, o tempo presente ou o assunto que <i>ainda vai ser dito</i> (catáfora)."
+            },
+            {
+                category: "Esse x Essa x Isso",
+                front: "Quando devemos empregar os pronomes demonstrativos <b>esse, essa, isso</b>?",
+                back: "Indicam o que está <b>perto da pessoa com quem se fala</b>, o passado recente ou o assunto que <i>já foi dito</i> (anáfora)."
+            },
+            {
+                category: "Aquele x Aquela x Aquilo",
+                front: "Qual é o uso principal dos demonstrativos <b>aquele, aquela, aquilo</b>?",
+                back: "Indicam o que está <b>distante de ambos</b> (falante e ouvinte) ou remetem a um passado remoto."
+            },
+            {
+                category: "Ambiguidade em Possessivos",
+                front: "Por que frases como 'João vendeu seu carro para Pedro' podem gerar problemas de duplo sentido?",
+                back: "Porque o possessivo <b>seu</b> pode ser ambíguo (carro do João ou do Pedro?). Para evitar, substitui-se por 'dele/dela' (carro <i>dele</i>)."
+            },
+
+            // --- FORMAS DE TRATAMENTO ---
+            {
+                category: "Concordância com Tratamento",
+                front: "Qual é a regra de concordância verbal e pronominal ao usar pronomes de tratamento (ex: Vossa Excelência)?",
+                back: "Embora o pronome se dirija à 2ª pessoa (com quem se fala), a concordância verbal e pronominal deve ser feita na <b>3ª pessoa</b> (Ex: Vossa Excelência <i>fará</i> <i>sua</i> viagem)."
+            },
+            {
+                category: "Vossa x Sua Excelência",
+                front: "Qual é a diferença prática entre usar <b>Vossa Excelência</b> e <b>Sua Excelência</b>?",
+                back: "• <b>Vossa Excelência:</b> Usa-se quando você está <i>falando diretamente</i> com a pessoa.<br>• <b>Sua Excelência:</b> Usa-se quando você está <i>falando sobre</i> a pessoa para terceiros."
+            },
+            {
+                category: "Você e Tu na Mesma Frase",
+                front: "Qual é o erro grave de tratamento na frase: 'Quando <b>você</b> fores ao mercado, traz-me <b>teu</b> caderno'?",
+                back: "É a <b>incoerência pronominal</b> (mistura de tratamentos). Se usar 'você', o verbo e os pronomes devem seguir a 3ª pessoa ('fores' está na 2ª pessoa do tu). O correto é: 'Quando você for... traga-me seu caderno'."
+            },
+
+            // --- COLOCAÇÃO PRONOMINAL: PRÓCLISE ---
+            {
+                category: "Palavras Atrativas (Próclise)",
+                front: "O que é a próclise obrigatória e qual é o principal fator que a desencadeia?",
+                back: "É a colocação do pronome oblíquo <b>antes do verbo</b>. É obrigatória quando há <b>palavras atrativas</b> na frase (palavras negativas, pronomes relativos, indefinidos, demonstrativos ou conjunções subordinativas)."
+            },
+            {
+                category: "Próclise com Palavras Negativas",
+                front: "A frase 'Não <b>falei-lhe</b> sobre o caso' está correta quanto à posição do pronome?",
+                back: "<b>Incorreta!</b> A palavra 'não' é um termo negativo e atrativo, exigindo próclise obrigatória. O correto é: 'Não <b>lhe falei</b> sobre o caso'."
+            },
+            {
+                category: "Próclise com Pronomes Relativos",
+                front: "Por que a próclise é obrigatória na frase 'Este é o livro <b>que comprou-me</b>' está errada?",
+                back: "Porque o pronome relativo <b>que</b> atrai o pronome oblíquo para antes do verbo. O correto é: 'Este é o livro que <b>me comprou</b>'."
+            },
+            {
+                category: "Próclise com Advérbios",
+                front: "Qual é a regra para o uso de pronomes após advérbios desacompanhados de vírgula?",
+                back: "O advérbio atrai o pronome para antes do verbo (próclise obrigatória). Ex: 'Aqui <b>se faz</b>, aqui se paga' (nunca 'Aqui faz-se')."
+            },
+
+            // --- COLOCAÇÃO PRONOMINAL: ÊNCLISE ---
+            {
+                category: "Início de Período (Ênclise)",
+                front: "É permitido iniciar orações ou períodos com pronomes oblíquos tonos (ex: 'Me empreste a caneta')?",
+                back: "<b>Jamais!</b> A norma culta proíbe iniciar frases ou períodos com pronomes oblíquos tonos. Deve-se usar <b>ênclise</b> (Ex: Empresta-<i>me</i> a caneta)."
+            },
+            {
+                category: "Ênclise com Gerúndio",
+                front: "Ocorre próclise ou ênclise com verbos no gerúndio isolados? (Ex: 'Fazendo-o / O fazendo')",
+                back: "Sem palavra atrativa anterior, usa-se preferencialmente a <b>ênclise</b> no gerúndio (Ex: Saiu correndo, <i>olhando-me</i>)."
+            },
+            {
+                category: "Ênclise com Infinitivo Impessoal",
+                front: "Qual é a regra de colocação pronominal com verbos no infinitivo impessoal sem fator atrativo?",
+                back: "Aceita-se tanto a próclise quanto a ênclise (Ex: Decidiu <i>ajudá-lo</i> / Decidiu <i>o</i> ajudar)."
+            },
+
+            // --- COLOCAÇÃO PRONOMINAL: MESÓCLISE ---
+            {
+                category: "O que é a Mesóclise?",
+                front: "Quando a <b>mesóclise</b> (pronome no meio do verbo) é obrigatória na língua portuguesa?",
+                back: "É obrigatória quando o verbo está no <b>futuro do presente</b> ou no <b>futuro do pretérito</b> do indicativo e o termo está no início da frase (sem palavra atrativa). Ex: 'Dar-<i>ei</i> a notícia' -> 'Dar-lha-ei'."
+            },
+            {
+                category: "Mesóclise Bloqueada por Próclise",
+                front: "Se houver uma palavra atrativa (como uma negação) antes de um verbo no futuro, usa-se mesóclise?",
+                back: "<b>Não!</b> A presença de qualquer fator de próclise anula a mesóclise e atrai o pronome para antes do verbo. Ex: 'Não <i>te</i> direi a verdade' (e nunca 'Não dir-te-ei')."
+            },
+
+            // --- LOCUÇÕES VERBAIS E CASOS ESPECIAIS ---
+            {
+                category: "Locução Verbal (Auxiliar + Principal)",
+                front: "Em locuções verbais (ex: <i>devia fazer</i>), onde o pronome pode ser colocado se houver palavra atrativa?",
+                back: "Com palavra atrativa, o pronome pode vir <b>antes do verbo auxiliar</b> ou <b>depois do verbo principal</b> (se infinitivo ou gerúndio). Ex: 'Não <i>o</i> podia fazer' ou 'Não podia fazê-<i>lo</i>'."
+            },
+            {
+                category: "Proibição de Pronome no Particípio",
+                front: "É permitido usar o pronome oblíquo diretamente ligado a um verbo no <b>particípio</b>? (Ex: 'Tinha-o feito')",
+                back: "Em locuções com particípio, <b>nunca</b> se usa o pronome logo após o particípio. O correto é colocar antes do verbo auxiliar (Ex: 'O tinha feito') ou entre o auxiliar e o particípio se houver atrativo."
+            },
+            {
+                category: "Exceção do Particípio",
+                front: "A frase 'Facho-<i>o</i> feito' está correta? Onde fica o pronome com o particípio isolado?",
+                back: "<b>Incorreta.</b> O pronome jamais pode vir após o particípio. O pronome deve acompanhar o verbo auxiliar da locução."
+            },
+            {
+                category: "Colocação com 'Em + Gerúndio'",
+                front: "Qual é a colocação obrigatória do pronome quando a oração inicia com a preposição <b>'em' + gerúndio</b>? (Ex: Em se tratando...)",
+                back: "A preposição 'em' atrai o pronome para perto de si (próclise obrigatória). Ex: 'Em <b>se tratando</b> de estudos, ele é o melhor'."
+            },
+            {
+                category: "Pronome com Conjunções Coordenadas",
+                front: "Conjunções coordenadas aditivas (como <b>e</b>) atraem o pronome para próclise obrigatoriamente?",
+                back: "<b>Não necessariamente.</b> A conjunção 'e' por si só não atrai o pronome a menos que venha acompanhada de outro fator atrativo (como uma negação). Se não houver atrativo após o 'e', prefere-se a ênclise."
+            },
+            {
+                category: "O Pronome 'Se' e a Voz Passiva",
+                front: "Na frase 'Alugam-<b>se</b> apartamentos', qual é a classificação e a função do pronome 'se'?",
+                back: "Trata-se de partícula apassivadora (pronome apassivador). O verbo concorda com o sujeito paciente ('apartamentos')."
+            },
+            {
+                category: "O Pronome 'Se' e o Índice de Indeterminação",
+                front: "Na frase 'Precisa-<b>se</b> de funcionários', qual é a função do 'se' e por que o verbo fica no singular?",
+                back: "É o <b>Índice de Indeterminação do Sujeito</b>. Como o verbo é transitivo indireto (exige 'de'), o sujeito é indeterminado e o verbo permanece obrigatoriamente na 3ª pessoa do singular."
+            },
+            {
+                category: "Pronomes Demonstrativos: O, A, Os, As",
+                front: "Quando os pronomes <b>o, a, os, as</b> podem funcionar como demonstrativos na língua portuguesa?",
+                back: "Quando equivalem a 'aquilo', 'aquele' ou 'aquele que', vindo antes de um 'que'. Ex: 'Não compreendi <b>o</b> que ele disse' (= aquilo que)."
+            },
+            {
+                category: "Resumo de Ouro da Colocação",
+                front: "Qual é a regra de ouro que resume o que você NUNCA deve fazer na colocação pronominal em concursos?",
+                back: "<b>1.</b> Nunca iniciar período com pronome oblíquo.<br><b>2.</b> Nunca usar pronome após particípio.<br><b>3.</b> Nunca usar mesóclise se houver palavra atrativa de próclise."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
