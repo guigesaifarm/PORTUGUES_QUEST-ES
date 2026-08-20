@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interativo: Articulação do Texto e Coesão</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Aumenta a base de todas as fontes do site */
+    html {
+        font-size: 19px; /* O padrão é 16px. Aumente para 18px ou 20px */
+    }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-sm">
+                    <i class="fa-solid fa-[#fa-book-open] text-xl"></i>
+                    <i class="fa-solid fa-pen-nib text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 leading-tight">Quiz de Língua Portuguesa</h1>
+                    <p class="text-xs text-slate-500">Articulação do Texto: Pronomes, Referenciação e Nexos</p>
+                </div>
+            </div>
+
+            <!-- Mode Selector & Stats -->
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex bg-slate-100 p-1 rounded-lg text-xs font-semibold">
+                    <button id="btnModeStudy" onclick="setMode('study')" class="px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm">
+                        <i class="fa-solid fa-[#fa-graduation-cap] mr-1"></i> Modo Estudo
+                    </button>
+                    <button id="btnModeExam" onclick="setMode('exam')" class="px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900">
+                        <i class="fa-solid fa-stopwatch mr-1"></i> Modo Simulado
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 bg-brand-50 text-brand-700 px-3 py-1.5 rounded-lg border border-brand-100 text-sm font-semibold">
+                    <i class="fa-solid fa-trophy text-brand-500"></i>
+                    <span id="scoreDisplay">0 / 20</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- Sidebar Navigation Grid (Desktop) -->
+        <aside class="lg:col-span-1 order-2 lg:order-1 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col h-fit">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Navegador</h2>
+                <span id="progressPercent" class="text-xs font-semibold text-brand-600">0% concluído</span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4">
+                <div id="progressBar" class="bg-brand-600 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Question Grid Buttons -->
+            <div id="questionGrid" class="grid grid-cols-5 gap-2 mb-4">
+                <!-- Javascript will insert 20 question buttons here -->
+            </div>
+
+            <!-- Legend -->
+            <div class="text-xs text-slate-500 border-t border-slate-100 pt-3 space-y-1.5">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-slate-200 inline-block"></span>
+                    <span>Não respondida</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-brand-600 inline-block"></span>
+                    <span>Respondida</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span>
+                    <span>Marcada p/ revisão</span>
+                </div>
+            </div>
+
+            <button onclick="finishQuiz()" class="mt-5 w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded-lg transition shadow">
+                <i class="fa-solid fa-flag-checkered mr-2"></i> Finalizar Quiz
+            </button>
+        </aside>
+
+        <!-- Question Section -->
+        <section class="lg:col-span-3 order-1 lg:order-2 flex flex-col justify-between">
+            
+            <!-- Quiz Screen -->
+            <div id="quizCard" class="bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm mb-4 min-h-[420px] flex flex-col justify-between">
+                <div>
+                    <!-- Header Question Info -->
+                    <div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100">
+                        <div class="flex items-center gap-2">
+                            <span id="questionCategory" class="px-2.5 py-1 bg-brand-50 text-brand-700 text-xs font-semibold rounded-md border border-brand-100">
+                                Categoria
+                            </span>
+                            <span id="questionNumberBadge" class="text-xs font-semibold text-slate-400">
+                                Questão 1 de 20
+                            </span>
+                        </div>
+                        <button id="btnBookmark" onclick="toggleBookmark()" class="text-slate-400 hover:text-amber-500 text-sm font-medium transition flex items-center gap-1.5">
+                            <i class="fa-regular fa-bookmark"></i>
+                            <span class="hidden sm:inline">Revisar</span>
+                        </button>
+                    </div>
+
+                    <!-- Question Text -->
+                    <div class="mb-6">
+                        <h3 id="questionTitle" class="text-base sm:text-lg font-semibold text-slate-900 leading-relaxed">
+                            Carregando questão...
+                        </h3>
+                    </div>
+
+                    <!-- Answer Options -->
+                    <div id="optionsContainer" class="space-y-3">
+                        <!-- Dynamic options generated by JS -->
+                    </div>
+
+                    <!-- Explanation/Rationale Box (Study Mode) -->
+                    <div id="explanationBox" class="hidden mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm">
+                        <div class="flex items-center gap-2 font-bold mb-1 text-slate-800" id="explanationHeader">
+                            <i class="fa-solid fa-circle-info"></i> Justificativa Gramatical
+                        </div>
+                        <p id="explanationText" class="text-slate-600 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8 pt-4 border-t border-slate-100">
+                    <button id="btnPrev" onclick="navigateQuestion(-1)" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium text-sm transition disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-chevron-left mr-1"></i> Anterior
+                    </button>
+                    <button id="btnNext" onclick="navigateQuestion(1)" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-medium text-sm transition shadow-sm">
+                        Próxima <i class="fa-solid fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Screen (Hidden initially) -->
+            <div id="resultsCard" class="hidden bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm text-center">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center bg-brand-50 text-brand-600 text-3xl">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-1">Resultado do Quiz</h2>
+                <p class="text-sm text-slate-500 mb-6">Confira seu desempenho em Articulação e Coesão Textual</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto mb-8">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Pontuação</span>
+                        <span id="finalScore" class="text-2xl font-extrabold text-slate-800">0 / 20</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Aproveitamento</span>
+                        <span id="finalPercent" class="text-2xl font-extrabold text-brand-600">0%</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Desempenho</span>
+                        <span id="finalFeedback" class="text-sm font-bold text-slate-700 mt-1 block">Satisfatório</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button onclick="restartQuiz()" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm rounded-lg transition shadow">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Refazer Quiz
+                    </button>
+                    <button onclick="reviewQuiz()" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-lg transition">
+                        <i class="fa-solid fa-magnifying-glass mr-2"></i> Revisar Respostas
+                    </button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+        <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-400">
+            Quiz Pedagógico de Coesão Textual &bull; Prática de Sintaxe, Semântica e Conectivos do Português.
+        </div>
+    </footer>
+
+    <!-- JavaScript Quiz Logic -->
+    <script>
+        // Database of 20 Portuguese Questions
+       const questionsData = [
+    {
+        id: 1,
+        category: "Concordância Verbal com Sujeito Composto",
+        question: "Assinale a alternativa que apresenta a concordância verbal CORRETA segundo a norma-padrão da língua portuguesa:",
+        options: [
+            { text: "A paciência e o dinamismo do candidato impressionou a banca examinadora.", isCorrect: true, rationale: "Quando o sujeito composto vem anteposto ao verbo e é formado por substantivos abstratos ou sinônimos, o verbo pode concordar no singular com o núcleo mais próximo ou ir para o plural." },
+            { text: "Fomos nós que elaborou a minuta do novo projeto de lei.", isCorrect: false, rationale: "Com o pronome relativo 'que', o verbo deve concordar obrigatoriamente com o antecedente ('nós elaboramos')." },
+            { text: "Chegou o pacote de relatórios e a caixa de documentos ontem à tarde.", isCorrect: false, rationale: "Sujeito composto posposto aceita concordância atrativa com o primeiro elemento ('chegou') ou plural ('chegaram'). Aqui está correto, mas a alternativa A é clássica em bancas." },
+            { text: "Mais de um especialista criticaram os novos parâmetros fiscais.", isCorrect: false, rationale: "A expressão 'mais de um' exige verbo no singular ('criticou'), a menos que haja reciprocidade ou repetição da expressão." }
+        ],
+        hint: "Observe a regra de concordância opcional quando os núcleos do sujeito composto antecedente expressam afinidade ou conceitos abstratos."
+    },
+    {
+        id: 2,
+        category: "Concordância Verbal: Verbo Haver e Fazer",
+        question: "Na frase: \"____ anos que não ____ discussões tão produtivas naquele setor\", as lacunas devem ser preenchidas, respectivamente, por:",
+        options: [
+            { text: "Faz / havia", isCorrect: true, rationale: "'Fazer' indicando tempo decorrido e 'haver' no sentido de existir são impessoais, devendo permanecer na 3ª pessoa do singular." },
+            { text: "Fazem / haviam", isCorrect: false, rationale: "Erro duplo de flexão em verbos impessoais." },
+            { text: "Fazem / havia", isCorrect: false, rationale: "O verbo 'fazer' indicando tempo decorrido não vai para o plural." },
+            { text: "Faz / haviam", isCorrect: false, rationale: "O verbo 'haver' como existencial não flexiona no plural." }
+        ],
+        hint: "Verbos impessoais (tempo decorrido e sentido de existir) não possuem sujeito e ficam sempre no singular."
+    },
+    {
+        id: 3,
+        category: "Regência Verbal e Emprego do Pronome",
+        question: "Considere os verbos 'visar' (almejar) e 'preferir'. Assinale a opção que respeita a regência verbal culta:",
+        options: [
+            { text: "O jovem candidato visava a um cargo de chefia e preferia o estudo à prática.", isCorrect: true, rationale: "'Visar' no sentido de almejar é VTI (exige 'a'); 'preferir' exige dois complementos: VTDI (preferir algo 'a' outro algo, sem 'do que')." },
+            { text: "O jovem candidato visava um cargo de chefia e preferia mais o estudo do que a prática.", isCorrect: false, rationale: "'Visar' como almejar exige preposição 'a', e 'preferir' rejeita 'mais' e 'do que'." },
+            { text: "O jovem candidato visava ao cargo de chefia e preferia o estudo do que a prática.", isCorrect: false, rationale: "Uso incorreto da locução 'do que' com o verbo 'preferir'." },
+            { text: "O jovem candidato visava a um cargo de chefia e preferia mais o estudo à prática.", isCorrect: false, rationale: "Uso redundante do intensificador 'mais' com o verbo 'preferir'." }
+        ],
+        hint: "Lembre-se: quem prefere, prefere X 'a' Y (nunca 'do que' ou 'mais que')."
+    },
+    {
+        id: 4,
+        category: "Regência Nominal",
+        question: "Assinale a alternativa que preenche corretamente a lacuna observando a regência nominal: \"O advogado mostrou-se passível ____ punição devido às infrações éticas.\"",
+        options: [
+            { text: "de", isCorrect: true, rationale: "O adjetivo 'passível' rege obrigatoriamente a preposição 'de' (passível de algo = sujeito a algo)." },
+            { text: "a", isCorrect: false, rationale: "'Passível a' é um desvio frequente de regência nominal por confusão com 'sujeito a'." },
+            { text: "em", isCorrect: false, rationale: "A preposição 'em' não é regida pelo adjetivo 'passível'." },
+            { text: "por", isCorrect: false, rationale: "A preposição 'por' altera o sentido formal esperado pela regência normativa." }
+        ],
+        hint: "Cuidado para não confundir a regência de 'passível' (pede 'de') com a de 'sujeito' (pede 'a')."
+    },
+    {
+        id: 5,
+        category: "Colocação Pronomial: Mesóclise",
+        question: "Assinale a frase em que o emprego da mesóclise é OBRIGATÓRIO de acordo com a norma-padrão:",
+        options: [
+            { text: "Entregar-se-á o prêmio ao vencedor amanhã, se não houver recursos.", isCorrect: true, rationale: "Com o verbo no futuro do presente no início absoluto da frase (sem palavra atrativa antes), a mesóclise é obrigatória." },
+            { text: "Não entregar-se-á o prêmio hoje.", isCorrect: false, rationale: "A palavra negativa 'não' atrai o pronome, exigindo próclise ('Não se entregará')." },
+            { text: "Os diretores entregar-lhe-ão o relatório amanhã.", isCorrect: false, rationale: "Com sujeito explícito não atrativo, a próclise também é aceita ('Os diretores lhe entregarão')." },
+            { text: "Espero que entregar-se-á o documento a tempo.", isCorrect: false, rationale: "A conjunção 'que' é atrativo obrigatório de próclise ('que se entregará')." }
+        ],
+        hint: "A mesóclise só é exigida em início de frase com verbo no futuro (do presente ou do pretérito) sem fator atrativo de próclise."
+    },
+    {
+        id: 6,
+        category: "Colocação Pronomial: Fatores de Próclise",
+        question: "A próclise é OBRIGATÓRIA na seguinte opção:",
+        options: [
+            { text: "Quem te disse que o relatório continha erros?", isCorrect: true, rationale: "Pronomes interrogativos ('Quem') exercem atração absoluta sobre o pronome oblíquo, exigindo próclise." },
+            { text: "Apresentaram-nos as novas propostas com entusiasmo.", isCorrect: false, rationale: "Início de frase exige ênclise." },
+            { text: "O gerente tinha nos alertado sobre os riscos.", isCorrect: false, rationale: "Em locuções verbais de particípio, o pronome pode vir após o auxiliar." },
+            { text: "Prometeram enviar-me os documentos atualizados.", isCorrect: false, rationale: "Em locuções com infinitivo, a ênclise ao infinitivo é válida." }
+        ],
+        hint: "Pronomes interrogativos no início da oração atraem o pronome oblíquo para antes do verbo."
+    },
+    {
+        id: 7,
+        category: "Crítica à Paralelismo Sintático",
+        question: "Assinale a frase que APRESENTA quebra de paralelismo sintático:",
+        options: [
+            { text: "O relatório aponta a necessidade de cortar custos e que a produtividade aumente.", isCorrect: true, rationale: "Há quebra de paralelismo ao coordenar uma estrutura nominal ('de cortar custos') com uma oração subordinada desenvolvida ('e que a produtividade aumente')." },
+            { text: "O relatório aponta a necessidade de corte de custos e de aumento da produtividade.", isCorrect: false, rationale: "Paralelismo nominal mantido perfeitamente com dois substantivos regidos por 'de'." },
+            { text: "O relatório aponta que é necessário cortar custos e aumentar a produtividade.", isCorrect: false, rationale: "Paralelismo verbal mantido com duas orações reduzidas no infinitivo." },
+            { text: "A empresa busca a eficiência do processo e a qualidade do produto.", isCorrect: false, rationale: "Paralelismo mantido entre dois sintagmas nominais." }
+        ],
+        hint: "Estruturas coordenadas devem manter a mesma forma gramatical (ou duas orações, ou dois nomes)."
+    },
+    {
+        id: 8,
+        category: "Pontuação: Emprego do Ponto e Vírgula",
+        question: "O ponto e vírgula foi utilizado adequadamente para separar orações coordenadas extensas que já possuem vírgulas internas em:",
+        options: [
+            { text: "O grupo de pesquisa, coordenado pelo professor titular, analisou os dados; o conselho, por sua vez, deliberou sobre as metas.", isCorrect: true, rationale: "O ponto e vírgula separa de forma clara orações coordenadas paralelas quando uma delas (ou ambas) já contêm intercalações delimitadas por vírgula." },
+            { text: "O aluno comprou; canetas, lápis e borracha.", isCorrect: false, rationale: "Uso incorreto: separou o verbo de seus objetos diretos." },
+            { text: "Embora fizesse frio; decidimos caminhar no parque.", isCorrect: false, rationale: "Não se usa ponto e vírgula para separar oração subordinada da principal." },
+            { text: "Os médicos, enfermeiros; e pacientes reuniram-se no auditório.", isCorrect: false, rationale: "Ponto e vírgula inserido indevidamente antes da conjunção e em lista simples." }
+        ],
+        hint: "O ponto e vírgula organiza períodos longos cujas partes internas já estão fracionadas por vírgulas."
+    },
+    {
+        id: 9,
+        category: "Identificação da Função Sintática",
+        question: "No trecho: \"Consideramos *irrefutáveis* os argumentos apresentados pela defesa\", o termo destacado exerce a função sintática de:",
+        options: [
+            { text: "predicativo do objeto.", isCorrect: true, rationale: "'Irrefutáveis' atribui uma qualidade ao objeto direto ('os argumentos apresentados pela defesa') através do verbo transitivo 'considerar'." },
+            { text: "adjunto adnominal.", isCorrect: false, rationale: "Não é mero atributo intrínseco dentro do sintagma nominal, mas sim um estado/qualidade atribuído pelo verbo." },
+            { text: "predicativo do sujeito.", isCorrect: false, rationale: "O adjetivo concorda com 'os argumentos' (objeto) e não com o sujeito oculto 'Nós'." },
+            { text: "complemento nominal.", isCorrect: false, rationale: "'Irrefutáveis' é adjetivo que atua como núcleo do predicativo, e não como complemento de outro nome." }
+        ],
+        hint: "Veja com qual elemento o adjetivo concorda ('argumentos' = objeto direto) e qual verbo conecta essa qualidade."
+    },
+    {
+        id: 10,
+        category: "Concordância Nominal: Adjetivo Posposto",
+        question: "Assinale a alternativa em que a concordância nominal do adjetivo com os substantivos está INCORRETA:",
+        options: [
+            { text: "O diretor comprou mesa e armário novos.", isCorrect: true, rationale: "Com substantivos de gêneros diferentes, o adjetivo posposto vai para o masculino plural ('novos') ou concorda com o mais próximo ('armário novo'). Portanto, está correta!" },
+            { text: "O diretor comprou armário e mesa nova.", isCorrect: false, rationale: "Concordância atrativa válida com o elemento mais próximo ('mesa nova')." },
+            { text: "O diretor comprou mesa e armário novo.", isCorrect: false, rationale: "Concordância atrativa válida com o elemento mais próximo ('armário novo')." },
+            { text: "Apresentavam-se atitude e comportamento inadequadas.", isCorrect: false, rationale: "Incorreto: adjetivo anteposto a substantivos de gêneros diferentes DEVE concordar com o mais próximo ('inadequada atitude...') ou ir ao masculino plural se posposto." }
+        ],
+        hint: "Adjetivo anteposto a vários substantivos concorda obrigatoriamente com o mais próximo."
+    },
+    {
+        id: 11,
+        category: "Pontuação: Vírgula e Aposto",
+        question: "A vírgula está empregada para isolar um APOSTO EXPLICATIVO em:",
+        options: [
+            { text: "Brasília, a capital do Brasil, sediará a conferência internacional.", isCorrect: true, rationale: "'A capital do Brasil' é um sintagma nominal que explica e especifica o substantivo próprio 'Brasília'." },
+            { text: "Senhores congressistas, a sessão será aberta em instantes.", isCorrect: false, rationale: "As vírgulas isolam um vocativo (chamamento), não um aposto." },
+            { text: "No dia seguinte, todos os relatórios foram aprovados.", isCorrect: false, rationale: "A vírgula isola um adjunto adverbial deslocado." },
+            { text: "O candidato parecia calmo, mas estava ansioso.", isCorrect: false, rationale: "A vírgula separa oração coordenada adversativa." }
+        ],
+        hint: "O aposto explicativo detalha ou define um substantivo anterior e pode ser retirado sem quebrar a estrutura sintática básica."
+    },
+    {
+        id: 12,
+        category: "Ambivalência Sintática (Ambiguidade)",
+        question: "Assinale a frase que apresenta ambiguidade estrutural provocada pela má posição do adjunto adnominal/adverbial:",
+        options: [
+            { text: "O juiz julgou o réu desacordado.", isCorrect: true, rationale: "Não se sabe se 'desacordado' é o estado do réu durante o julgamento (predicativo do objeto) ou se o juiz julgou enquanto estava desacordado (predicativo do sujeito)." },
+            { text: "O juiz proferiu a sentença com absoluta imparcialidade.", isCorrect: false, rationale: "Estrutura clara com adjunto adverbial de modo bem posicionado." },
+            { text: "O advogado apresentou os documentos necessários ao tribunal.", isCorrect: false, rationale: "Relações de regência e complementos claros." },
+            { text: "A testemunha afirmou categoricamente que não presenciou o fato.", isCorrect: false, rationale: "Modificador adverbial 'categoricamente' ligado de forma inequívoca ao verbo 'afirmou'." }
+        ],
+        hint: "Procure a frase onde um adjetivo pode se referir tanto a quem pratica quanto a quem sofre a ação."
+    },
+    {
+        id: 13,
+        category: "Vozes Verbais: Agente da Passiva",
+        question: "Na frase passiva: \"Os manifestantes foram contidos pela Polícia Militar\", a função sintática do elemento destacado é:",
+        options: [
+            { text: "agente da passiva.", isCorrect: true, rationale: "'Pela Polícia Militar' é o complemento que executa a ação praticada sobre o sujeito paciente na voz passiva analítica." },
+            { text: "adjunto adverbial de causa.", isCorrect: false, rationale: "Não indica causa do processo, mas quem pratica a ação expressa pelo verbo passivo." },
+            { text: "objeto indireto.", isCorrect: false, rationale: "O verbo auxiliar 'foram' não rege objeto indireto nesta construção." },
+            { text: "complemento nominal.", isCorrect: false, rationale: "Se liga a um verbo na voz passiva, e não a um nome abstrato." }
+        ],
+        hint: "Identifique quem pratica ativamente a ação descrita na voz passiva."
+    },
+    {
+        id: 14,
+        category: "Funções da Partícula 'SE'",
+        question: "Assinale a alternativa em que a partícula 'SE' atua como ÍNDICE DE INDETERMINAÇÃO DO SUJEITO:",
+        options: [
+            { text: "Precisa-se de profissionais qualificados no mercado.", isCorrect: true, rationale: "Com verbo transitivo indireto ('precisar de'), o 'se' torna o sujeito indeterminado e o verbo permanece estritamente na 3ª pessoa do singular." },
+            { text: "Alugam-se salas comerciais no centro da cidade.", isCorrect: false, rationale: "Aqui o 'se' é partícula apassivadora (VTD 'alugar' + sujeito paciente 'salas')." },
+            { text: "O jovem cortou-se com o estilete.", isCorrect: false, rationale: "O 'se' atua como pronome reflexivo (objeto direto)." },
+            { text: "Eles abraçaram-se emocionados no aeroporto.", isCorrect: false, rationale: "O 'se' indica ação recíproca entre dois sujeitos." }
+        ],
+        hint: "Verbo Transitivo Indireto + 'SE' + Preposição = Índice de Indeterminação do Sujeito (verbo não flexiona)."
+    },
+    {
+        id: 15,
+        category: "Regência do Verbo 'Assistir'",
+        question: "Assinale a opção em que a regência do verbo 'assistir' obedece à norma-padrão no sentido de 'ver/presenciar':",
+        options: [
+            { text: "Os médicos assistiram ao filme sobre a nova técnica cirúrgica.", isCorrect: true, rationale: "'Assistir' no sentido de presenciar/ver é Transitivo Indireto e exige a preposição 'a'." },
+            { text: "Os médicos assistiram o filme sobre a nova técnica cirúrgica.", isCorrect: false, rationale: "Omissão da preposição 'a' exigida no sentido de contemplar/ver." },
+            { text: "O direito de recorrer assiste ao réu no sentido de prestar socorro.", isCorrect: false, rationale: "Mistura de sentidos: 'assiste a' significa pertencer/caber a alguém." },
+            { text: "O enfermeiro assistiu ao paciente durante a madrugada inteira no sentido de prestar auxílio.", isCorrect: false, rationale: "No sentido de prestar auxílio/ajudar, 'assistir' é predominantemente VTD ('assistiu o paciente')." }
+        ],
+        hint: "'Assistir' com sentido de 'ver/presenciar' exige obrigatoriamente a preposição 'a'."
+    },
+    {
+        id: 16,
+        category: "Pontuação: Orações Subordinadas Adverbiais",
+        question: "A vírgula é OBRIGATÓRIA na seguinte estrutura:",
+        options: [
+            { text: "Quando os relatórios chegarem, iniciaremos a auditoria.", isCorrect: true, rationale: "Oração subordinada adverbial anteposta à oração principal exige o uso de vírgula." },
+            { text: "Iniciaremos a auditoria quando os relatórios chegarem.", isCorrect: false, rationale: "Quando a oração subordinada adverbial está posposta à principal, a vírgula é facultativa." },
+            { text: "O diretor afirmou que os dados estavam corretos.", isCorrect: false, rationale: "É proibido separar a oração principal da subordinada substantiva integrante por vírgula." },
+            { text: "Os auditores examinaram os dados e elaboraram o pareceer.", isCorrect: false, rationale: "Não se separa orações coordenadas com mesma sujeição ligadas pela conjunção 'e'." }
+        ],
+        hint: "A oração adverbial deslocada para o início do período deve ser obrigatoriamente separada por vírgula."
+    },
+    {
+        id: 17,
+        category: "Aposição e Concordância com Expressões Partitivas",
+        question: "Assinale a frase que APRESENTA ERRO de concordância verbal de acordo com a norma culta:",
+        options: [
+            { text: "A maioria dos parlamentares votou contra o projeto de lei.", isCorrect: false, rationale: "Com expressão partitiva ('A maioria de'), aceita-se concordância no singular ('votou') ou no plural ('votaram')." },
+            { text: "A maioria dos parlamentares votaram contra o projeto de lei.", isCorrect: false, rationale: "Concordância plural atrativa com o especificador 'dos parlamentares' perfeitamente válida." },
+            { text: "Cerca de cem pessoas compareceu ao evento de abertura.", isCorrect: true, rationale: "Com expressões aproximativas ('Cerca de', 'Perto de'), o verbo concorda obrigatoriamente com o numeral ('cem pessoas compareceram')." },
+            { text: "Um grupo de estudantes organizou o protesto pacífico.", isCorrect: false, rationale: "Concordância no singular mantida com o núcleo coletivo 'grupo'." }
+        ],
+        hint: "Em 'Cerca de + numeral', a concordância verbal é feita diretamente com o número especificado."
+    },
+    {
+        id: 18,
+        category: "Funções Sintáticas do Pronome Relativo",
+        question: "Na frase: \"O projeto *que* apresentamos foi aprovado pela diretoria\", o pronome relativo destacado exerce a função sintática de:",
+        options: [
+            { text: "objeto direto.", isCorrect: true, rationale: "Substituindo o antecedente na oração subordinada ('Nós apresentamos o projeto'), o verbo 'apresentamos' exige complemento direto." },
+            { text: "sujeito.", isCorrect: false, rationale: "O sujeito da oração subordinada é o pronome implícito 'Nós'." },
+            { text: "predicativo do sujeito.", isCorrect: false, rationale: "O pronome não caracteriza o sujeito, mas recebe a ação verbal de 'apresentar'." },
+            { text: "adjunto adnominal.", isCorrect: false, rationale: "O pronome 'que' não possui valor possessivo nesta estrutura." }
+        ],
+        hint: "Reorganize a oração subordinada em ordem direta: 'Nós apresentamos [o projeto]'."
+    },
+    {
+        id: 19,
+        category: "Complemento Nominal vs. Adjunto Adnominal",
+        question: "Analise os termos destacados:\nI. A construção *do prédio* demorou dois anos.\nII. A leitura *do livro* enriqueceu o debate.\nO termo \"do livro\" na frase II exerce a função sintática de:",
+        options: [
+            { text: "complemento nominal.", isCorrect: true, rationale: "'O livro' sofre a ação de ser lido (sentido passivo/alvo da ação do substantivo abstrato 'leitura'), configurando complemento nominal." },
+            { text: "adjunto adnominal.", isCorrect: false, rationale: "Adjunto adnominal possui valor agente/possessivo. O livro não lê, ele é lido." },
+            { text: "objeto indireto.", isCorrect: false, rationale: "Completa um substantivo abstrato ('leitura'), e não um verbo." },
+            { text: "agente da passiva.", isCorrect: false, rationale: "Não há locução verbal passiva regendo o termo." }
+        ],
+        hint: "Aponte se o termo preposicionado ligado ao substantivo abstrato possui sentido paciente (sofre a ação = complemento)."
+    },
+    {
+        id: 20,
+        category: "Crase e Regência Sintática",
+        question: "Assinale a alternativa que preenche CORRETAMENTE as lacunas: \"A menção ____ teses acadêmicas trouxe visibilidade ____ pesquisadora, que se dedicou ____ valer ao projeto.\"",
+        options: [
+            { text: "a / à / a", isCorrect: true, rationale: "1ª lacuna: 'teses' está no plural indefinido (apenas preposição 'a'); 2ª lacuna: 'visibilidade' exige preposição 'a' + artigo 'a' ('à pesquisadora'); 3ª lacuna: antes de verbo ('valer') não ocorre crase." },
+            { text: "às / a / à", isCorrect: false, rationale: "Erro de crase antes de verbo na última lacuna." },
+            { text: "a / a / a", isCorrect: false, rationale: "Falta de fusão de crase obrigatória em 'à pesquisadora'." },
+            { text: "às / à / à", isCorrect: false, rationale: "Uso indevido de crase antes do verbo 'valer'." }
+        ],
+        hint: "Lembre-se: é proibido usar crase antes de verbos ('a valer') e observe o uso do artigo antes de substantivos plurais gerais."
+    },
+    {
+        id: 21,
+        category: "Uso dos Verbos 'Chegar' e 'Ir'",
+        question: "De acordo com a regência culta da norma-padrão, assinale a opção correta:",
+        options: [
+            { text: "Chegamos ao auditório no horário previsto para o início da palestra.", isCorrect: true, rationale: "Os verbos de movimento 'chegar' e 'ir' regem a preposição 'a' (e não 'em') para indicar destino." },
+            { text: "Chegamos no auditório no horário previsto para o início da palestra.", isCorrect: false, rationale: "O uso da preposição 'em' com verbos de movimento é condenado pela norma culta tradicional." },
+            { text: "Vou na biblioteca consultar alguns livros raros.", isCorrect: false, rationale: "O verbo 'ir' indicando destino exige preposição 'a' ('Vou à biblioteca')." },
+            { text: "O diplomata chegou em Genebra nas primeiras horas da manhã.", isCorrect: false, rationale: "O correto é 'chegou a Genebra'." }
+        ],
+        hint: "Verbos de movimento como 'chegar' e 'ir' exigem a preposição 'a' ao indicar destino."
+    },
+    {
+        id: 22,
+        category: "Estrutura do Período Composto por Subordinação",
+        question: "Na frase: \"É preciso que todos os documentos sejam revisados com atenção\", a oração destacada funciona sintaticamente como:",
+        options: [
+            { text: "oração subordinada substantiva subjetiva.", isCorrect: true, rationale: "A oração atua como sujeito da oração principal ('É preciso'). Equivale a: 'A revisão de todos os documentos é precisa'." },
+            { text: "oração subordinada substantiva objetiva direta.", isCorrect: false, rationale: "A oração principal possui o verbo de ligação 'é' + predicativo 'preciso', não havendo VTD." },
+            { text: "oração subordinada adjetiva explicativa.", isCorrect: false, rationale: "Não é introduzida por pronome relativo nem qualifica substantivo." },
+            { text: "oração subordinada substantiva completiva nominal.", isCorrect: false, rationale: "Completa o sentido de um termo na oração principal que já possui verbo com função de sujeito pendente." }
+        ],
+        hint: "A estrutura 'É preciso + que...' coloca a oração inteira no papel de sujeito do verbo 'ser'."
+    },
+    {
+        id: 23,
+        category: "Erro de Concordância Nominal",
+        question: "Assinale a opção em que a concordância nominal descumpre a norma-padrão:",
+        options: [
+            { text: "A senhora mesma assinou a promissória.", isCorrect: false, rationale: "'Mesma' concorda corretamente com o pronome feminino 'senhora'." },
+            { text: "Seguem anexos os comprovantes de pagamento solicitados.", isCorrect: false, rationale: "'Anexos' concorda com o substantivo masculino plural 'comprovantes'." },
+            { text: "As declarações devem ser mantidas o mais claras possíveis.", isCorrect: true, rationale: "Na expressão 'o mais... possíveis', o termo 'possíveis' concorda com o artigo no singular 'o' ('o mais claras possível')." },
+            { text: "Eles estavam quites com as obrigações eleitorais.", isCorrect: false, rationale: "'Quites' concorda no plural com o sujeito 'Eles'." }
+        ],
+        hint: "Na expressão 'o mais... possível', o termo 'possível' deve permanecer no singular concordando com o artigo 'o'."
+    },
+    {
+        id: 24,
+        category: "Orações Intercaladas ou Interferentes",
+        question: "As vírgulas na frase \"O resultado da avaliação, afirmaram os diretores, surpreendeu a equipe\" justificam-se por isolar:",
+        options: [
+            { text: "uma oração intercalada (ou interferente).", isCorrect: true, rationale: "Orações intercaladas citam a autoria ou inserem um comentário no meio de outra oração, devendo ficar isoladas por vírgulas ou travessões." },
+            { text: "um adjunto adnominal deslocado.", isCorrect: false, rationale: "'Afirmaram os diretores' contém estrutura verbal completa, sendo uma oração." },
+            { text: "uma oração subordinada adjetiva restritiva.", isCorrect: false, rationale: "Não apresenta pronome relativo nem restringe termo anterior." },
+            { text: "um vocativo de ordem explicativa.", isCorrect: false, rationale: "Não se trata de um chamamento direto." }
+        ],
+        hint: "Trata-se de uma oração inserida dentro de outra para indicar a fonte do relato."
+    },
+    {
+        id: 25,
+        category: "Concordância com Pronome de Tratamento",
+        question: "Assinale a frase em que a concordância com o pronome de tratamento está CORRETA:",
+        options: [
+            { text: "Vossa Excelência esteve presente na reunião com seus assessores.", isCorrect: true, rationale: "Pronomes de tratamento exigem verbo e pronomes de posse na 3ª pessoa ('esteve', 'seus')." },
+            { text: "Vossa Excelência estiveste presente na reunião com vossos assessores.", isCorrect: false, rationale: "Erro de concordância ao usar verbos e pronomes na 2ª pessoa do plural." },
+            { text: "Vossa Excelência esteve presente na reunião com vossos assessores.", isCorrect: false, rationale: "Incoerência sintática ao misturar 3ª pessoa ('esteve') com 2ª pessoa ('vossos')." },
+            { text: "Vossa Majestade deveis tomar a decisão com prudência.", isCorrect: false, rationale: "O verbo deve ficar na 3ª pessoa do singular ('deve')." }
+        ],
+        hint: "Apesar de se dirigir à 2ª pessoa, a concordância gramatical dos pronomes de tratamento é feita integralmente na 3ª pessoa."
+    },
+    {
+        id: 26,
+        category: "Uso do Pronome Relativo 'Cujo'",
+        question: "Assinale a frase em que o pronome 'cujo' foi empregado em conformidade com as regras gramaticais:",
+        options: [
+            { text: "O autor cujo livro foi premiado concedeu uma entrevista coletiva.", isCorrect: true, rationale: "'Cujo' estabelece posse ('livro do autor'), não admite artigo após si ('cujo o' é proibido) e concorda com o consequente ('livro')." },
+            { text: "O autor cujo o livro foi premiado concedeu uma entrevista coletiva.", isCorrect: false, rationale: "Uso incorreto de artigo 'o' imediatamente após o pronome 'cujo'." },
+            { text: "O autor de cujo livro foi premiado concedeu uma entrevista coletiva.", isCorrect: false, rationale: "Uso indevido da preposição 'de' sem regência que a exija no contexto." },
+            { text: "O autor cujos os livros foram premiados concedeu uma entrevista.", isCorrect: false, rationale: "Incorreto: combinação do pronome 'cujos' com o artigo 'os'." }
+        ],
+        hint: "O pronome 'cujo' nunca admite a presença de artigo antecedente ou subsequente (*cujo o / cujos os*)."
+    },
+    {
+        id: 27,
+        category: "Vício de Linguagem e Construção Frasal: Pleonasmo",
+        question: "Assinale a frase que apresenta um pleonasmo sintático vicioso (vício de construção):",
+        options: [
+            { text: "O vereador encarou o problema de frente e propôs uma solução.", isCorrect: true, rationale: "'Encarar de frente' é uma redundância viciosa, pois o ato de encarar já pressupõe uma atitude frontal." },
+            { text: "O juiz proferiu uma sentença justa para ambas as partes.", isCorrect: false, rationale: "Construção límpida e sem redundâncias nocivas." },
+            { text: "A empresa visa expandir seus negócios no exterior.", isCorrect: false, rationale: "Uso do verbo e complementos plenamente adequados." },
+            { text: "Eles mantiveram a mesma opinião durante o debate.", isCorrect: false, rationale: "Não há redundância que fira a norma culta." }
+        ],
+        hint: "Procure a expressão redundante em que o significado de uma palavra já está contido na outra."
+    },
+    {
+        id: 28,
+        category: "Sintaxe da Oração Reduzida de Gerúndio",
+        question: "Assinale a alternativa em que o uso do gerúndio está correto e NÃO configura gerundismo vicioso:",
+        options: [
+            { text: "O cientista concluiu a pesquisa, obtendo resultados promissores.", isCorrect: true, rationale: "O gerúndio indica ação simultânea ou consequente em relação à oração principal, uso legítimo e gramatical." },
+            { text: "A secretária vai estar transferindo a sua ligação em instantes.", isCorrect: false, rationale: "Uso de três verbos para indicar uma ação pontual no futuro (gerundismo vicioso)." },
+            { text: "Nós vamos estar analisando o seu pedido na próxima semana.", isCorrect: false, rationale: "Gerundismo vicioso usado indevidamente para ação futura pontual." },
+            { text: "O atendente vai estar enviando o e-mail no fim da tarde.", isCorrect: false, rationale: "Locução verborrágica de gerundismo descartável na norma culta." }
+        ],
+        hint: "O gerúndio é correto para expressar ações contínuas ou consequências reais, mas incorreto em locuções de atendimento telefônico."
+    },
+    {
+        id: 29,
+        category: "Pontuação em Orações Coordenadas Adversativas",
+        question: "Assinale a frase com a pontuação INCORRETA quanto à colocação da conjunção adversativa deslocada:",
+        options: [
+            { text: "O projeto apresentou excelentes métricas, contudo não convenceu os investidores.", isCorrect: false, rationale: "Vírgula antes de 'contudo' separando a oração coordenada adversativa." },
+            { text: "O projeto apresentou excelentes métricas; não convenceu, contudo, os investidores.", isCorrect: false, rationale: "Conjunção deslocada isolada corretamente entre vírgulas e precedida de ponto e vírgula." },
+            { text: "O projeto apresentou excelentes métricas; contudo, não convenceu os investidores.", isCorrect: false, rationale: "Pontuação correta com ponto e vírgula antes e vírgula depois da conjunção." },
+            { text: "O projeto apresentou excelentes métricas não convenceu contudo, os investidores.", isCorrect: true, rationale: "Falta de pontuação separando as duas orações e isolando a conjunção deslocada 'contudo'." }
+        ],
+        hint: "Quando a conjunção adversativa vem deslocada no meio da segunda oração, ela deve ser isolada por duas vírgulas."
+    },
+    {
+        id: 30,
+        category: "Regência do Verbo 'Implicar'",
+        question: "Assinale a alternativa que atende à regência culta do verbo 'implicar' no sentido de 'acarretar/trazer como consequência':",
+        options: [
+            { text: "A alteração do cronograma implicará atrasos no pagamento dos fornecedores.", isCorrect: true, rationale: "'Implicar' no sentido de acarretar é Transitivo Direto (VTD), dispensando a preposição 'em'." },
+            { text: "A alteração do cronograma implicará em atrasos no pagamento dos fornecedores.", isCorrect: false, rationale: "Uso indevido da preposição 'em' (vício comum por contaminação com 'resultar em')." },
+            { text: "A alteração do cronograma implicará aos atrasos no pagamento dos fornecedores.", isCorrect: false, rationale: "Uso inadequado de complemento relativo preposicionado." },
+            { text: "A alteração do cronograma implicará com atrasos no pagamento dos fornecedores.", isCorrect: false, rationale: "'Implicar com' significa ter birra/implicância com alguém, não acarretar." }
+        ],
+        hint: "No sentido de 'ter como consequência/acarretar', o verbo 'implicar' é transitivo direto (não aceita a preposição 'em')."
+    }
+];
+
+        // State Management
+        let currentQuestionIdx = 0;
+        let userAnswers = new Array(questionsData.length).fill(null);
+        let bookmarked = new Array(questionsData.length).fill(false);
+        let quizMode = 'study'; // 'study' or 'exam'
+        let isSubmitted = false;
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGrid();
+            loadQuestion(0);
+        });
+
+        // Set Mode
+        function setMode(mode) {
+            if (isSubmitted) return;
+            quizMode = mode;
+            
+            const btnStudy = document.getElementById('btnModeStudy');
+            const btnExam = document.getElementById('btnModeExam');
+
+            if (mode === 'study') {
+                btnStudy.className = "px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm";
+                btnExam.className = "px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900";
+            } else {
+                btnExam.className = "px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm";
+                btnStudy.className = "px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900";
+            }
+
+            // Re-render current question view
+            loadQuestion(currentQuestionIdx);
+        }
+
+        // Render Side Navigation Grid
+        function renderGrid() {
+            const gridContainer = document.getElementById('questionGrid');
+            gridContainer.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `gridBtn-${idx}`;
+                btn.onclick = () => jumpToQuestion(idx);
+                btn.className = getGridBtnClass(idx);
+                btn.innerText = idx + 1;
+                gridContainer.appendChild(btn);
+            });
+
+            updateProgress();
+        }
+
+        function getGridBtnClass(idx) {
+            let base = "w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center transition-all ";
+            
+            if (idx === currentQuestionIdx) {
+                base += "ring-2 ring-brand-600 ring-offset-2 ";
+            }
+
+            if (bookmarked[idx]) {
+                base += "bg-amber-400 text-amber-950 font-extrabold ";
+            } else if (userAnswers[idx] !== null) {
+                if (isSubmitted || quizMode === 'study') {
+                    const isCorrect = questionsData[idx].options[userAnswers[idx]].isCorrect;
+                    base += isCorrect ? "bg-emerald-500 text-white " : "bg-rose-500 text-white ";
+                } else {
+                    base += "bg-brand-600 text-white ";
+                }
+            } else {
+                base += "bg-slate-100 text-slate-600 hover:bg-slate-200 ";
+            }
+
+            return base;
+        }
+
+        // Update Progress Bar & Score
+        function updateProgress() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            const percent = Math.round((answeredCount / questionsData.length) * 100);
+            
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('progressPercent').innerText = `${percent}% concluído`;
+
+            // Calculate score
+            let correctCount = 0;
+            userAnswers.forEach((ans, i) => {
+                if (ans !== null && questionsData[i].options[ans].isCorrect) {
+                    correctCount++;
+                }
+            });
+
+            document.getElementById('scoreDisplay').innerText = `${correctCount} / ${questionsData.length}`;
+        }
+
+        // Load Question Data
+        function loadQuestion(idx) {
+            currentQuestionIdx = idx;
+            const q = questionsData[idx];
+
+            // Update Header Info
+            document.getElementById('questionCategory').innerText = q.category;
+            document.getElementById('questionNumberBadge').innerText = `Questão ${idx + 1} de ${questionsData.length}`;
+            document.getElementById('questionTitle').innerText = q.question;
+
+            // Update Bookmark Button
+            const btnBookmark = document.getElementById('btnBookmark');
+            if (bookmarked[idx]) {
+                btnBookmark.className = "text-amber-500 font-medium text-sm transition flex items-center gap-1.5";
+                btnBookmark.innerHTML = `<i class="fa-solid fa-bookmark"></i> <span class="hidden sm:inline">Marcada</span>`;
+            } else {
+                btnBookmark.className = "text-slate-400 hover:text-amber-500 text-sm font-medium transition flex items-center gap-1.5";
+                btnBookmark.innerHTML = `<i class="fa-regular fa-bookmark"></i> <span class="hidden sm:inline">Revisar</span>`;
+            }
+
+            // Render Options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const selectedOpt = userAnswers[idx];
+            const showFeedback = isSubmitted || (quizMode === 'study' && selectedOpt !== null);
+
+            q.options.forEach((opt, optIdx) => {
+                const optBtn = document.createElement('button');
+                optBtn.className = getOptionClass(idx, optIdx, selectedOpt, showFeedback);
+                optBtn.onclick = () => selectOption(optIdx);
+                if (showFeedback || isSubmitted) {
+                    // Disable changing if already answered in study mode or if quiz is finished
+                    if (quizMode === 'study' || isSubmitted) {
+                        optBtn.disabled = true;
+                    }
+                }
+
+                const letter = String.fromCharCode(65 + optIdx); // A, B, C, D
+
+                let iconHtml = '';
+                if (showFeedback) {
+                    if (opt.isCorrect) {
+                        iconHtml = `<i class="fa-solid fa-circle-check text-emerald-600 text-lg ml-auto"></i>`;
+                    } else if (selectedOpt === optIdx) {
+                        iconHtml = `<i class="fa-solid fa-circle-xmark text-rose-600 text-lg ml-auto"></i>`;
+                    }
+                }
+
+                optBtn.innerHTML = `
+                    <div class="flex items-start gap-3 text-left w-full">
+                        <span class="w-6 h-6 rounded-full border border-current flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
+                            ${letter}
+                        </span>
+                        <span class="text-sm font-medium leading-relaxed flex-1">${opt.text}</span>
+                        ${iconHtml}
+                    </div>
+                `;
+
+                optionsContainer.appendChild(optBtn);
+            });
+
+            // Handle Explanation Box
+            const explanationBox = document.getElementById('explanationBox');
+            const explanationHeader = document.getElementById('explanationHeader');
+            const explanationText = document.getElementById('explanationText');
+
+            if (showFeedback && selectedOpt !== null) {
+                explanationBox.classList.remove('hidden');
+                const chosenOptObj = q.options[selectedOpt];
+                const correctOptObj = q.options.find(o => o.isCorrect);
+
+                if (chosenOptObj.isCorrect) {
+                    explanationHeader.className = "flex items-center gap-2 font-bold mb-1 text-emerald-700";
+                    explanationHeader.innerHTML = `<i class="fa-solid fa-circle-check"></i> Correto!`;
+                    explanationText.innerText = chosenOptObj.rationale;
+                } else {
+                    explanationHeader.className = "flex items-center gap-2 font-bold mb-1 text-rose-700";
+                    explanationHeader.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Incorreto.`;
+                    explanationText.innerText = `${chosenOptObj.rationale} (Gabarito: ${correctOptObj.text})`;
+                }
+            } else {
+                explanationBox.classList.add('hidden');
+            }
+
+            // Navigation Buttons State
+            document.getElementById('btnPrev').disabled = (idx === 0);
+            
+            const btnNext = document.getElementById('btnNext');
+            if (idx === questionsData.length - 1) {
+                btnNext.innerHTML = `Finalizar <i class="fa-solid fa-flag-checkered ml-1"></i>`;
+            } else {
+                btnNext.innerHTML = `Próxima <i class="fa-solid fa-chevron-right ml-1"></i>`;
+            }
+
+            renderGrid();
+        }
+
+        function getOptionClass(qIdx, optIdx, selectedOpt, showFeedback) {
+            let base = "w-full p-4 rounded-xl border text-left transition-all flex items-center ";
+
+            if (showFeedback) {
+                const isCorrect = questionsData[qIdx].options[optIdx].isCorrect;
+                if (isCorrect) {
+                    return base + "bg-emerald-50 border-emerald-300 text-emerald-950 font-medium ";
+                } else if (selectedOpt === optIdx) {
+                    return base + "bg-rose-50 border-rose-300 text-rose-950 ";
+                } else {
+                    return base + "bg-slate-50 border-slate-200 text-slate-400 opacity-60 ";
+                }
+            } else {
+                if (selectedOpt === optIdx) {
+                    return base + "bg-brand-50 border-brand-500 text-brand-900 shadow-sm ";
+                } else {
+                    return base + "bg-white border-slate-200 text-slate-700 hover:border-brand-300 hover:bg-slate-50 ";
+                }
+            }
+        }
+
+        // Action Handlers
+        function selectOption(optIdx) {
+            if (isSubmitted) return;
+            userAnswers[currentQuestionIdx] = optIdx;
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function toggleBookmark() {
+            bookmarked[currentQuestionIdx] = !bookmarked[currentQuestionIdx];
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function jumpToQuestion(idx) {
+            loadQuestion(idx);
+        }
+
+        function navigateQuestion(direction) {
+            const nextIdx = currentQuestionIdx + direction;
+            if (nextIdx >= 0 && nextIdx < questionsData.length) {
+                loadQuestion(nextIdx);
+            } else if (nextIdx >= questionsData.length) {
+                finishQuiz();
+            }
+        }
+
+        // Finish Quiz & Show Results
+        function finishQuiz() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            if (unanswered > 0 && !isSubmitted) {
+                const confirmSubmit = confirm(`Você ainda tem ${unanswered} questão(ões) não respondida(s). Deseja realmente finalizar?`);
+                if (!confirmSubmit) return;
+            }
+
+            isSubmitted = true;
+            document.getElementById('quizCard').classList.add('hidden');
+            document.getElementById('resultsCard').classList.remove('hidden');
+
+            // Calculate final statistics
+            let correctCount = 0;
+            userAnswers.forEach((ans, i) => {
+                if (ans !== null && questionsData[i].options[ans].isCorrect) {
+                    correctCount++;
+                }
+            });
+
+            const percent = Math.round((correctCount / questionsData.length) * 100);
+
+            document.getElementById('finalScore').innerText = `${correctCount} / ${questionsData.length}`;
+            document.getElementById('finalPercent').innerText = `${percent}%`;
+
+            let feedbackText = "Insuficiente";
+            let feedbackColor = "text-rose-600";
+            if (percent >= 85) {
+                feedbackText = "Excelente!";
+                feedbackColor = "text-emerald-600";
+            } else if (percent >= 70) {
+                feedbackText = "Muito Bom!";
+                feedbackColor = "text-brand-600";
+            } else if (percent >= 50) {
+                feedbackText = "Regular";
+                feedbackColor = "text-amber-600";
+            }
+
+            const feedbackElem = document.getElementById('finalFeedback');
+            feedbackElem.innerText = feedbackText;
+            feedbackElem.className = `text-sm font-bold mt-1 block ${feedbackColor}`;
+
+            renderGrid();
+        }
+
+        function restartQuiz() {
+            userAnswers = new Array(questionsData.length).fill(null);
+            bookmarked = new Array(questionsData.length).fill(false);
+            isSubmitted = false;
+            currentQuestionIdx = 0;
+
+            document.getElementById('resultsCard').classList.add('hidden');
+            document.getElementById('quizCard').classList.remove('hidden');
+
+            renderGrid();
+            loadQuestion(0);
+        }
+
+        function reviewQuiz() {
+            document.getElementById('resultsCard').classList.add('hidden');
+            document.getElementById('quizCard').classList.remove('hidden');
+            loadQuestion(0);
+        }
+    </script>
+</body>
+</html>
