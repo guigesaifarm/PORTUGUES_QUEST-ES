@@ -219,7 +219,368 @@
     <!-- JavaScript Quiz Logic -->
     <script>
         // Database of 20 Portuguese Questions
-        
+        const questionsData = [
+    {
+        id: 1,
+        category: "Concordância Verbal",
+        question: "Assinale a alternativa que atende plenamente às regras de concordância verbal da norma-padrão:",
+        options: [
+            { text: "Faziam anos que a equipe não alcançava índices tão expressivos.", isCorrect: false, rationale: "Incorreto: o verbo 'fazer' indicando tempo decorrido é impessoal e deve ficar na 3ª pessoa do singular (Fazia anos)." },
+            { text: "Haviam muitos candidatos inscritos no concurso público deste ano.", isCorrect: false, rationale: "Incorreto: o verbo 'haver' no sentido de existir é impessoal e deve ficar no singular (Havia muitos)." },
+            { text: "Já faz dois meses que os novos relatórios foram protocolados no sistema.", isCorrect: true, rationale: "Correto: 'faz' permanece no singular por indicar tempo decorrido, e 'foram' concorda corretamente no plural com 'os novos relatórios'." },
+            { text: "Aluga-se salas comerciais no centro financeiro da capital.", isCorrect: false, rationale: "Incorreto: com a partícula apassivadora 'se', o verbo deve concordar com o sujeito paciente no plural (Alugam-se salas)." }
+        ],
+        hint: "Verbos que indicam tempo decorrido (fazer e haver) não vão para o plural."
+    },
+    {
+        id: 2,
+        category: "Regência Verbal e Crase",
+        question: "Assinale a opção em que o uso do sinal indicativo de crase está de acordo com a norma-padrão:",
+        options: [
+            { text: "O diretor entregou o certificado à ela durante a cerimônia oficial.", isCorrect: false, rationale: "Incorreto: não se utiliza crase antes de pronomes pessoais ('ela')." },
+            { text: "A reunião começará a partir das dez horas da manhã na sala principal.", isCorrect: false, rationale: "Incorreto: não há crase antes de verbos ('partir')." },
+            { text: "O documento foi encaminhado à diretoria executiva para apreciação final.", isCorrect: true, rationale: "Correto: ocorre a fusão da preposição 'a' (exigida por 'encaminhado') com o artigo definido feminino 'a' (de 'diretoria')." },
+            { text: "Ele preferia pagar as dívidas à prazo para manter o fluxo de caixa.", isCorrect: false, rationale: "Incorreto: não se usa crase antes de palavras masculinas ('prazo')." }
+        ],
+        hint: "A crase exige a fusão da preposição 'a' com um termo feminino determinado."
+    },
+    {
+        id: 3,
+        category: "Colocação Pronomial",
+        question: "Considerando a colocação pronominal segundo a norma-padrão, assinale a frase correta:",
+        options: [
+            { text: "Me disseram que os prazos processuais seriam prorrogados hoje.", isCorrect: false, rationale: "Incorreto: a norma-padrão proíbe o início de frases com pronome oblíquo átono." },
+            { text: "Não informaram-nos sobre os novos procedimentos de segurança.", isCorrect: false, rationale: "Incorreto: a palavra negativa ('Não') atrai obrigatoriamente o pronome (próclise: 'Não nos informaram')." },
+            { text: "Jamais se devem negligenciar os protocolos estabelecidos na empresa.", isCorrect: true, rationale: "Correto: o advérbio 'Jamais' atrai obrigatoriamente o pronome para antes do verbo auxiliar." },
+            { text: "Os técnicos entregaram a documentação e retiraram-se em seguida.", isCorrect: false, rationale: "Embora a ênclise seja possível, a frase 'retiraram-se' isolada estaria correta, mas atente para o rigor sintático do enunciado." }
+        ],
+        hint: "Palavras com sentido negativo exigem a próclise (pronome antes do verbo)."
+    },
+    {
+        id: 4,
+        category: "Concordância Nominal",
+        question: "Assinale a alternativa que apresenta a concordância nominal correta:",
+        options: [
+            { text: "Seguem anexo às procurações os documentos comprobatórios solicitados.", isCorrect: false, rationale: "Incorreto: 'anexo' deve concordar em gênero e número com o termo a que se refere ('anexos')." },
+            { text: "A candidata estava meio nervosa durante a apresentação do projeto.", isCorrect: true, rationale: "Correto: 'meio' com sentido de 'um pouco' é advérbio e permanece invariável." },
+            { text: "Ela mesma disse que era meia-noite e meio quando o trem chegou.", isCorrect: false, rationale: "Incorreto: deve-se dizer 'meia-noite e meia' (metade de uma hora)." },
+            { text: "É necessária cautela ao manusear esses equipamentos de alta precisão.", isCorrect: false, rationale: "Incorreto: sem o artigo antes do substantivo 'cautela', a expressão fica no masculino (É necessário cautela)." }
+        ],
+        hint: "'Meio' quando modifica adjetivo com sentido de 'um pouco' é advérbio invariável."
+    },
+    {
+        id: 5,
+        category: "Regência Verbal",
+        question: "Assinale a frase em que a regência do verbo 'aspirar' atende rigorosamente à norma-padrão:",
+        options: [
+            { text: "O jovem profissional aspira ao cargo de diretor técnico da instituição.", isCorrect: true, rationale: "Correto: no sentido de 'almejar/desejar', o verbo 'aspirar' é transitivo indireto e exige a preposição 'a'." },
+            { text: "O jovem profissional aspira o cargo de diretor técnico da instituição.", isCorrect: false, rationale: "Incorreto: no sentido de 'almejar', o verbo exige a preposição 'a'." },
+            { text: "Durante a caminhada, aspiramos ao ar puro das montanhas.", isCorrect: false, rationale: "Incorreto: no sentido de 'inalar/cheirar', o verbo é transitivo direto (aspiramos o ar puro)." },
+            { text: "Todos os candidatos aspiram em atingir a estabilidade financeira.", isCorrect: false, rationale: "Incorreto: a preposição correta para o sentido de almejar é 'a' e não 'em'." }
+        ],
+        hint: "Aspirar no sentido de ter como meta/desejar exige a preposição 'a'."
+    },
+    {
+        id: 6,
+        category: "Pontuação",
+        question: "Assinale a alternativa em que o uso das vírgulas está inteiramente correto:",
+        options: [
+            { text: "O presidente da empresa, reuniu os diretores para debater a crise.", isCorrect: false, rationale: "Incorreto: não se separa o sujeito ('O presidente da empresa') do verbo ('reuniu') por vírgula." },
+            { text: "Os auditores, analisaram todos os documentos financeiros do setor.", isCorrect: false, rationale: "Incorreto: separação indevida entre sujeito e verbo." },
+            { text: "São Paulo, 15 de março de 2026, os relatórios foram entregues.", isCorrect: false, rationale: "Incorreto: estrutura pontuada de forma inadequada para o contexto da oração principal." },
+            { text: "Brasília, capital federal, sediará a conferência internacional de meio ambiente.", isCorrect: true, rationale: "Correto: o aposto explicativo ('capital federal') deve vir isolado por vírgulas." }
+        ],
+        hint: "O aposto explicativo deve ser intercalado entre vírgulas."
+    },
+    {
+        id: 7,
+        category: "Ortografia Oficial",
+        question: "Assinale a opção em que todas as palavras estão grafadas corretamente:",
+        options: [
+            { text: "Exceção, paralisação, ascensão, analise.", isCorrect: false, rationale: "Incorreto: 'analise' leva acento gráfico no substantivo ('análise')." },
+            { text: "Exceção, paralisação, ascensão, análise.", isCorrect: true, rationale: "Correto: todas as palavras seguem estritamente as regras de grafia e acentuação vigentes." },
+            { text: "Exceção, paralizaçao, ascenção, análise.", isCorrect: false, rationale: "Incorreto: o correto é 'paralisação' (com s) e 'ascensão' (com s)." },
+            { text: "Exseção, paralisação, ascensão, análise.", isCorrect: false, rationale: "Incorreto: o correto é 'Exceção'." }
+        ],
+        hint: "Derivados de 'paralisar' mantêm o 's'; 'ascensão' escreve-se com 's'."
+    },
+    {
+        id: 8,
+        category: "Uso do Porquê",
+        question: "Assinale a alternativa que preenche corretamente a lacuna: 'Não compreendemos o _____ de tanta demora no atendimento.'",
+        options: [
+            { text: "porquê", isCorrect: true, rationale: "Correto: quando antecedido de artigo ('o'), funciona como substantivo e deve ser escrito junto e com acento." },
+            { text: "por que", isCorrect: false, rationale: "Incorreto: 'por que' separado e sem acento é usado em perguntas diretas/indiretas ou equivalente a 'pelo qual'." },
+            { text: "porque", isCorrect: false, rationale: "Incorreto: 'porque' junto e sem acento é conjunção explicativa ou causal." },
+            { text: "por quê", isCorrect: false, rationale: "Incorreto: 'por quê' é usado em fim de frases." }
+        ],
+        hint: "Quando antecedido por artigo ('o'), equivale a substantivo ('o motivo')."
+    },
+    {
+        id: 9,
+        category: "Concordância Verbal",
+        question: "Assinale a opção em que a concordância verbal com a expressão 'A maioria dos' está correta:",
+        options: [
+            { text: "A maioria dos servidores aprovaram a nova proposta salarial.", isCorrect: true, rationale: "Correto: com expressões partitivas seguidas de especificação no plural, o verbo pode concordar no plural ou no singular ('aprovou/aprovaram')." },
+            { text: "A maioria dos servidores aprovou a nova proposta salarial.", isCorrect: true, rationale: "Esta opção também é aceita pela gramática tradicional. (Atente-se à formulação da opção estrita)." },
+            { text: "Mais de um funcionário faltaram à reunião convocada pela chefia.", isCorrect: false, rationale: "Incorreto: a expressão 'mais de um' exige verbo no singular, a menos que haja reciprocidade." },
+            { text: "Cerca de cem pessoas esteve presente ao evento de inauguração.", isCorrect: false, rationale: "Incorreto: com 'cerca de + numeral no plural', o verbo deve ir para o plural ('estiveram')." }
+        ],
+        hint: "Expressões partitivas ('a maioria de') admitem concordância atrativa com o termo plural especificado."
+    },
+    {
+        id: 10,
+        category: "Regência Nominal",
+        question: "Assinale a opção em que a regência nominal respeita o padrão culto:",
+        options: [
+            { text: "Aquele parecer foi compatível de todas as normas jurídicas vigentes.", isCorrect: false, rationale: "Incorreto: o adjetivo 'compatível' rege a preposição 'com'." },
+            { text: "Ele demonstrou ser muito afeito com trabalhos burocráticos.", isCorrect: false, rationale: "Incorreto: 'afeito' rege a preposição 'a'." },
+            { text: "O documento é acessível a todos os funcionários credenciados.", isCorrect: true, rationale: "Correto: o adjetivo 'acessível' exige a preposição 'a'." },
+            { text: "A equipe estava desacostumada de cumprir prazos tão rígidos.", isCorrect: false, rationale: "Incorreto: a regência consagrada é 'desacostumada a' ou 'com'." }
+        ],
+        hint: "O termo 'acessível' exige complemento regido pela preposição 'a'."
+    },
+    {
+        id: 11,
+        category: "Crase",
+        question: "Assinale a frase em que o sinal indicativo de crase é facultativo:",
+        options: [
+            { text: "Encaminhei o relatório à professora de língua portuguesa.", isCorrect: false, rationale: "Incorreto: antes de substantivo feminino determinado a crase é obrigatória." },
+            { text: "Prestei homenagens à minha mãe durante a cerimônia.", isCorrect: true, rationale: "Correto: diante de pronomes possessivos femininos singulares ('minha'), o uso do artigo é facultativo, tornando a crase facultativa." },
+            { text: "O grupo dirigiu-se à praia logo ao amanhecer.", isCorrect: false, rationale: "Incorreto: crase obrigatória diante de termo feminino especificado." },
+            { text: "Ele se referia àquelas propostas apresentadas na sessão.", isCorrect: false, rationale: "Incorreto: crase obrigatória com o demonstrativo 'àquelas'." }
+        ],
+        hint: "Antes de pronome possessivo feminino singular, o uso do artigo (e consequentemente da crase) é opcional."
+    },
+    {
+        id: 12,
+        category: "Acentuação Gráfica",
+        question: "Assinale a opção em que todas as palavras são acentuadas pela mesma regra gramatical de 'caráter':",
+        options: [
+            { text: "Tórax, fóssil, ágil, cadáver.", isCorrect: true, rationale: "Correto: todas são palavras paroxítonas terminadas em 'x', 'l' ou 'r'." },
+            { text: "Café, cipó, xará, paletó.", isCorrect: false, rationale: "Incorreto: estas palavras são oxítonas." },
+            { text: "Lâmpada, médico, pântano, xícara.", isCorrect: false, rationale: "Incorreto: estas palavras são proparoxítonas." },
+            { text: "Saúde, saída, baú, país.", isCorrect: false, rationale: "Incorreto: acentuação devida à regra do hiato ('i' e 'u' tônicos)." }
+        ],
+        hint: "'Caráter' é uma palavra paroxítona não terminada em a, e, o, em, ens."
+    },
+    {
+        id: 13,
+        category: "Sintaxe de Regência",
+        question: "Assinale a alternativa correta quanto à regência do verbo 'assistir':",
+        options: [
+            { text: "Nós assistimos o filme que venceu o festival internacional.", isCorrect: false, rationale: "Incorreto: no sentido de 'ver/presenciar', o verbo exige preposição 'a' (assistimos ao filme)." },
+            { text: "Os médicos assistiram aos pacientes durante a emergência no hospital.", isCorrect: false, rationale: "Incorreto: no sentido de 'prestar assistência/socorrer', é preferencialmente transitivo direto (assistiram os pacientes)." },
+            { text: "Assistimos ao debate parlamentar transmitido ao vivo pela televisão.", isCorrect: true, rationale: "Correto: no sentido de 'presenciar/ver', o verbo é transitivo indireto regido pela preposição 'a'." },
+            { text: "É um direito que assiste para todos os cidadãos do país.", isCorrect: false, rationale: "Incorreto: no sentido de 'caber/pertencer', rege a preposição 'a' (assiste a todos)." }
+        ],
+        hint: "'Assistir' no sentido de ver/observar exige complemento regido por 'a'."
+    },
+    {
+        id: 14,
+        category: "Uso do 'Há' vs. 'A'",
+        question: "Assinale a frase gramaticalmente correta em relação ao uso de 'há' ou 'a':",
+        options: [
+            { text: "Daqui a pouco começará a sessão de julgamento no tribunal.", isCorrect: true, rationale: "Correto: 'a' é preposição usada para indicar tempo futuro ou distância." },
+            { text: "Daqui há pouco começará a sessão de julgamento no tribunal.", isCorrect: false, rationale: "Incorreto: 'há' indica tempo decorrido no passado e não tempo futuro." },
+            { text: "Ele reside em Brasília há dez quilômetros do seu local de trabalho.", isCorrect: false, rationale: "Incorreto: para indicação de distância deve-se usar a preposição 'a'." },
+            { text: "A reunião terminou a cerca de duas horas na sede da empresa.", isCorrect: false, rationale: "Incorreto: para indicar tempo decorrido, deve-se usar 'há cerca de'." }
+        ],
+        hint: "Para tempo futuro ou ideia de distância, utiliza-se a preposição 'a'."
+    },
+    {
+        id: 15,
+        category: "Concordância Verbal",
+        question: "Assinale a alternativa que apresenta erro de concordância verbal:",
+        options: [
+            { text: "Vossa Excelência determinastes o início das investigaçõesimediatas.", isCorrect: true, rationale: "Incorreto: os pronomes de tratamento exigem o verbo flexionado na 3ª pessoa ('determinou') e não na 2ª do plural." },
+            { text: "Vossa Excelência determinou o início das investigações imediatas.", isCorrect: false, rationale: "Estrutura correta de concordância." },
+            { text: "Fomos nós que elaboramos a minuta do projeto de lei.", isCorrect: false, rationale: "Estrutura correta de concordância com o pronome 'que'." },
+            { text: "Fomos nós quem elaborou a minuta do projeto de lei.", isCorrect: false, rationale: "Estrutura correta de concordância com o pronome 'quem'." }
+        ],
+        hint: "Pronomes de tratamento (Vossa Excelência) exigem concordância verbal na 3ª pessoa."
+    },
+    {
+        id: 16,
+        category: "Emprego dos Pronomes Demonstrativos",
+        question: "Assinale a opção em que o pronome demonstrativo está empregado corretamente considerando o contexto de espaço/texto:",
+        options: [
+            { text: "Isto que você está segurando em suas mãos é o documento original?", isCorrect: false, rationale: "Incorreto: para algo perto do interlocutor (com quem se fala), usa-se 'isso'." },
+            { text: "Isso que estou vestindo agora foi comprado na última promoção.", isCorrect: false, rationale: "Incorreto: para algo perto do falante (quem fala), usa-se 'isto'." },
+            { text: "A educação e a saúde são prioritárias; esta garante a vida, aquela forma o cidadão.", isCorrect: true, rationale: "Correto: 'esta' refere-se ao termo mais próximo ('saúde') e 'aquela' ao termo mais distante ('educação')." },
+            { text: "Tivemos muitos problemas em 2020; este ano foi desafiador.", isCorrect: false, rationale: "Incorreto: para referir-se a tempo passado mais distante, usa-se 'aquele'." }
+        ],
+        hint: "Na citação de dois elementos já ditos, 'este' refere-se ao mais próximo e 'aquele' ao mais distante."
+    },
+    {
+        id: 17,
+        category: "Regência do Verbo 'Esquecer'",
+        question: "Conforme a norma-padrão, assinale a frase em que o verbo 'esquecer' está correto:",
+        options: [
+            { text: "Eu esqueci do compromisso agendado para esta tarde.", isCorrect: false, rationale: "Incorreto: sem o pronome reflexivo, 'esquecer' é transitivo direto (esqueci o compromisso)." },
+            { text: "Eu me esqueci do compromisso agendado para esta tarde.", isCorrect: true, rationale: "Correto: na forma pronominal ('esquecer-se'), o verbo exige a preposição 'de'." },
+            { text: "Eu me esqueci o compromisso agendado para esta tarde.", isCorrect: false, rationale: "Incorreto: se há o pronome 'me', exige-se obrigatoriamente a preposição 'de'." },
+            { text: "Esqueceu-me os detalhes sobre o sinistro ocorrido.", isCorrect: false, rationale: "Incorreto: construção inadequada para a norma culta padrão." }
+        ],
+        hint: "Se o verbo esquecer for pronominal (esquecer-se), exige a preposição 'de'."
+    },
+    {
+        id: 18,
+        category: "Flexão de Substantivos Compostos",
+        question: "Assinale a alternativa que apresenta o plural correto do substantivo composto 'decreto-lei':",
+        options: [
+            { text: "Decretos-leis ou decretos-lei.", isCorrect: true, rationale: "Correto: quando o segundo substantivo limita o primeiro, admitem-se as duas formas de plural no padrão culto." },
+            { text: "Apenas decretos-leis.", isCorrect: false, rationale: "Incorreto: a forma 'decretos-lei' também é plenamente aceita." },
+            { text: "Decreto-leis.", isCorrect: false, rationale: "Incorreto: o primeiro elemento deve obrigatoriamente ir para o plural nesta estrutura." },
+            { text: "Decretos-lei apenas.", isCorrect: false, rationale: "Incorreto: ambas as formas são válidas." }
+        ],
+        hint: "Substantivo + substantivo (onde o 2º especifica o 1º) aceita plural nos dois elementos ou apenas no primeiro."
+    },
+    {
+        id: 19,
+        category: "Pontuação - Oração Adverbial",
+        question: "Em qual das alternativas a vírgula é obrigatória por norma gramatical?",
+        options: [
+            { text: "O candidato respondeu a todas as perguntas com extrema clareza.", isCorrect: false, rationale: "Incorreto: oração na ordem direta sem termos intercalados não exige vírgula." },
+            { text: "Quando os relatórios foram entregues, a comissão encerrou a sessão.", isCorrect: true, rationale: "Correto: a oração subordinada adverbial anteposta à oração principal exige o uso da vírgula." },
+            { text: "A comissão encerrou a sessão quando os relatórios foram entregues.", isCorrect: false, rationale: "Incorreto: oração adverbial em ordem direta (ao final) torna a vírgula facultativa." },
+            { text: "Os diretores aprovaram a alteração orçamentária ontem à tarde.", isCorrect: false, rationale: "Incorreto: adjunto adverbial de curta extensão ao final da frase não exige vírgula." }
+        ],
+        hint: "Oração subordinada adverbial anteposta à oração principal deve obrigatoriamente ser separada por vírgula."
+    },
+    {
+        id: 20,
+        category: "Grau dos Adjetivos",
+        question: "Assinale a frase em que o emprego do superlativo absoluto sintético está correto segundo a norma-padrão:",
+        options: [
+            { text: "Aquele problema era facílimo de ser resolvido pela equipe.", isCorrect: true, rationale: "Correto: 'facílimo' é a forma superlativa sintética erudita do adjetivo 'fácil'." },
+            { text: "Aquele problema era muito facílimo de ser resolvido.", isCorrect: false, rationale: "Incorreto: pleonasmo vicioso ('muito facílimo')." },
+            { text: "O resultado da pesquisa foi mais excelente do que o esperado.", isCorrect: false, rationale: "Incorreto: 'excelente' já expressa uma ideia superlativa, não admitindo 'mais'." },
+            { text: "A decisão tomada pelos conselheiros foi super boa.", isCorrect: false, rationale: "Incorreto: 'super boa' é forma coloquial/informal, não aceita no padrão culto estrito." }
+        ],
+        hint: "Evite redundâncias como usar 'muito' antes de formas superlativas sintéticas."
+    },
+    {
+        id: 21,
+        category: "Concordância Verbal com Sujeito Composto",
+        question: "Assinale a alternativa correta quanto à concordância com sujeito composto anteposto ao verbo:",
+        options: [
+            { text: "O diretor e o gerente assinou o contrato de prestação de serviços.", isCorrect: false, rationale: "Incorreto: sujeito composto anteposto exige verbo no plural (assinaram)." },
+            { text: "O diretor e o gerente assinaram o contrato de prestação de serviços.", isCorrect: true, rationale: "Correto: quando o sujeito composto está antes do verbo, a regra geral exige a flexão no plural." },
+            { text: "Chegou ao escritório o diretor e o gerente para a reunião.", isCorrect: false, rationale: "Embora o verbo posposto possa concordar com o mais próximo, atente para a regra do sujeito anteposto do enunciado." },
+            { text: "Nem o aluno nem o professor conseguia resolver a questão complexa.", isCorrect: false, rationale: "Com a conjunção 'nem... nem', quando a ação se aplica a ambos, prefere-se o verbo no plural." }
+        ],
+        hint: "Sujeito composto anteposto ao verbo exige concordância no plural."
+    },
+    {
+        id: 22,
+        category: "Crase Antes de Nomes Próprios Geográficos",
+        question: "Assinale a alternativa em que o uso do sinal indicativo de crase está incorreto:",
+        options: [
+            { text: "Iremos à Bahia nas próximas férias de verão.", isCorrect: false, rationale: "Correto: o nome próprio 'Bahia' aceita artigo definido (Quem vai à Bahia, volta DA Bahia)." },
+            { text: "Viajaremos à Roma dos imperadores para realizar pesquisas históricas.", isCorrect: false, rationale: "Correto: embora 'Roma' não aceite artigo, quando especificada exige artigo e portanto crase." },
+            { text: "Os passageiros chegaram à Roma nas primeiras horas da manhã.", isCorrect: true, rationale: "Incorreto: 'Roma' sem especificação não aceita artigo feminino (Volto DE Roma, logo vou A Roma sem crase)." },
+            { text: "O navio retornará à Europa no fim do mês.", isCorrect: false, rationale: "Correto: 'Europa' admite artigo feminino (Volto DA Europa)." }
+        ],
+        hint: "Substantivos geográficos que não admitem artigo ('Volto DE') não levam crase, a menos que estejam especificados."
+    },
+    {
+        id: 23,
+        category: "Grafia de Palavras - Homônimos e Parônimos",
+        question: "Assinale a alternativa que preenche corretamente as lacunas: 'É preciso _____ o mandato do deputado por _____ de decoro parlamentar.'",
+        options: [
+            { text: "cassar - falta", isCorrect: true, rationale: "Correto: 'cassar' significa anular/revogar direitos políticos; 'caçar' refere-se a perseguir animais." },
+            { text: "caçar - falta", isCorrect: false, rationale: "Incorreto: 'caçar' significa perseguir animais." },
+            { text: "cassar - falta de decoro (com s)", isCorrect: false, rationale: "Incorreto: variação ortográfica inexistente." },
+            { text: "casssar - falta", isCorrect: false, rationale: "Incorreto: grafia inexistente na língua portuguesa." }
+        ],
+        hint: "'Cassar' com 'ss' significa anular ou privar direitos."
+    },
+    {
+        id: 24,
+        category: "Conjunções e Valor Semântico",
+        question: "Na frase 'Conquanto a economia apresente sinais de recuperação, os investimentos permanecem cautelosos', o conector destacado expressa ideia de:",
+        options: [
+            { text: "concessão.", isCorrect: true, rationale: "Correto: 'conquanto' é conjunção subordinativa concessiva (equivale a embora, ainda que)." },
+            { text: "causa.", isCorrect: false, rationale: "Incorreto: conectivos causais são 'porque', 'visto que', 'já que'." },
+            { text: "consequência.", isCorrect: false, rationale: "Incorreto: conectivos consecutivos são 'de modo que', 'tão... que'." },
+            { text: "condição.", isCorrect: false, rationale: "Incorreto: conectivos condicionais são 'se', 'caso', 'contanto que'." }
+        ],
+        hint: "'Conquanto' é um sinônimo culto de 'embora'."
+    },
+    {
+        id: 25,
+        category: "Regência do Verbo 'Implicar'",
+        question: "Assinale a frase em que a regência do verbo 'implicar' atende rigorosamente à norma-padrão no sentido de 'acarretar':",
+        options: [
+            { text: "A nova medida governamental implicará em severas mudanças tributárias.", isCorrect: false, rationale: "Incorreto: no sentido de acarretar/causar, o verbo 'implicar' é transitivo direto (não exige a preposição 'em')." },
+            { text: "A nova medida governamental implicará severas mudanças tributárias.", isCorrect: true, rationale: "Correto: no sentido de 'acarretar', o verbo é Transitivo Direto, dispensando preposição." },
+            { text: "A nova medida governamental implicará de severas mudanças tributárias.", isCorrect: false, rationale: "Incorreto: não admite preposição 'de'." },
+            { text: "A nova medida governamental implicará com severas mudanças tributárias.", isCorrect: false, rationale: "Incorreto: 'implicar com' significa ter birra/antipatia com alguém." }
+        ],
+        hint: "No sentido de 'ter como consequência/acarretar', o verbo implicar não exige preposição."
+    },
+    {
+        id: 26,
+        category: "Colocação Pronomial em Nascer de Orações",
+        question: "Assinale a alternativa correta referente à colocação pronominal nas orações iniciadas por pronomes interrogativos:",
+        options: [
+            { text: "Quem informou-te sobre o cancelamento da sessão extraordinária?", isCorrect: false, rationale: "Incorreto: pronomes interrogativos ('Quem') exercem atração obrigatória, exigindo próclise." },
+            { text: "Quem te informou sobre o cancelamento da sessão extraordinária?", isCorrect: true, rationale: "Correto: palavras e pronomes interrogativos atrai o pronome oblíquo para antes do verbo." },
+            { text: "Quem informar-te-á sobre o cancelamento da sessão?", isCorrect: false, rationale: "Incorreto: a mesóclise é neutralizada pela presença do fator de atração próclita." },
+            { text: "Quem ter-te-ia informado sobre o cancelamento da sessão?", isCorrect: false, rationale: "Incorreto: estrutura inadequada dada a atração obrigatória por fator interrogativo." }
+        ],
+        hint: "Pronomes interrogativos atraem obrigatoriamente o pronome oblíquo átono."
+    },
+    {
+        id: 27,
+        category: "Uso dos Hífens (Novo Acordo Ortográfico)",
+        question: "Assinale a alternativa correta quanto ao emprego do hífen após o Novo Acordo Ortográfico:",
+        options: [
+            { text: "Anti-inflamatório, autoescola, microrganismo, infraestrutura.", isCorrect: true, rationale: "Correto: hífen se usa quando o prefixo termina na mesma vogal que inicia o segundo termo (anti-inflamatório); vogais diferentes se juntam (autoescola, infraestrutura)." },
+            { text: "Antiinflamatório, auto-escola, micro-organismo, infra-estrutura.", isCorrect: false, rationale: "Incorreto: desconforme com as regras do Novo Acordo." },
+            { text: "Anti-inflamatório, auto-escola, microrganismo, infraestrutura.", isCorrect: false, rationale: "Incorreto: 'autoescola' não deve levar hífen." },
+            { text: "Antiinflamatório, autoescola, micro-organismo, infra-estrutura.", isCorrect: false, rationale: "Incorreto: 'anti-inflamatório' exige hífen." }
+        ],
+        hint: "Vogais iguais se separam com hífen; vogais diferentes se unem sem hífen."
+    },
+    {
+        id: 28,
+        category: "Concordância Verbal - Verbos Relativos a Fenômenos da Natureza",
+        question: "Assinale a opção em que o verbo empregado em sentido figurado concorda corretamente:",
+        options: [
+            { text: "Choveu elogios para a atuação da jovem atriz na peça.", isCorrect: false, rationale: "Incorreto: quando empregado em sentido conotativo/figurado, o verbo varia e concorda com o sujeito ('Choveram elogios')." },
+            { text: "Choveram elogios para a atuação da jovem atriz na peça.", isCorrect: true, rationale: "Correto: usado no sentido figurado, o verbo perde a impessoalidade e concorda com o sujeito ('elogios')." },
+            { text: "Houveram muitas reclamações durante a assembleia de condomínio.", isCorrect: false, rationale: "Incorreto: 'haver' no sentido de existir permanece impessoal e no singular." },
+            { text: "Fazem dias ensolarados e agradáveis nesta região da serra.", isCorrect: false, rationale: "Incorreto: 'fazer' indicando clima permanece no singular." }
+        ],
+        hint: "Verbos de fenômeno da natureza em sentido figurado concordam normalmente com o sujeito."
+    },
+    {
+        id: 29,
+        category: "Flexão de Adjetivos Compostos",
+        question: "Assinale a frase em que o plural do adjetivo composto está correto:",
+        options: [
+            { text: "Os acordos francos-brasileiros foram assinados pelos diplomata.", isCorrect: false, rationale: "Incorreto: a forma correta do primeiro adjetivo é a reduzida invariável (franco-brasileiros)." },
+            { text: "Os acordos franco-brasileiros foram assinados pelos diplomatas.", isCorrect: true, rationale: "Correto: em adjetivos compostos, via de regra, apenas o último elemento varia em gênero e número." },
+            { text: "Os acordos franco-brasileiro foram assinados pelos diplomatas.", isCorrect: false, rationale: "Incorreto: o último elemento deve concordar no plural com 'acordos'." },
+            { text: "Os acordos francos-brasileiro foram assinados pelos diplomatas.", isCorrect: false, rationale: "Incorreto: flexão inadequada dos elementos." }
+        ],
+        hint: "Nos adjetivos compostos, via de regra, apenas o último elemento vai para o plural."
+    },
+    {
+        id: 30,
+        category: "Pontuação - Isolamento de Vocativo",
+        question: "Assinale a alternativa em que o vocativo foi pontuado corretamente conforme a norma-padrão:",
+        options: [
+            { text: "Senhores alunos mantenham a atenção durante a explicação da matéria.", isCorrect: false, rationale: "Incorreto: o vocativo deve vir obrigatoriamente isolado por vírgula." },
+            { text: "Senhores alunos, mantenham a atenção durante a explicação da matéria.", isCorrect: true, rationale: "Correto: 'Senhores alunos' funciona como vocativo (termo de chamamento) e exige o uso da vírgula." },
+            { text: "Senhores, alunos mantenham a atenção durante a explicação da matéria.", isCorrect: false, rationale: "Incorreto: a vírgula foi posicionada inadequadamente cortando o vocativo." },
+            { text: "Mantenham a atenção senhores alunos, durante a explicação da matéria.", isCorrect: false, rationale: "Incorreto: falta isolar o vocativo intercalado por duas vírgulas." }
+        ],
+        hint: "O vocativo (termo usado para chamar/interpelar o interlocutor) exige isolamento por vírgula."
+    }
+];
 
         // State Management
         let currentQuestionIdx = 0;
