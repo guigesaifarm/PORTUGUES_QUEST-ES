@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Flexão Nominal e Verbal</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb; /* Ajustado para o azul padrão de português */
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        /* Fontes aumentadas para melhor legibilidade */
+        .card-content {
+            font-size: 1.7rem; 
+            line-height: 1.5;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.2rem; 
+            text-align: left;
+            color: #34495e;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.4rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Domínio da Flexão Nominal e Verbal para Concursos</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Flexão</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            // --- FLEXÃO NOMINAL (1 a 15) ---
+            {
+                category: "Flexão Nominal",
+                front: "Quais são as duas categorias básicas de variação (flexão) das palavras nominais na língua portuguesa?",
+                back: "As palavras nominais (substantivos, adjetivos, pronomes, artigos e numerais) flexionam-se em <b>gênero</b> (masculino/feminino) e em <b>número</b> (singular/plural)."
+            },
+            {
+                category: "Substantivos Biformes",
+                front: "O que são substantivos <b>biformes</b> na flexão de gênero?",
+                back: "São aqueles que possuem duas formas diferentes para indicar o gênero: uma para o masculino e outra para o feminino (Ex: <i>aluno / aluna</i>, <i>conde / condessa</i>)."
+            },
+            {
+                category: "Substantivos Comuns de Dois",
+                front: "O que caracteriza os substantivos chamados <b>comuns de dois gêneros</b>?",
+                back: "Possuem uma única forma para ambos os gêneros, sendo a distinção feita por meio de artigos, pronomes ou adjetivos que os acompanham (Ex: <i>o estudante / a estudante</i>)."
+            },
+            {
+                category: "Substantivos Sobrecomuns",
+                front: "O que são substantivos <b>sobrecomuns</b> na flexão de gênero?",
+                back: "São aqueles que possuem um único gênero gramatical para indicar pessoas de ambos os sexos, sem alterar nem mesmo o artigo (Ex: <i>a criança</i>, <i>a testemunha</i>, <i>o cônjuge</i>)."
+            },
+            {
+                category: "Substantivos Epicenos",
+                front: "O que caracteriza os substantivos chamados <b>epicenos</b>?",
+                back: "São nomes de animais que possuem um só gênero gramatical, exigindo o acréscimo das palavras <i>macho</i> ou <i>fêmea</i> para especificar o sexo (Ex: <i>a cobra macho / a cobra fêmea</i>)."
+            },
+            {
+                category: "Plural de Compostos",
+                front: "Qual é a regra geral de plural para substantivos compostos formados por <b>substantivo + substantivo</b> ligados sem hífen?",
+                back: "Apenas o primeiro elemento vai para o plural se indicar fim ou semelhança (Ex: <i>navios-escola</i>). Se ambos forem substantivos, o padrão atual costuma admitir a variação de ambos ou apenas do segundo."
+            },
+            {
+                category: "Plural de Compostos",
+                front: "Como fica o plural de substantivos compostos formados por <b>verbo + substantivo</b>? (Ex: guarda-chuva)",
+                back: "O verbo permanece invariável e apenas o substantivo vai para o plural (Ex: <i>guarda-chuvas</i>, <i>beija-flores</i>, <i>cata-ventos</i>)."
+            },
+            {
+                category: "Plural de Compostos",
+                front: "Como flexionar no plural substantivos compostos formados por palavras invariáveis + palavra variável? (Ex: alto-falante)",
+                back: "Apenas o segundo elemento (a palavra variável) vai para o plural (Ex: <i>altos-falantes</i>, <i>aben-a-deuses</i>, <i>sem-tetos</i>)."
+            },
+            {
+                category: "Plural de Compostos",
+                front: "O que acontece no plural com compostos formados por elementos repetidos ou onomatopeias? (Ex: reco-reco / tico-tico)",
+                back: "Apenas o último elemento sofre flexão de plural (Ex: <i>reco-recos</i>, <i>tico-ticos</i>, <i>Zigue-zagues</i>)."
+            },
+            {
+                category: "Plural de Reduzidos",
+                front: "Como se faz o plural de palavras terminadas em <b>-ão</b>? Quais são as três terminações possíveis?",
+                back: "Podem terminar em: <br>• <b>-ões</b> (maioria, ex: limão -> limões)<br>• <b>-ães</b> (ex: cão -> cães, pão -> pães)<br>• <b>-ãos</b> (ex: irmão -> irmãos, cidadão -> cidadãos)."
+            },
+            {
+                category: "Plural de Oxítonas em -AL",
+                front: "Qual é a regra de plural para substantivos e adjetivos oxítonos terminados em <b>-al, -el, -ol, -ul</b>?",
+                back: "Substitui-se a letra <b>L</b> por <b>IS</b> (Ex: canal -> canais, anel -> anéis, lençol -> lençóis, azul -> azuis).<br><i>Exceções comuns:</i> mal -> males, consul -> cônsules."
+            },
+            {
+                category: "Plural de Palavras em -IL",
+                front: "Como se flexionam no plural as palavras oxítonas e paroxítonas terminadas em <b>-il</b>?",
+                back: "• Se forem <b>oxítonas</b> (frequentemente acentuadas), troca-se o -il por <b>-is</b> (funil -> funis).<br>• Se forem <b>paroxítonas</b> (não acentuadas na tônica), troca-se por <b>-eis</b> (fóssil -> fósseis, projétil -> projéteis)."
+            },
+            {
+                category: "Plural de Palavras em -M",
+                front: "Qual é a regra para o plural de palavras terminadas em <b>-m</b>? (Ex: homem, jardim)",
+                back: "Substitui-se a terminação <b>-m</b> por <b>-ns</b> (Ex: homem -> homens, jardim -> jardins, nuvem -> nuvens)."
+            },
+            {
+                category: "Grau dos Substantivos",
+                front: "Quais são os graus em que o substantivo pode se flexionar?",
+                back: "O substantivo pode se flexionar em grau <b>aumentativo</b> e <b>diminutivo</b>, que podem ser formados por sufixos sintéticos (ex: casinha, corpanzil) ou analíticos (com adjetivos, ex: casa pequena)."
+            },
+            {
+                category: "Grau dos Adjetivos",
+                front: "Quais são os graus de intensidade em que o <b>adjetivo</b> pode se flexionar?",
+                back: "Flexiona-se em grau <b>comparativo</b> (de igualdade, superioridade ou inferioridade) e grau <b>superlativo</b> (que pode ser absoluto sintético/analítico ou relativo de superioridade/inferioridade)."
+            },
+
+            // --- FLEXÃO VERBAL (16 a 30) ---
+            {
+                category: "Flexão Verbal",
+                front: "Quais são as cinco categorias de variação (flexão) próprias do verbo na língua portuguesa?",
+                back: "O verbo flexiona-se em <b>modo</b>, <b>tempo</b>, <b>número</b>, <b>pessoa</b> e <b>voz</b>."
+            },
+            {
+                category: "Modos Verbais",
+                front: "Quais são os três <b>modos</b> verbais básicos e o que cada um expressa?",
+                back: "• <b>Indicativo:</b> certeza, realidade.<br>• <b>Subjuntivo:</b> dúvida, hipótese, possibilidade.<br>• <b>Imperativo:</b> ordem, pedido, conselho, súplica."
+            },
+            {
+                category: "Formas Nominais",
+                front: "Quais são as três formas nominais do verbo que não possuem flexão completa de modo e tempo?",
+                back: "<b>Infinitivo</b> (impessoal/pessoal), <b>Gerúndio</b> (-ndo) e <b>Particípio</b> (-do)."
+            },
+            {
+                category: "Verbos Regulares vs Irregulares",
+                front: "Qual é a diferença estrutural entre um verbo <b>regular</b> e um verbo <b>irregular</b> durante a flexão?",
+                back: "• <b>Regular:</b> mantém o radical inalterado e segue as desinências padrão da sua conjugação.<br>• <b>Irregular:</b> sofre alterações no radical ou nas desinências padrão ao ser flexionado (ex: dar, vir, fazer)."
+            },
+            {
+                category: "Verbos Anômalos",
+                front: "O que são verbos <b>anômalos</b> na flexão verbal?",
+                back: "São verbos altamente irregulares cujas flexões apresentam radicais totalmente diferentes entre si na mesma conjugação (Ex: os verbos <i>ser</i> e <i>ir</i>)."
+            },
+            {
+                category: "Verbos Defectivos",
+                front: "O que são verbos <b>defectivos</b>?",
+                back: "São verbos que não possuem conjugação completa, faltando determinadas pessoas, tempos ou modos por incompatibilidade semântica ou eufônica (Ex: <i>falir</i>, <i>abolir</i>, <i>reaver</i>)."
+            },
+            {
+                category: "Verbos Abundantes",
+                front: "O que são verbos <b>abundantes</b> na flexão verbal?",
+                back: "São aqueles que apresentam mais de uma forma correta para uma mesma flexão, ocorrendo muito frequentemente no <b>particípio</b> (Ex: aceitado / aceito, ganho / ganhado)."
+            },
+            {
+                category: "Particípio Regular vs Irregular",
+                front: "Qual é a regra geral de uso prático para as duas formas do particípio nos verbos abundantes?",
+                back: "Usa-se o particípio <b>regular</b> (terminado em -ado/-ido) na voz ativa com os auxiliares <i>ter</i> e <i>haver</i>. Usa-se o particípio <b>irregular</b> com os auxiliares <i>ser</i> e <i>estar</i> (voz passiva)."
+            },
+            {
+                category: "Derivação dos Tempos Verbais",
+                front: "Quais são os tempos verbais considerados 'primitivos' a partir dos quais os demais tempos derivam?",
+                back: "1. <b>Presente do Indicativo</b> (deriva o presente do subjuntivo e o imperativo).<br>2. <b>Pretérito Perfeito do Indicativo</b> (deriva o pretérito mais-que-perfeito, imperfeito do subjuntivo e futuro do subjuntivo).<br>3. <b>Infinitivo Impessoal</b> (deriva o futuro do presente, futuro do pretérito e pretérito imperfeito do indicativo)."
+            },
+            {
+                category: "Conjugação do Verbo Pôr",
+                front: "A qual conjugação pertence o verbo <b>pôr</b> e seus derivados (compor, depor, etc.)?",
+                back: "Pertence à <b>2ª conjugação</b> (antigamente chamado de <i>poer</i> em latim), mantendo a vogal temática <b>e</b> nas suas desinências e formas derivadas."
+            },
+            {
+                category: "Flexão de Número e Pessoa",
+                front: "Como os verbos se flexionam em relação a número e pessoa?",
+                back: "Flexionam-se em três pessoas do singular (1ª eu, 2ª tu, 3ª ele/ela) e três pessoas do plural (1ª nós, 2ª vós, 3ª eles/elas), concordando obrigatoriamente com o sujeito da oração."
+            },
+            {
+                category: "Tempos Compostos",
+                front: "Como se formam os <b>tempos compostos</b> na flexão verbal da língua portuguesa?",
+                back: "Formam-se com um verbo auxiliar (geralmente <i>ter</i> ou <i>haver</i>) conjugado no tempo simples, seguido de um verbo principal no <b>particípio</b> (Ex: tinha comprado, houvera terminado)."
+            },
+            {
+                category: "Vozes Verbais",
+                front: "Quais são as três <b>vozes verbais</b> que indicam a relação entre a ação e o sujeito?",
+                back: "• <b>Ativa:</b> o sujeito pratica a ação.<br>• <b>Passiva:</b> o sujeito sofre a ação.<br>• <b>Reflexiva:</b> o sujeito pratica e sofre a ação ao mesmo tempo."
+            },
+            {
+                category: "Flexão do Infinitivo Pessoal",
+                front: "Quando o <b>infinitivo pessoal</b> deve ser flexionado nas orações?",
+                back: "Deve ser flexionado quando tem sujeito próprio expresso ou claro, distinto da oração principal, indicando claramente quem executa a ação verbal (Ex: Para <i>sermos</i> aprovados, precisamos estudar)."
+            },
+            {
+                category: "Diferença Morfológica Geral",
+                front: "Qual é a principal diferença de estrutura morfológica entre a flexão nominal e a flexão verbal?",
+                back: "Os nomes flexionam-se apenas em gênero, número e grau (fixando categorias estáticas). Já os verbos possuem uma flexão infinitamente mais complexa, mudando radical e desinências para indicar o tempo, o modo, o aspecto e a relação com o enunciador."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
