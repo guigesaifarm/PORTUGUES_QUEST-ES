@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interativo: Articulação do Texto e Coesão</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Aumenta a base de todas as fontes do site */
+    html {
+        font-size: 19px; /* O padrão é 16px. Aumente para 18px ou 20px */
+    }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-sm">
+                    <i class="fa-solid fa-[#fa-book-open] text-xl"></i>
+                    <i class="fa-solid fa-pen-nib text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 leading-tight">Quiz de Língua Portuguesa</h1>
+                    <p class="text-xs text-slate-500">Articulação do Texto: Pronomes, Referenciação e Nexos</p>
+                </div>
+            </div>
+
+            <!-- Mode Selector & Stats -->
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex bg-slate-100 p-1 rounded-lg text-xs font-semibold">
+                    <button id="btnModeStudy" onclick="setMode('study')" class="px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm">
+                        <i class="fa-solid fa-[#fa-graduation-cap] mr-1"></i> Modo Estudo
+                    </button>
+                    <button id="btnModeExam" onclick="setMode('exam')" class="px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900">
+                        <i class="fa-solid fa-stopwatch mr-1"></i> Modo Simulado
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 bg-brand-50 text-brand-700 px-3 py-1.5 rounded-lg border border-brand-100 text-sm font-semibold">
+                    <i class="fa-solid fa-trophy text-brand-500"></i>
+                    <span id="scoreDisplay">0 / 20</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- Sidebar Navigation Grid (Desktop) -->
+        <aside class="lg:col-span-1 order-2 lg:order-1 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col h-fit">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Navegador</h2>
+                <span id="progressPercent" class="text-xs font-semibold text-brand-600">0% concluído</span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4">
+                <div id="progressBar" class="bg-brand-600 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Question Grid Buttons -->
+            <div id="questionGrid" class="grid grid-cols-5 gap-2 mb-4">
+                <!-- Javascript will insert 20 question buttons here -->
+            </div>
+
+            <!-- Legend -->
+            <div class="text-xs text-slate-500 border-t border-slate-100 pt-3 space-y-1.5">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-slate-200 inline-block"></span>
+                    <span>Não respondida</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-brand-600 inline-block"></span>
+                    <span>Respondida</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span>
+                    <span>Marcada p/ revisão</span>
+                </div>
+            </div>
+
+            <button onclick="finishQuiz()" class="mt-5 w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded-lg transition shadow">
+                <i class="fa-solid fa-flag-checkered mr-2"></i> Finalizar Quiz
+            </button>
+        </aside>
+
+        <!-- Question Section -->
+        <section class="lg:col-span-3 order-1 lg:order-2 flex flex-col justify-between">
+            
+            <!-- Quiz Screen -->
+            <div id="quizCard" class="bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm mb-4 min-h-[420px] flex flex-col justify-between">
+                <div>
+                    <!-- Header Question Info -->
+                    <div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100">
+                        <div class="flex items-center gap-2">
+                            <span id="questionCategory" class="px-2.5 py-1 bg-brand-50 text-brand-700 text-xs font-semibold rounded-md border border-brand-100">
+                                Categoria
+                            </span>
+                            <span id="questionNumberBadge" class="text-xs font-semibold text-slate-400">
+                                Questão 1 de 20
+                            </span>
+                        </div>
+                        <button id="btnBookmark" onclick="toggleBookmark()" class="text-slate-400 hover:text-amber-500 text-sm font-medium transition flex items-center gap-1.5">
+                            <i class="fa-regular fa-bookmark"></i>
+                            <span class="hidden sm:inline">Revisar</span>
+                        </button>
+                    </div>
+
+                    <!-- Question Text -->
+                    <div class="mb-6">
+                        <h3 id="questionTitle" class="text-base sm:text-lg font-semibold text-slate-900 leading-relaxed">
+                            Carregando questão...
+                        </h3>
+                    </div>
+
+                    <!-- Answer Options -->
+                    <div id="optionsContainer" class="space-y-3">
+                        <!-- Dynamic options generated by JS -->
+                    </div>
+
+                    <!-- Explanation/Rationale Box (Study Mode) -->
+                    <div id="explanationBox" class="hidden mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm">
+                        <div class="flex items-center gap-2 font-bold mb-1 text-slate-800" id="explanationHeader">
+                            <i class="fa-solid fa-circle-info"></i> Justificativa Gramatical
+                        </div>
+                        <p id="explanationText" class="text-slate-600 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8 pt-4 border-t border-slate-100">
+                    <button id="btnPrev" onclick="navigateQuestion(-1)" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium text-sm transition disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-chevron-left mr-1"></i> Anterior
+                    </button>
+                    <button id="btnNext" onclick="navigateQuestion(1)" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-medium text-sm transition shadow-sm">
+                        Próxima <i class="fa-solid fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Screen (Hidden initially) -->
+            <div id="resultsCard" class="hidden bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm text-center">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center bg-brand-50 text-brand-600 text-3xl">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-1">Resultado do Quiz</h2>
+                <p class="text-sm text-slate-500 mb-6">Confira seu desempenho em Articulação e Coesão Textual</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto mb-8">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Pontuação</span>
+                        <span id="finalScore" class="text-2xl font-extrabold text-slate-800">0 / 20</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Aproveitamento</span>
+                        <span id="finalPercent" class="text-2xl font-extrabold text-brand-600">0%</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Desempenho</span>
+                        <span id="finalFeedback" class="text-sm font-bold text-slate-700 mt-1 block">Satisfatório</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button onclick="restartQuiz()" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm rounded-lg transition shadow">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Refazer Quiz
+                    </button>
+                    <button onclick="reviewQuiz()" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-lg transition">
+                        <i class="fa-solid fa-magnifying-glass mr-2"></i> Revisar Respostas
+                    </button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+        <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-400">
+            Quiz Pedagógico de Coesão Textual &bull; Prática de Sintaxe, Semântica e Conectivos do Português.
+        </div>
+    </footer>
+
+    <!-- JavaScript Quiz Logic -->
+    <script>
+        // Database of 20 Portuguese Questions
+        const questionsData = [
+    {
+        id: 1,
+        category: "Regência Verbal",
+        question: "Assinale a alternativa em que a regência do verbo 'assistir' está de acordo com a norma-padrão no sentido de 'presenciar/ver':",
+        options: [
+            { text: "Nós assistimos ao debate presidencial com grande interesse.", isCorrect: true, rationale: "No sentido de ver ou presenciar, o verbo 'assistir' é transitivo indireto e exige a preposição 'a' (assistir a algo)." },
+            { text: "Nós assistimos o debate presidencial com grande interesse.", isCorrect: false, rationale: "Incorreto: no sentido de presenciar, a norma culta exige a preposição 'a'." },
+            { text: "Nós assistimos no debate presidencial com grande interesse.", isCorrect: false, rationale: "Incorreto: 'assistir em' significa residir/morar." },
+            { text: "Nós assistimos pelo debate presidencial com grande interesse.", isCorrect: false, rationale: "Incorreto: o verbo 'assistir' não rege a preposição 'por'." }
+        ],
+        hint: "Quando significa 'presenciar/ver', o verbo assistir exige a preposição 'a'."
+    },
+    {
+        id: 2,
+        category: "Regência Verbal",
+        question: "Considere a frase: 'O jovem aspirava ____ cargo de gerência na empresa.' Para atender à norma-padrão no sentido de 'almejar/desejar', a lacuna deve ser preenchida por:",
+        options: [
+            { text: "ao", isCorrect: true, rationale: "No sentido de almejar ou desejar, 'aspirar' é transitivo indireto e exige a preposição 'a' (aspirar ao cargo)." },
+            { text: "o", isCorrect: false, rationale: "Incorreto: 'aspirar o' significa sorver/inalar (ex.: aspirar o ar puro)." },
+            { text: "pelo", isCorrect: false, rationale: "Incorreto: o verbo 'aspirar' não rege a preposição 'por' na norma culta." },
+            { text: "no", isCorrect: false, rationale: "Incorreto: a regência de 'aspirar' no sentido de almejar exige a preposição 'a'." }
+        ],
+        hint: "No sentido de almejar/pretender, o verbo 'aspirar' exige a preposição 'a'."
+    },
+    {
+        id: 3,
+        category: "Regência Verbal",
+        question: "Assinale a opção em que o verbo 'preferir' atende rigorosamente à regência preconizada pela norma culta:",
+        options: [
+            { text: "O candidato prefere estudar a praticar esportes nos fins de semana.", isCorrect: true, rationale: "O verbo 'preferir' é transitivo direto e indireto, regendo 'a' (preferir X a Y). É incorreto usar 'do que' ou 'mais que'." },
+            { text: "O candidato prefere mais estudar do que praticar esportes nos fins de semana.", isCorrect: false, rationale: "Incorreto: a norma-padrão condena o uso de 'mais', 'antes' ou 'do que' com o verbo preferir." },
+            { text: "O candidato prefere estudar do que praticar esportes nos fins de semana.", isCorrect: false, rationale: "Incorreto: não se deve usar a locução 'do que' com o verbo preferir." },
+            { text: "O candidato prefere mil vezes estudar do que praticar esportes.", isCorrect: false, rationale: "Incorreto: expressões de intensidade como 'mil vezes' e 'do que' são inadequadas segundo a gramática normativa." }
+        ],
+        hint: "O verbo 'preferir' rege a preposição 'a' (preferir algo A outro algo) e rejeita 'mais' ou 'do que'."
+    },
+    {
+        id: 4,
+        category: "Regência Verbal",
+        question: "Na frase 'O médico atendeu ____ pacientes com dedicação', assinale a alternativa que completa a lacuna corretamente de acordo com a regência do verbo 'atender':",
+        options: [
+            { text: "aos (ou os)", isCorrect: true, rationale: "O verbo 'atender' admite dupla regência quando se refere a pessoas: pode ser transitivo direto (atender os pacientes) ou indireto (atender aos pacientes)." },
+            { text: "com os", isCorrect: false, rationale: "Incorreto: a preposição 'com' altera a estrutura transitiva do verbo 'atender'." },
+            { text: "pelos", isCorrect: false, rationale: "Incorreto: não se usa a preposição 'por' para o complemento do verbo 'atender'." },
+            { text: "nos", isCorrect: false, rationale: "Incorreto: 'em' não é a preposição regida pelo verbo 'atender'." }
+        ],
+        hint: "Referindo-se a pessoas, o verbo 'atender' aceita tanto a regência direta quanto a indireta (com a preposição 'a')."
+    },
+    {
+        id: 5,
+        category: "Regência Nominal",
+        question: "Assinale a alternativa em que a regência do nome 'acessível' está correta:",
+        options: [
+            { text: "As informações do portal estão acessíveis a todos os cidadãos.", isCorrect: true, rationale: "O adjetivo 'acessível' rege a preposição 'a' (acessível a alguém ou a algo)." },
+            { text: "As informações do portal estão acessíveis para com todos os cidadãos.", isCorrect: false, rationale: "Incorreto: 'acessível para com' é um desvio da norma culta." },
+            { text: "As informações do portal estão acessíveis com todos os cidadãos.", isCorrect: false, rationale: "Incorreto: a preposição correta para o adjetivo 'acessível' é 'a'." },
+            { text: "As informações do portal estão acessíveis de todos os cidadãos.", isCorrect: false, rationale: "Incorreto: 'acessível de' contraria a norma-padrão." }
+        ],
+        hint: "Aquilo que é acessível é acessível A alguém."
+    },
+    {
+        id: 6,
+        category: "Regência Verbal",
+        question: "Assinale a frase em que o verbo 'esquecer' está empregado corretamente de acordo com a regência culta:",
+        options: [
+            { text: "Ele se esqueceu dos documentos essenciais para a reunião.", isCorrect: true, rationale: "Quando pronominal ('esquecer-se'), o verbo exige a preposição 'de' (esquecer-se de algo)." },
+            { text: "Ele esqueceu dos documentos essenciais para a reunião.", isCorrect: false, rationale: "Incorreto: sem o pronome reflexivo, o verbo 'esquecer' é transitivo direto (esqueceu os documentos)." },
+            { text: "Ele se esqueceu os documentos essenciais para a reunião.", isCorrect: false, rationale: "Incorreto: com o pronome, é obrigatório o uso da preposição 'de'." },
+            { text: "Ele esqueceu-se os documentos essenciais para a reunião.", isCorrect: false, rationale: "Incorreto: faltou a preposição 'de' regida pela forma pronominal." }
+        ],
+        hint: "Lembre-se da regra: sem pronome = sem preposição; com pronome = com preposição ('de')."
+    },
+    {
+        id: 7,
+        category: "Regência Nominal",
+        question: "Indique a alternativa que preenche corretamente as lacunas: 'Ele sempre foi simpático ____ colegas e passível ____ punições.'",
+        options: [
+            { text: "com os / de", isCorrect: true, rationale: "'Simpático' admite a preposição 'com' (ou 'a'); 'passível' exige a preposição 'de' (passível de algo)." },
+            { text: "para os / a", isCorrect: false, rationale: "Incorreto: 'passível' não rege a preposição 'a', mas sim 'de'." },
+            { text: "pelos / em", isCorrect: false, rationale: "Incorreto: regências inadequadas para ambos os nomes." },
+            { text: "aos / para", isCorrect: false, rationale: "Incorreto: 'passível para' contraria a regência nominal culta." }
+        ],
+        hint: "'Simpático' combina com 'com' ou 'a', enquanto 'passível' rege obrigatoriamente a preposição 'de'."
+    },
+    {
+        id: 8,
+        category: "Regência Verbal",
+        question: "Na frase 'O policial visou ____ alvo e disparou', qual opção preenche a lacuna corretamente no sentido de 'mirar':",
+        options: [
+            { text: "o", isCorrect: true, rationale: "No sentido de mirar ou por o visto, o verbo 'visar' é transitivo direto (visar o alvo)." },
+            { text: "ao", isCorrect: false, rationale: "Incorreto: 'visar ao' significa almejar/objetivar, e não mirar fisicamente." },
+            { text: "no", isCorrect: false, rationale: "Incorreto: a regência no sentido de apontar a arma/mirar não utiliza 'em'." },
+            { text: "do", isCorrect: false, rationale: "Incorreto: 'visar' não rege preposição 'de'." }
+        ],
+        hint: "No sentido de mirar/apontar para algo físico, o verbo 'visar' é transitivo direto (sem preposição)."
+    },
+    {
+        id: 9,
+        category: "Regência Verbal",
+        question: "Assinale a opção em que a regência do verbo 'implicar' atende à norma-padrão no sentido de 'acarretar/trazer como consequência':",
+        options: [
+            { text: "A falta de planejamento implicará corte de custos no projeto.", isCorrect: true, rationale: "No sentido de acarretar/causar, o verbo 'implicar' é transitivo direto (não exige preposição 'em')." },
+            { text: "A falta de planejamento implicará em corte de custos no projeto.", isCorrect: false, rationale: "Incorreto: o uso da preposição 'em' nesse sentido é um vício de linguagem comum, porém condenado pela norma culta." },
+            { text: "A falta de planejamento implicará ao corte de custos no projeto.", isCorrect: false, rationale: "Incorreto: o verbo não rege a preposição 'a'." },
+            { text: "A falta de planejamento implicará com o corte de custos no projeto.", isCorrect: false, rationale: "Incorreto: 'implicar com' significa ter birra ou implicância com alguém." }
+        ],
+        hint: "No sentido de acarretar, o verbo 'implicar' é transitivo direto: não use a preposição 'em'."
+    },
+    {
+        id: 10,
+        category: "Regência Nominal",
+        question: "Assinale a alternativa com a regência nominal INCORRETA:",
+        options: [
+            { text: "O Diretor mostrou-se incompatível de assumir o novo cargo público.", isCorrect: true, rationale: "Incorreto: o adjetivo 'incompatível' rege a preposição 'com' (incompatível com o cargo), e não 'de'." },
+            { text: "O aluno estava ansioso por ver o resultado da avaliação.", isCorrect: false, rationale: "Correto: 'ansioso' aceita as preposições 'por', 'de' ou 'para'." },
+            { text: "Ele demonstrou ser muito apto para realizar aquelas tarefas.", isCorrect: false, rationale: "Correto: 'apto' rege 'para' ou 'a'." },
+            { text: "Sua conduta é totalmente alheia aos princípios da instituição.", isCorrect: false, rationale: "Correto: 'alheio' rege a preposição 'a' (ou 'de')." }
+        ],
+        hint: "Quem é incompatível é incompatível COM alguma coisa."
+    },
+    {
+        id: 11,
+        category: "Regência Verbal",
+        question: "Na frase 'Informamos ____ clientes ____ novo horário de funcionamento', assinale a opção que preenche corretamente as lacunas segundo a norma culta:",
+        options: [
+            { text: "os / do (ou aos / o)", isCorrect: true, rationale: "O verbo 'informar' é transitivo direto e indireto: informa-se alguém (OD) de/sobre algo (OI) OU informa-se algo (OD) a alguém (OI)." },
+            { text: "aos / ao", isCorrect: false, rationale: "Incorreto: não se pode ter dois objetos indiretos para o mesmo verbo." },
+            { text: "os / o", isCorrect: false, rationale: "Incorreto: não se pode ter dois objetos diretos para o mesmo verbo." },
+            { text: "pelos / no", isCorrect: false, rationale: "Incorreto: regência totalmente desacordo com a norma-padrão." }
+        ],
+        hint: "O verbo 'informar' exige um objeto direto e outro indireto (nunca dois iguais)."
+    },
+    {
+        id: 12,
+        category: "Regência Verbal",
+        question: "Assinale a opção em que o verbo 'obrigar' apresenta a regência correta:",
+        options: [
+            { text: "A nova lei obrigou as empresas a contratarem estagiários.", isCorrect: true, rationale: "O verbo 'obrigar' rege a preposição 'a' no complemento indireto (obrigar alguém A algo)." },
+            { text: "A nova lei obrigou as empresas em contratarem estagiários.", isCorrect: false, rationale: "Incorreto: não se usa a preposição 'em' com o verbo obrigar." },
+            { text: "A nova lei obrigou às empresas a contratarem estagiários.", isCorrect: false, rationale: "Incorreto: 'as empresas' é o objeto direto, não cabendo crase/preposição 'a'." },
+            { text: "A nova lei obrigou para as empresas contratarem estagiários.", isCorrect: false, rationale: "Incorreto: a preposição regida pelo verbo 'obrigar' é 'a'." }
+        ],
+        hint: "Quem obriga, obriga alguém A fazer algo."
+    },
+    {
+        id: 13,
+        category: "Regência Nominal",
+        question: "Assinale a alternativa em que a regência do substantivo 'obediência' está correta:",
+        options: [
+            { text: "A obediência às leis é um dever de todo cidadão.", isCorrect: true, rationale: "O substantivo 'obediência' exige complemento regido pela preposição 'a' (obediência a algo -> às leis)." },
+            { text: "A obediência pelas leis é um dever de todo cidadão.", isCorrect: false, rationale: "Incorreto: 'obediência' não rege a preposição 'por'." },
+            { text: "A obediência com as leis é um dever de todo cidadão.", isCorrect: false, rationale: "Incorreto: a preposição adequada é 'a'." },
+            { text: "A obediência nas leis é um dever de todo cidadão.", isCorrect: false, rationale: "Incorreto: não se usa a preposição 'em' para o nome 'obediência'." }
+        ],
+        hint: "Assim como o verbo 'obedecer', o substantivo 'obediência' exige a preposição 'a'."
+    },
+    {
+        id: 14,
+        category: "Regência Verbal",
+        question: "Considere a frase: 'O documento a que o advogado se referiu já foi anexado.' A preposição 'a' antes do pronome relativo 'que' justifica-se porque:",
+        options: [
+            { text: "é exigida pela regência do verbo 'referir-se'.", isCorrect: true, rationale: "Quem se refere, refere-se A algo ou A alguém. O verbo 'referir-se' exige a preposição 'a', que deve anteceder o pronome relativo." },
+            { text: "é exigida pela regência do verbo 'anexar'.", isCorrect: false, rationale: "Incorreto: o verbo 'anexar' não rege o complemento introduzido por 'a que'." },
+            { text: "é um artigo definido feminino singular.", isCorrect: false, rationale: "Incorreto: trata-se de uma preposição gramatical exigida pela regência verbal." },
+            { text: "trata-se de uso facultativo da preposição diante do pronome 'que'.", isCorrect: false, rationale: "Incorreto: a preposição é obrigatória por exigência sintática do verbo." }
+        ],
+        hint: "Observe qual verbo da oração subordinada pede a preposição 'a' (quem se refere, refere-se A)."
+    },
+    {
+        id: 15,
+        category: "Regência Verbal",
+        question: "Assinale a alternativa em que a regência do verbo 'responder' atende à norma culta quando empregado no sentido de 'dar resposta a algo/alguém':",
+        options: [
+            { text: "O candidato respondeu às perguntas do examinador com firmeza.", isCorrect: true, rationale: "No sentido de dar resposta, o verbo 'responder' é transitivo indireto e exige a preposição 'a' (responder a algo/alguém)." },
+            { text: "O candidato respondeu as perguntas do examinador com firmeza.", isCorrect: false, rationale: "Incorreto: na norma culta, a coisa ou pessoa respondida deve ser precedida da preposição 'a'." },
+            { text: "O candidato respondeu pelas perguntas do examinador com firmeza.", isCorrect: false, rationale: "Incorreto: 'responder por' significa assumir a responsabilidade por algo." },
+            { text: "O candidato respondeu sobre as perguntas do examinador com firmeza.", isCorrect: false, rationale: "Incorreto: 'responder sobre' não é o complemento padrão para a coisa respondida." }
+        ],
+        hint: "Ao dar resposta a uma pergunta ou pessoa, o verbo 'responder' rege a preposição 'a'."
+    },
+    {
+        id: 16,
+        category: "Regência Nominal",
+        question: "Qual das opções abaixo apresenta erro de regência nominal?",
+        options: [
+            { text: "Ele sempre foi muito horrorizado de injustiças.", isCorrect: true, rationale: "Incorreto: o adjetivo 'horrorizado' rege a preposição 'com' ou 'por' (horrorizado com/por algo), e não 'de'." },
+            { text: "Ele demonstrou ser muito grato a todos os seus mestres.", isCorrect: false, rationale: "Correto: 'grato' rege a preposição 'a'." },
+            { text: "A medida é benéfica à saúde da população.", isCorrect: false, rationale: "Correto: 'benéfica' rege a preposição 'a'." },
+            { text: "Ficamos satisfeitos com os resultados obtidos.", isCorrect: false, rationale: "Correto: 'satisfeito' rege a preposição 'com' (ou 'de', 'por')." }
+        ],
+        hint: "Quem fica horrorizado fica horrorizado COM algo."
+    },
+    {
+        id: 17,
+        category: "Regência Verbal",
+        question: "Assinale a frase em que o verbo 'perdoar' está empregado em conformidade com a norma-padrão:",
+        options: [
+            { text: "O juiz perdoou a dívida do réu, mas não perdoou ao réu.", isCorrect: true, rationale: "Os verbos 'perdoar' e 'pagar' são transitivos diretos para coisas (perdoou a dívida) e indiretos com 'a' para pessoas (perdoou ao réu)." },
+            { text: "O juiz perdoou à dívida do réu e perdoou o réu.", isCorrect: false, rationale: "Incorreto: inverteu a regência de coisa e pessoa." },
+            { text: "O juiz perdoou da dívida do réu e perdoou pelo réu.", isCorrect: false, rationale: "Incorreto: regências preposicionais inadequadas." },
+            { text: "O juiz perdoou ao réu sua dívida com a preposição 'de'.", isCorrect: false, rationale: "Incorreto: a coisa não recebe preposição." }
+        ],
+        hint: "Lembre-se: Perdoar/Pagar COISA = sem preposição (OD); PESSOA = com preposição 'a' (OI)."
+    },
+    {
+        id: 18,
+        category: "Regência Verbal",
+        question: "Na frase: 'Esta é a cidade ____ mais gosto e ____ pretendo retornar', as preposições que preenchem corretamente as lacunas são:",
+        options: [
+            { text: "de que / a que", isCorrect: true, rationale: "O verbo 'gostar' rege a preposição 'de' (gostar DE); o verbo 'retornar' rege a preposição 'a' (retornar A)." },
+            { text: "que / que", isCorrect: false, rationale: "Incorreto: omitiu as preposições obrigatórias exigidas pelos verbos." },
+            { text: "em que / para que", isCorrect: false, rationale: "Incorreto: 'gostar em' contraria a regência do verbo gostar." },
+            { text: "com que / de que", isCorrect: false, rationale: "Incorreto: as preposições não correspondem às exigências sintáticas dos verbos." }
+        ],
+        hint: "Análise separadamente: quem gosta, gosta DE... e quem retorna, retorna A..."
+    },
+    {
+        id: 19,
+        category: "Regência Nominal",
+        question: "Assinale a alternativa que preenche adequadamente a sentença: 'O jovem era muito curioso ____ novidades tecnológicas e acostumado ____ rotina puxada.'",
+        options: [
+            { text: "por (ou de) / com (ou a)", isCorrect: true, rationale: "'Curioso' admite as preposições 'por' ou 'de'; 'acostumado' admite as preposições 'com' ou 'a'." },
+            { text: "em / sobre", isCorrect: false, rationale: "Incorreto: 'curioso em' não atende ao padrão da norma culta." },
+            { text: "para / de", isCorrect: false, rationale: "Incorreto: combinações preposicionais inadequadas para os adjetivos." },
+            { text: "sobre / por", isCorrect: false, rationale: "Incorreto: regências não consagradas na norma-padrão para esses nomes." }
+        ],
+        hint: "Curioso POR algo; acostumado COM (ou A) algo."
+    },
+    {
+        id: 20,
+        category: "Regência Verbal",
+        question: "Assinale a alternativa correta quanto à regência do verbo 'simpatizar':",
+        options: [
+            { text: "Não simpatizei com as ideias apresentadas pelo palestrante.", isCorrect: true, rationale: "O verbo 'simpatizar' exige a preposição 'com' e NÃO é pronominal (não se usa 'simpatizar-se')." },
+            { text: "Não me simpatizei com as ideias apresentadas pelo palestrante.", isCorrect: false, rationale: "Incorreto: o verbo 'simpatizar' não admite o uso de pronomes oblíquos reflexivos (não é pronominal)." },
+            { text: "Não simpatizei das ideias apresentadas pelo palestrante.", isCorrect: false, rationale: "Incorreto: 'simpatizar' rege 'com', e não 'de'." },
+            { text: "Não simpatizei às ideias apresentadas pelo palestrante.", isCorrect: false, rationale: "Incorreto: a preposição correta é 'com'." }
+        ],
+        hint: "O verbo 'simpatizar' rege a preposição 'com' e NUNCA é pronominal (não use 'se simpatizar')."
+    },
+    {
+        id: 21,
+        category: "Regência Verbal",
+        question: "Assinale a alternativa em que a regência do verbo 'proceder' no sentido de 'dar início / realizar' está correta:",
+        options: [
+            { text: "O delegado procedeu à abertura do inquérito policial.", isCorrect: true, rationale: "No sentido de dar início ou realizar, 'proceder' é transitivo indireto e exige a preposição 'a' (proceder à abertura)." },
+            { text: "O delegado procedeu a abertura do inquérito policial.", isCorrect: false, rationale: "Incorreto: faltou a crase decorrente da fusão da preposição 'a' exigida pelo verbo com o artigo 'a'." },
+            { text: "O delegado procedeu da abertura do inquérito policial.", isCorrect: false, rationale: "Incorreto: 'proceder de' significa originar-se ou ter fundamento." },
+            { text: "O delegado procedeu na abertura do inquérito policial.", isCorrect: false, rationale: "Incorreto: regência inadequada para o sentido de realizar." }
+        ],
+        hint: "No sentido de dar início/efetuar, 'proceder' rege a preposição 'a' (exige crase antes de palavra feminina)."
+    },
+    {
+        id: 22,
+        category: "Regência Nominal",
+        question: "Assinale a alternativa que apresenta a regência nominal CORRETA para o adjetivo 'equivalente':",
+        options: [
+            { text: "A quantia oferecida é equivalente ao valor do prejuízo.", isCorrect: true, rationale: "O adjetivo 'equivalente' exige a preposição 'a' (equivalente a algo)." },
+            { text: "A quantia oferecida é equivalente com o valor do prejuízo.", isCorrect: false, rationale: "Incorreto: 'equivalente com' é um desvio da norma-padrão." },
+            { text: "A quantia oferecida é equivalente do valor do prejuízo.", isCorrect: false, rationale: "Incorreto: 'equivalente de' contraria a norma culta." },
+            { text: "A quantia oferecida é equivalente pelo valor do prejuízo.", isCorrect: false, rationale: "Incorreto: não se usa 'por' com o adjetivo equivalente." }
+        ],
+        hint: "Aquilo que é equivalente, é equivalente A outra coisa."
+    },
+    {
+        id: 23,
+        category: "Regência Verbal",
+        question: "Na frase: 'O bom cidadão obedece ____ leis e respeita ____ autoridades', as lacunas são preenchidas por:",
+        options: [
+            { text: "às / as", isCorrect: true, rationale: "O verbo 'obedecer' é transitivo indireto (rege a preposição 'a' -> às leis); o verbo 'respeitar' é transitivo direto (não rege preposição -> as autoridades)." },
+            { text: "as / as", isCorrect: false, rationale: "Incorreto: 'obedecer' exige a preposição 'a', gerando crase antes de 'leis'." },
+            { text: "às / às", isCorrect: false, rationale: "Incorreto: 'respeitar' é transitivo direto e não aceita preposição 'a'." },
+            { text: "nas / pelas", isCorrect: false, rationale: "Incorreto: regências totalmente incompatíveis com os verbos propostos." }
+        ],
+        hint: "'Obedecer' exige preposição 'a' (exige crase em 'às leis'); 'respeitar' não pede preposição."
+    },
+    {
+        id: 24,
+        category: "Regência Nominal",
+        question: "Em 'Ele era muito devoto ____ Santa Rita de Cássia', a preposição adequada segundo a norma culta é:",
+        options: [
+            { text: "de (ou a)", isCorrect: true, rationale: "O substantivo/adjetivo 'devoto' rege tradicionalmente a preposição 'de' ou 'a' (devoto de / devoto a)." },
+            { text: "em", isCorrect: false, rationale: "Incorreto: a regência recomendada não utiliza 'em'." },
+            { text: "por", isCorrect: false, rationale: "Incorreto: 'devoto por' não é a forma aceita na norma-padrão." },
+            { text: "com", isCorrect: false, rationale: "Incorreto: a preposição 'com' não é regida por 'devoto'." }
+        ],
+        hint: "Devoto DE alguma coisa/santo ou devoto A."
+    },
+    {
+        id: 25,
+        category: "Regência Verbal",
+        question: "Assinale a opção em que a regência do verbo 'namorar' respeita a norma culta:",
+        options: [
+            { text: "O jovem namora a filha do vizinho há dois anos.", isCorrect: true, rationale: "O verbo 'namorar' é transitivo direto (não rege preposição 'com'). O correto é namorar alguém." },
+            { text: "O jovem namora com a filha do vizinho há dois anos.", isCorrect: false, rationale: "Incorreto: o uso da preposição 'com' é um vício de linguagem coloquial não aceito na norma culta." },
+            { text: "O jovem namora da filha do vizinho há dois anos.", isCorrect: false, rationale: "Incorreto: 'namorar' não exige a preposição 'de'." },
+            { text: "O jovem namora à filha do vizinho há dois anos.", isCorrect: false, rationale: "Incorreto: por não pedir preposição, não ocorre crase." }
+        ],
+        hint: "Na norma culta, o verbo 'namorar' não exige preposição (quem namora, namora ALGUÉM, e não 'com' alguém)."
+    },
+    {
+        id: 26,
+        category: "Regência Verbal",
+        question: "Assinale a frase em que o verbo 'custar' está empregado de acordo com a regência clássica no sentido de 'ser difícil':",
+        options: [
+            { text: "Custou ao aluno compreender a explicação do professor.", isCorrect: true, rationale: "No sentido de ser difícil, 'custar' é transitivo indireto com a preposição 'a' e tem como sujeito a oração no infinitivo ('compreender... custou ao aluno')." },
+            { text: "O aluno custou para compreender a explicação do professor.", isCorrect: false, rationale: "Incorreto: a gramática normativa rejeita a construção em que a pessoa é o sujeito do verbo 'custar' nesse sentido." },
+            { text: "O aluno custou a compreender a explicação do professor.", isCorrect: false, rationale: "Incorreto: o sujeito não deve ser a pessoa que tem dificuldade na norma clássica." },
+            { text: "Custou do aluno compreender a explicação do professor.", isCorrect: false, rationale: "Incorreto: a preposição regida para a pessoa que padece a dificuldade é 'a'." }
+        ],
+        hint: "Na norma clássica: 'Custou A alguém fazer algo' (a pessoa é objeto indireto, não sujeito)."
+    },
+    {
+        id: 27,
+        category: "Regência Nominal",
+        question: "Assinale a alternativa que apresenta incorreção na regência do nome destacado:",
+        options: [
+            { text: "Ela demonstrava grande aversão de lugares fechados.", isCorrect: true, rationale: "Incorreto: o substantivo 'aversão' rege as preposições 'a' ou 'por' (aversão a/por lugares fechados), mas não 'de'." },
+            { text: "Ele sempre foi muito fiel aos seus compromissos.", isCorrect: false, rationale: "Correto: 'fiel' exige a preposição 'a'." },
+            { text: "O rapaz é imune a críticas destrutivas.", isCorrect: false, rationale: "Correto: 'imune' rege a preposição 'a'." },
+            { text: "Ela é perita em assuntos financeiros.", isCorrect: false, rationale: "Correto: 'perita' rege a preposição 'em'." }
+        ],
+        hint: "Quem tem aversão, tem aversão A algo ou POR algo."
+    },
+    {
+        id: 28,
+        category: "Regência Verbal",
+        question: "Considere o verbo 'pagar'. Assinale a alternativa gramaticalmente CORRETA:",
+        options: [
+            { text: "O cliente pagou ao garçom a conta do restaurante.", isCorrect: true, rationale: "O verbo 'pagar' rege objeto direto para coisas ('a conta') e objeto indireto com 'a' para pessoas ('ao garçom')." },
+            { text: "O cliente pagou o garçom a conta do restaurante.", isCorrect: false, rationale: "Incorreto: a pessoa que recebe o pagamento deve ser introduzida pela preposição 'a'." },
+            { text: "O cliente pagou à conta do restaurante ao garçom.", isCorrect: false, rationale: "Incorreto: a coisa (conta) é objeto direto e não recebe preposição nem crase." },
+            { text: "O cliente pagou do garçom a conta do restaurante.", isCorrect: false, rationale: "Incorreto: 'pagar do garçom' desrespeita a regência verbal." }
+        ],
+        hint: "Pagar algo (sem preposição) A alguém (com preposição)."
+    },
+    {
+        id: 29,
+        category: "Regência Verbal",
+        question: "Assinale a alternativa em que a regência do verbo 'chegar' está em conformidade com o padrão culto:",
+        options: [
+            { text: "Chegamos ao auditório no horário combinado.", isCorrect: true, rationale: "Verbos de movimento como 'chegar' e 'ir' regem a preposição 'a' indicando destino, e não 'em'." },
+            { text: "Chegamos no auditório no horário combinado.", isCorrect: false, rationale: "Incorreto: o uso da preposição 'em' com verbo de movimento é comum no uso coloquial, mas reprovado pela norma-padrão." },
+            { text: "Chegamos pelo auditório no horário combinado.", isCorrect: false, rationale: "Incorreto: a preposição 'por' altera o sentido para passagem/trânsito." },
+            { text: "Chegamos com o auditório no horário combinado.", isCorrect: false, rationale: "Incorreto: a preposição 'com' indica companhia, inadequada ao contexto de destino." }
+        ],
+        hint: "Quem chega, chega A algum lugar (e não 'em')."
+    },
+    {
+        id: 30,
+        category: "Regência Nominal",
+        question: "Assinale a alternativa que preenche corretamente a lacuna: 'O projeto é passível ____ alterações, pois não é definitivo.'",
+        options: [
+            { text: "de", isCorrect: true, rationale: "O adjetivo 'passível' exige a preposição 'de' (passível de algo = sujeito a algo)." },
+            { text: "a", isCorrect: false, rationale: "Incorreto: 'passível a' não é a regência consagrada gramaticalmente." },
+            { text: "com", isCorrect: false, rationale: "Incorreto: a preposição 'com' não é regida pelo adjetivo 'passível'." },
+            { text: "em", isCorrect: false, rationale: "Incorreto: 'passível em' contraria a norma-padrão." }
+        ],
+        hint: "O adjetivo 'passível' rege a preposição 'de'."
+    }
+];
+
+        // State Management
+        let currentQuestionIdx = 0;
+        let userAnswers = new Array(questionsData.length).fill(null);
+        let bookmarked = new Array(questionsData.length).fill(false);
+        let quizMode = 'study'; // 'study' or 'exam'
+        let isSubmitted = false;
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGrid();
+            loadQuestion(0);
+        });
+
+        // Set Mode
+        function setMode(mode) {
+            if (isSubmitted) return;
+            quizMode = mode;
+            
+            const btnStudy = document.getElementById('btnModeStudy');
+            const btnExam = document.getElementById('btnModeExam');
+
+            if (mode === 'study') {
+                btnStudy.className = "px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm";
+                btnExam.className = "px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900";
+            } else {
+                btnExam.className = "px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm";
+                btnStudy.className = "px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900";
+            }
+
+            // Re-render current question view
+            loadQuestion(currentQuestionIdx);
+        }
+
+        // Render Side Navigation Grid
+        function renderGrid() {
+            const gridContainer = document.getElementById('questionGrid');
+            gridContainer.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `gridBtn-${idx}`;
+                btn.onclick = () => jumpToQuestion(idx);
+                btn.className = getGridBtnClass(idx);
+                btn.innerText = idx + 1;
+                gridContainer.appendChild(btn);
+            });
+
+            updateProgress();
+        }
+
+        function getGridBtnClass(idx) {
+            let base = "w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center transition-all ";
+            
+            if (idx === currentQuestionIdx) {
+                base += "ring-2 ring-brand-600 ring-offset-2 ";
+            }
+
+            if (bookmarked[idx]) {
+                base += "bg-amber-400 text-amber-950 font-extrabold ";
+            } else if (userAnswers[idx] !== null) {
+                if (isSubmitted || quizMode === 'study') {
+                    const isCorrect = questionsData[idx].options[userAnswers[idx]].isCorrect;
+                    base += isCorrect ? "bg-emerald-500 text-white " : "bg-rose-500 text-white ";
+                } else {
+                    base += "bg-brand-600 text-white ";
+                }
+            } else {
+                base += "bg-slate-100 text-slate-600 hover:bg-slate-200 ";
+            }
+
+            return base;
+        }
+
+        // Update Progress Bar & Score
+        function updateProgress() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            const percent = Math.round((answeredCount / questionsData.length) * 100);
+            
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('progressPercent').innerText = `${percent}% concluído`;
+
+            // Calculate score
+            let correctCount = 0;
+            userAnswers.forEach((ans, i) => {
+                if (ans !== null && questionsData[i].options[ans].isCorrect) {
+                    correctCount++;
+                }
+            });
+
+            document.getElementById('scoreDisplay').innerText = `${correctCount} / ${questionsData.length}`;
+        }
+
+        // Load Question Data
+        function loadQuestion(idx) {
+            currentQuestionIdx = idx;
+            const q = questionsData[idx];
+
+            // Update Header Info
+            document.getElementById('questionCategory').innerText = q.category;
+            document.getElementById('questionNumberBadge').innerText = `Questão ${idx + 1} de ${questionsData.length}`;
+            document.getElementById('questionTitle').innerText = q.question;
+
+            // Update Bookmark Button
+            const btnBookmark = document.getElementById('btnBookmark');
+            if (bookmarked[idx]) {
+                btnBookmark.className = "text-amber-500 font-medium text-sm transition flex items-center gap-1.5";
+                btnBookmark.innerHTML = `<i class="fa-solid fa-bookmark"></i> <span class="hidden sm:inline">Marcada</span>`;
+            } else {
+                btnBookmark.className = "text-slate-400 hover:text-amber-500 text-sm font-medium transition flex items-center gap-1.5";
+                btnBookmark.innerHTML = `<i class="fa-regular fa-bookmark"></i> <span class="hidden sm:inline">Revisar</span>`;
+            }
+
+            // Render Options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const selectedOpt = userAnswers[idx];
+            const showFeedback = isSubmitted || (quizMode === 'study' && selectedOpt !== null);
+
+            q.options.forEach((opt, optIdx) => {
+                const optBtn = document.createElement('button');
+                optBtn.className = getOptionClass(idx, optIdx, selectedOpt, showFeedback);
+                optBtn.onclick = () => selectOption(optIdx);
+                if (showFeedback || isSubmitted) {
+                    // Disable changing if already answered in study mode or if quiz is finished
+                    if (quizMode === 'study' || isSubmitted) {
+                        optBtn.disabled = true;
+                    }
+                }
+
+                const letter = String.fromCharCode(65 + optIdx); // A, B, C, D
+
+                let iconHtml = '';
+                if (showFeedback) {
+                    if (opt.isCorrect) {
+                        iconHtml = `<i class="fa-solid fa-circle-check text-emerald-600 text-lg ml-auto"></i>`;
+                    } else if (selectedOpt === optIdx) {
+                        iconHtml = `<i class="fa-solid fa-circle-xmark text-rose-600 text-lg ml-auto"></i>`;
+                    }
+                }
+
+                optBtn.innerHTML = `
+                    <div class="flex items-start gap-3 text-left w-full">
+                        <span class="w-6 h-6 rounded-full border border-current flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
+                            ${letter}
+                        </span>
+                        <span class="text-sm font-medium leading-relaxed flex-1">${opt.text}</span>
+                        ${iconHtml}
+                    </div>
+                `;
+
+                optionsContainer.appendChild(optBtn);
+            });
+
+            // Handle Explanation Box
+            const explanationBox = document.getElementById('explanationBox');
+            const explanationHeader = document.getElementById('explanationHeader');
+            const explanationText = document.getElementById('explanationText');
+
+            if (showFeedback && selectedOpt !== null) {
+                explanationBox.classList.remove('hidden');
+                const chosenOptObj = q.options[selectedOpt];
+                const correctOptObj = q.options.find(o => o.isCorrect);
+
+                if (chosenOptObj.isCorrect) {
+                    explanationHeader.className = "flex items-center gap-2 font-bold mb-1 text-emerald-700";
+                    explanationHeader.innerHTML = `<i class="fa-solid fa-circle-check"></i> Correto!`;
+                    explanationText.innerText = chosenOptObj.rationale;
+                } else {
+                    explanationHeader.className = "flex items-center gap-2 font-bold mb-1 text-rose-700";
+                    explanationHeader.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Incorreto.`;
+                    explanationText.innerText = `${chosenOptObj.rationale} (Gabarito: ${correctOptObj.text})`;
+                }
+            } else {
+                explanationBox.classList.add('hidden');
+            }
+
+            // Navigation Buttons State
+            document.getElementById('btnPrev').disabled = (idx === 0);
+            
+            const btnNext = document.getElementById('btnNext');
+            if (idx === questionsData.length - 1) {
+                btnNext.innerHTML = `Finalizar <i class="fa-solid fa-flag-checkered ml-1"></i>`;
+            } else {
+                btnNext.innerHTML = `Próxima <i class="fa-solid fa-chevron-right ml-1"></i>`;
+            }
+
+            renderGrid();
+        }
+
+        function getOptionClass(qIdx, optIdx, selectedOpt, showFeedback) {
+            let base = "w-full p-4 rounded-xl border text-left transition-all flex items-center ";
+
+            if (showFeedback) {
+                const isCorrect = questionsData[qIdx].options[optIdx].isCorrect;
+                if (isCorrect) {
+                    return base + "bg-emerald-50 border-emerald-300 text-emerald-950 font-medium ";
+                } else if (selectedOpt === optIdx) {
+                    return base + "bg-rose-50 border-rose-300 text-rose-950 ";
+                } else {
+                    return base + "bg-slate-50 border-slate-200 text-slate-400 opacity-60 ";
+                }
+            } else {
+                if (selectedOpt === optIdx) {
+                    return base + "bg-brand-50 border-brand-500 text-brand-900 shadow-sm ";
+                } else {
+                    return base + "bg-white border-slate-200 text-slate-700 hover:border-brand-300 hover:bg-slate-50 ";
+                }
+            }
+        }
+
+        // Action Handlers
+        function selectOption(optIdx) {
+            if (isSubmitted) return;
+            userAnswers[currentQuestionIdx] = optIdx;
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function toggleBookmark() {
+            bookmarked[currentQuestionIdx] = !bookmarked[currentQuestionIdx];
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function jumpToQuestion(idx) {
+            loadQuestion(idx);
+        }
+
+        function navigateQuestion(direction) {
+            const nextIdx = currentQuestionIdx + direction;
+            if (nextIdx >= 0 && nextIdx < questionsData.length) {
+                loadQuestion(nextIdx);
+            } else if (nextIdx >= questionsData.length) {
+                finishQuiz();
+            }
+        }
+
+        // Finish Quiz & Show Results
+        function finishQuiz() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            if (unanswered > 0 && !isSubmitted) {
+                const confirmSubmit = confirm(`Você ainda tem ${unanswered} questão(ões) não respondida(s). Deseja realmente finalizar?`);
+                if (!confirmSubmit) return;
+            }
+
+            isSubmitted = true;
+            document.getElementById('quizCard').classList.add('hidden');
+            document.getElementById('resultsCard').classList.remove('hidden');
+
+            // Calculate final statistics
+            let correctCount = 0;
+            userAnswers.forEach((ans, i) => {
+                if (ans !== null && questionsData[i].options[ans].isCorrect) {
+                    correctCount++;
+                }
+            });
+
+            const percent = Math.round((correctCount / questionsData.length) * 100);
+
+            document.getElementById('finalScore').innerText = `${correctCount} / ${questionsData.length}`;
+            document.getElementById('finalPercent').innerText = `${percent}%`;
+
+            let feedbackText = "Insuficiente";
+            let feedbackColor = "text-rose-600";
+            if (percent >= 85) {
+                feedbackText = "Excelente!";
+                feedbackColor = "text-emerald-600";
+            } else if (percent >= 70) {
+                feedbackText = "Muito Bom!";
+                feedbackColor = "text-brand-600";
+            } else if (percent >= 50) {
+                feedbackText = "Regular";
+                feedbackColor = "text-amber-600";
+            }
+
+            const feedbackElem = document.getElementById('finalFeedback');
+            feedbackElem.innerText = feedbackText;
+            feedbackElem.className = `text-sm font-bold mt-1 block ${feedbackColor}`;
+
+            renderGrid();
+        }
+
+        function restartQuiz() {
+            userAnswers = new Array(questionsData.length).fill(null);
+            bookmarked = new Array(questionsData.length).fill(false);
+            isSubmitted = false;
+            currentQuestionIdx = 0;
+
+            document.getElementById('resultsCard').classList.add('hidden');
+            document.getElementById('quizCard').classList.remove('hidden');
+
+            renderGrid();
+            loadQuestion(0);
+        }
+
+        function reviewQuiz() {
+            document.getElementById('resultsCard').classList.add('hidden');
+            document.getElementById('quizCard').classList.remove('hidden');
+            loadQuestion(0);
+        }
+    </script>
+</body>
+</html>
