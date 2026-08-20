@@ -219,7 +219,368 @@
     <!-- JavaScript Quiz Logic -->
     <script>
         // Database of 20 Portuguese Questions
-       
+       const questionsData = [
+    {
+        id: 1,
+        category: "Morfologia - Estrutura das Palavras",
+        question: "Na palavra 'infelizmente', o segmento '-mente' atua como um morfema do tipo:",
+        options: [
+            { text: "Sufixo derivacional, encarregado de alterar a classe gramatical da palavra base.", isCorrect: true, rationale: "O elemento '-mente' é um sufixo derivacional formador de advérbio a partir do adjetivo 'infeliz'." },
+            { text: "Desinência modo-temporal, indicando o tempo verbal.", isCorrect: false, rationale: "'-mente' é sufixo de formação nominal/adverbial, não desinência verbal." },
+            { text: "Prefixo gramatical, que modifica o sentido sem alterar a classe.", isCorrect: false, rationale: "Elemento posposto ao radical é sufixo, não prefixo." },
+            { text: "Vogal temática, responsável por ligar o radical às desinências.", isCorrect: false, rationale: "Não se trata de vogal temática, mas de um afixo derivacional." }
+        ],
+        hint: "Observe a posição do elemento após o radical e a alteração da classe de adjetivo para advérbio."
+    },
+    {
+        id: 2,
+        category: "Morfologia - Processos de Formação",
+        question: "O vocábulo 'envergonhar' é formado pelo processo de derivacional denominado:",
+        options: [
+            { text: "Parassíntese (ou derivação parassintética).", isCorrect: true, rationale: "Ocorre acréscimo simultâneo do prefixo 'en-' e do sufixo '-ar' ao radical 'vergonh-'. Não existem isoladamente as formas 'envergonh' nem 'vergonhar'." },
+            { text: "Derivação prefixal e sufixal.", isCorrect: false, rationale: "Na derivação prefixal e sufixal os afixos são independentes; na parassíntese, a anexaição é simultânea e obrigatória." },
+            { text: "Derivação regressiva.", isCorrect: false, rationale: "Derivação regressiva reduz a palavra (ex: cantar -> o canto)." },
+            { text: "Composição por aglutinação.", isCorrect: false, rationale: "Trata-se de anexação de afixos a um único radical, não de fusão de dois radicais." }
+        ],
+        hint: "Tente remover o prefixo ou o sufixo isoladamente. Se a palavra deixar de existir, o processo é simultâneo."
+    },
+    {
+        id: 3,
+        category: "Morfologia - Estrutura das Palavras",
+        question: "Assinale a alternativa que indica corretamente o radical da palavra 'pedregulho':",
+        options: [
+            { text: "pedr-", isCorrect: true, rationale: "O radical 'pedr-' é o elemento irredutível que contém o significado básico da família de palavras (pedra, pedreiro, pedregulho)." },
+            { text: "pedreg-", isCorrect: false, rationale: "'g' já faz parte do sufixo diminutivo/coletivo '-gulho'." },
+            { text: "pedre-", isCorrect: false, rationale: "A vogal 'e' não faz parte do radical básico morfológico." },
+            { text: "pedrug-", isCorrect: false, rationale: "Forma inexistente como elemento primário da raiz." }
+        ],
+        hint: "Compare com outras palavras da mesma família, como 'pedra' e 'pedreiro', para achar a base invariável."
+    },
+    {
+        id: 4,
+        category: "Morfologia - Derivação Regressiva",
+        question: "Assinale a opção que apresenta um substantivo deverbal formado por derivação regressiva:",
+        options: [
+            { text: "O resgate.", isCorrect: true, rationale: "'Resgate' é um substantivo deverbal derivado regressivamente do verbo 'resgatar'." },
+            { text: "O enredo.", isCorrect: false, rationale: "Embora ligado a enredar, trata-se de derivação por sufixação/morfologia histórica própria." },
+            { text: "A claridade.", isCorrect: false, rationale: "Substantivo derivado por sufixação do adjetivo 'claro'." },
+            { text: "O desmonte.", isCorrect: false, rationale: "A palavra 'desmonte' deriva de desmontar, contudo 'resgate' é o exemplo clássico e indiscutível de substantivo abstrato que indica ação." }
+        ],
+        hint: "Substantivos deverbais indicam ação e derivam da redução da forma verbal."
+    },
+    {
+        id: 5,
+        category: "Morfologia - Derivação Imprópria",
+        question: "Na frase: \"O *não* já temos, agora buscamos o sim\", a palavra destacada sofreu o processo de:",
+        options: [
+            { text: "Derivação imprópria (ou conversão).", isCorrect: true, rationale: "O advérbio 'não' foi convertido em substantivo pela anteposição do artigo 'O'." },
+            { text: "Derivação sufixal.", isCorrect: false, rationale: "Não houve acréscimo de sufixos na estrutura da palavra." },
+            { text: "Composição por justaposição.", isCorrect: false, rationale: "Não há união de dois radicais numa nova palavra." },
+            { text: "Derivação regressiva.", isCorrect: false, rationale: "Não houve redução do corpo fonético da palavra." }
+        ],
+        hint: "Acontece quando uma palavra muda de classe gramatical sem alterar sua forma escrita."
+    },
+    {
+        id: 6,
+        category: "Morfologia - Composição",
+        question: "Assinale o vocábulo formado pelo processo de composição por aglutinação:",
+        options: [
+            { text: "Pernalta.", isCorrect: true, rationale: "União de 'perna' + 'alta', com perda do elemento fonético 'a' de 'perna' (perna + alta = pernalta)." },
+            { text: "Guarda-chuva.", isCorrect: false, rationale: "Formado por composição por justaposição (sem perda de elementos)." },
+            { text: "Passatempo.", isCorrect: false, rationale: "Formado por composição por justaposição." },
+            { text: "Saca-rolhas.", isCorrect: false, rationale: "Formado por composição por justaposição." }
+        ],
+        hint: "Na aglutinação, pelo menos um dos radicais sofre alteração em sua grafia ou som."
+    },
+    {
+        id: 7,
+        category: "Morfologia - Elementos Mórfiicos",
+        question: "Na forma verbal 'cantávamos', o elemento '-va-' exerce a função de:",
+        options: [
+            { text: "Desinência modo-temporal.", isCorrect: true, rationale: "O sufixo flexional '-va-' indica o modo indicativo e o tempo pretérito imperfeito." },
+            { text: "Desinência número-pessoal.", isCorrect: false, rationale: "A desinência número-pessoal nessa palavra é '-mos'." },
+            { text: "Vogal temática.", isCorrect: false, rationale: "A vogal temática do verbo cantar é o '-a-' associado ao radical." },
+            { text: "Vogal de ligação.", isCorrect: false, rationale: "'-va-' é um morfema flexional completo, não mero conector." }
+        ],
+        hint: "Identifique o elemento que informa se o verbo está no presente, pretérito ou futuro."
+    },
+    {
+        id: 8,
+        category: "Morfologia - Vogal/Consoante de Ligação",
+        question: "Na palavra 'gasômetro', a vogal 'ô' funciona como:",
+        options: [
+            { text: "Vogal de ligação.", isCorrect: true, rationale: "A vogal de ligação 'ô' serve para unir o radical 'gás' ao radical 'metro', facilitando a pronúncia." },
+            { text: "Vogal temática.", isCorrect: false, rationale: "Vogais temáticas ligam o radical às desinências em nomes ou verbos." },
+            { text: "Sufixo flexional.", isCorrect: false, rationale: "Não indica flexão gramatical nem derivação semântica." },
+            { text: "Desinência de gênero.", isCorrect: false, rationale: "Não marca gênero masculino nem feminino." }
+        ],
+        hint: "Trata-se de um elemento eufônico que facilita a junção de dois radicais."
+    },
+    {
+        id: 9,
+        category: "Morfologia - Hibridismo",
+        question: "A palavra 'sociologia' é formada por elementos de idiomas diferentes (latim + grego). Esse processo chama-se:",
+        options: [
+            { text: "Hibridismo.", isCorrect: true, rationale: "Hibridismo é o processo de formação de palavras com elementos oriundos de línguas distintas (socio = latim; logia = grego)." },
+            { text: "Estrangeirismo.", isCorrect: false, rationale: "Estrangeirismo é a introdução de palavra estrangeira na língua." },
+            { text: "Neologismo por justaposição.", isCorrect: false, rationale: "Não se refere à origem de idiomas diferentes dos elementos." },
+            { text: "Abreviação vocabular.", isCorrect: false, rationale: "Não houve redução do vocábulo." }
+        ],
+        hint: "Nome dado à união de radicais de linguagens/fontes eruditas diferentes no mesmo vocábulo."
+    },
+    {
+        id: 10,
+        category: "Morfologia - Onomatopeia",
+        question: "Palavras como 'tique-taque', 'pingue-pongue' e 'miau' são formadas por:",
+        options: [
+            { text: "Onomatopeia.", isCorrect: true, rationale: "Onomatopeia é o processo de criação de palavras que tentam imitar sons da natureza ou de objetos." },
+            { text: "Abreviação ou reduplicação infantil.", isCorrect: false, rationale: "Trata-se de imitação sonora intencional e codificada." },
+            { text: "Prefixação parassintética.", isCorrect: false, rationale: "Não envolve morfemas derivacionais clássicos." },
+            { text: "Aglutinação fonética.", isCorrect: false, rationale: "Não ocorre perda de fonemas de radicais preexistentes." }
+        ],
+        hint: "Processo ligado à reprodução de sons e ruídos da realidade."
+    },
+    {
+        id: 11,
+        category: "Morfologia - Classes Gramaticais (Substantivo)",
+        question: "Quanto à sua formação, o substantivo 'pedreira' é classificado como:",
+        options: [
+            { text: "Derivado e simples.", isCorrect: true, rationale: "É simples (possui apenas um radical) e derivado (vem da palavra primitiva 'pedra')." },
+            { text: "Composto e derivado.", isCorrect: false, rationale: "Não é composto pois contém somente um radical." },
+            { text: "Primitivo e simples.", isCorrect: false, rationale: "Não é primitivo, pois deriva de 'pedra'." },
+            { text: "Composto e primitivo.", isCorrect: false, rationale: "Classificação duplamente incorreta." }
+        ],
+        hint: "Considere a quantidade de radicais e se a palavra provém de outra antecedente."
+    },
+    {
+        id: 12,
+        category: "Morfologia - Plural dos Substantivos Compostos",
+        question: "Indique a alternativa em que o plural do substantivo composto está de acordo com a norma-padrão:",
+        options: [
+            { text: "Couve-flores / Couves-flores.", isCorrect: true, rationale: "Ambas as formas são aceitas: 'couves-flores' (substantivo + substantivo, ambos flexionam) ou 'couve-flores' (o segundo limita o primeiro)." },
+            { text: "Pás-de-professores.", isCorrect: false, rationale: "O correto para pé-de-moleque / pão-de-ló e similares ligados por preposição é flexionar só o 1º elemento." },
+            { text: "Guardas-chuvas.", isCorrect: false, rationale: "'Guarda' (verbo) não flexiona. Correto: guarda-chuvas." },
+            { text: "Sempre-vivas-iguais.", isCorrect: false, rationale: "'Sempre' é advérbio e não flexiona." }
+        ],
+        hint: "Lembre-se das regras de flexão em elementos compostos por substantivo + substantivo ou verbo + substantivo."
+    },
+    {
+        id: 13,
+        category: "Morfologia - Flexão de Gênero",
+        question: "O substantivo 'o/a estudante' é classificado quanto ao gênero como:",
+        options: [
+            { text: "Comum de dois gêneros.", isCorrect: true, rationale: "Apresenta uma única forma para ambos os sexos, diferenciando-se pelo artigo (o estudante / a estudante)." },
+            { text: "Sobrecomum.", isCorrect: false, rationale: "Sobrecomum tem um só artigo para homens e mulheres (ex: a criança)." },
+            { text: "Epiceno.", isCorrect: false, rationale: "Epiceno é reservado a animais com especificação 'macho' ou 'fêmea'." },
+            { text: "Heterônimo.", isCorrect: false, rationale: "Heterônimos mudam o radical (ex: homem / mulher)." }
+        ],
+        hint: "Observe que a palavra não muda de forma, apenas o determinante (artigo) varia."
+    },
+    {
+        id: 14,
+        category: "Morfologia - Flexão de Número",
+        question: "Assinale o substantivo que faz o plural com a mesma alteração do fonema tônico de 'ovo / ovos' (metafonia):",
+        options: [
+            { text: "Poço / poços.", isCorrect: true, rationale: "Ocorre metafonia: o 'o' tônico fechado [o] no singular vira 'o' aberto [ɔ] no plural (pôço -> póços)." },
+            { text: "Esgoto / esgotos.", isCorrect: false, rationale: "Mantém o som fechado no plural (esgôto -> esgôtos)." },
+            { text: "Esposo / esposos.", isCorrect: false, rationale: "Mantém o som fechado no plural na norma-padrão (espôso -> espôsos)." },
+            { text: "Bolso / bolsos.", isCorrect: false, rationale: "Mantém o som fechado (bôlso -> bôlsos)." }
+        ],
+        hint: "Identifique a palavra cuja vogal 'o' tônica muda de som fechado no singular para som aberto no plural."
+    },
+    {
+        id: 15,
+        category: "Morfologia - Afixos Prefixo e Sufixo",
+        question: "Na palavra 'deslealdade', temos um exemplo de:",
+        options: [
+            { text: "Derivação prefixal e sufixal.", isCorrect: true, rationale: "A palavra possui o prefixo 'des-' e o sufixo '-dade' anexados ao radical 'leal'. Ambas as formas 'desleal' e 'lealdade' existem isoladamente." },
+            { text: "Parassíntese.", isCorrect: false, rationale: "Não é parassintética porque as formas intermediárias 'desleal' e 'lealdade' existem." },
+            { text: "Composição por aglutinação.", isCorrect: false, rationale: "Não há múltiplos radicais envolvidos." },
+            { text: "Derivação regressiva.", isCorrect: false, rationale: "Houve acréscimo de afixos, não redução." }
+        ],
+        hint: "Verifique se a remoção de um dos afixos mantém uma palavra com sentido existente na língua."
+    },
+    {
+        id: 16,
+        category: "Morfologia - Redução ou Abreviação",
+        question: "As palavras 'foto' (de fotografia), 'pneu' (de pneumático) e 'cine' (de cinematógrafo) foram formadas por:",
+        options: [
+            { text: "Abreviação vocabular (ou redução).", isCorrect: true, rationale: "Trata-se do corte de parte da palavra para obter uma forma mais curta." },
+            { text: "Siglonimização.", isCorrect: false, rationale: "Não são formadas pelas letras iniciais de frases ou nomes compostos." },
+            { text: "Derivação regressiva.", isCorrect: false, rationale: "Derivação regressiva forma substantivos abstratos a partir de verbos." },
+            { text: "Acronímia.", isCorrect: false, rationale: "Não são sílabas reunidas de várias palavras." }
+        ],
+        hint: "Consiste em economizar o corpo fonético da palavra mantendo todo o seu sentido original."
+    },
+    {
+        id: 17,
+        category: "Morfologia - Pronomes e Flexão",
+        question: "Em 'Entreguei-lhe os documentos', o pronome destacado funciona morfologicamente como:",
+        options: [
+            { text: "Pronome pessoal oblíquo átono.", isCorrect: true, rationale: "'Lhe' é uma forma de pronome pessoal oblíquo átono que desempenha a função sintática de objeto indireto." },
+            { text: "Pronome demonstrativo.", isCorrect: false, rationale: "Pronomes demonstrativos indicam posição (este, esse, aquele)." },
+            { text: "Pronome relativo.", isCorrect: false, rationale: "Pronomes relativos retomam termos anteriores na oração." },
+            { text: "Pronome indefinido.", isCorrect: false, rationale: "Pronomes indefinidos referem-se à 3ª pessoa de modo vago." }
+        ],
+        hint: "Analise a classificação do pronome que substitui a pessoa a quem se entrega algo sem acentuação própria."
+    },
+    {
+        id: 18,
+        category: "Morfologia - Flexão Verbal",
+        question: "A forma verbal 'refizéssemos' encontra-se flexionada no:",
+        options: [
+            { text: "Pretérito imperfeito do subjuntivo.", isCorrect: true, rationale: "A desinência '-sse-' caracteriza o pretérito imperfeito do modo subjuntivo." },
+            { text: "Futuro do presente do indicativo.", isCorrect: false, rationale: "O futuro do presente seria 'refaremos'." },
+            { text: "Pretérito mais-que-perfeito do indicativo.", isCorrect: false, rationale: "O pretérito mais-que-perfeito seria 'refizéramos'." },
+            { text: "Presente do subjuntivo.", isCorrect: false, rationale: "O presente do subjuntivo seria 'refaçamos'." }
+        ],
+        hint: "Observe a presença do sufixo desinencial '-sse-' que marca a hipótese no passado."
+    },
+    {
+        id: 19,
+        category: "Morfologia - Verbos Anômalos e Irregulares",
+        question: "Verbos que apresentam alterações profundas em seus radicais durante a conjugação (como 'ser' e 'ir') são classificados como:",
+        options: [
+            { text: "Anômalos.", isCorrect: true, rationale: "Verbos anômalos mudam de radical em suas conjugações (ex: eu sou, eu fui, eu serei)." },
+            { text: "Defectivos.", isCorrect: false, rationale: "Defectivos são aqueles que não possuem conjugação completa." },
+            { text: "Abundantes.", isCorrect: false, rationale: "Abundantes possuem duas ou mais formas equivalentes (geralmente no particípio)." },
+            { text: "Regulares.", isCorrect: false, rationale: "Regulares mantêm o radical inalterado." }
+        ],
+        hint: "Aponte a categoria restrita de verbos cujos radicais sofrem modificações totais de origem histórica."
+    },
+    {
+        id: 20,
+        category: "Morfologia - Adjetivos Compostos",
+        question: "Assinale a alternativa que traz a forma correta do plural do adjetivo composto 'intervenção médico-cirúrgica':",
+        options: [
+            { text: "Intervenções médico-cirúrgicas.", isCorrect: true, rationale: "Em adjetivos compostos, via de regra, apenas o último elemento flexiona em gênero e número." },
+            { text: "Intervenções médicas-cirúrgicas.", isCorrect: false, rationale: "O primeiro elemento adjetivo deve permanecer invariável." },
+            { text: "Intervenções médicos-cirúrgicas.", isCorrect: false, rationale: "O primeiro elemento permanece no masculino singular de forma invariável." },
+            { text: "Intervenções médico-cirúrgico.", isCorrect: false, rationale: "O último elemento deve concordar com o substantivo a que se refere." }
+        ],
+        hint: "Lembre-se da regra geral: apenas o segundo elemento do adjetivo composto sofre flexão."
+    },
+    {
+        id: 21,
+        category: "Morfologia - Valor Semântico de Prefixo",
+        question: "O prefixo destacado na palavra '*Anfíbio*' possui valor semântico de:",
+        options: [
+            { text: "Duplicidade ou dois meios.", isCorrect: true, rationale: "O prefixo grego 'anfi-' significa 'de ambos os lados', 'duplo' ou 'em dois meios'." },
+            { text: "Negação ou privação.", isCorrect: false, rationale: "Negação é expressa por 'a-/an-' (ex: analfabeto)." },
+            { text: "Anterioridade no tempo.", isCorrect: false, rationale: "Anterioridade é expressa por 'ante-'." },
+            { text: "Movimento para fora.", isCorrect: false, rationale: "Movimento para fora é expresso por 'ex-/e-'." }
+        ],
+        hint: "Pense na capacidade dos anfíbios de viverem em dois ambientes (terrestre e aquático)."
+    },
+    {
+        id: 22,
+        category: "Morfologia - Neologismo e Formação",
+        question: "A palavra 'deletar' (originada do inglês *to delete* e incorporada com a terminação da 1ª conjugação) é um exemplo de:",
+        options: [
+            { text: "Neologismo formado por sufixação.", isCorrect: true, rationale: "Formação de uma nova palavra na língua acrescentando o sufixo verbal '-ar' a uma base estrangeira adaptada." },
+            { text: "Derivação parassintética pura.", isCorrect: false, rationale: "Não possui prefixo associado no processo nacional." },
+            { text: "Composição por aglutinação.", isCorrect: false, rationale: "Não reúne dois radicais em língua portuguesa." },
+            { text: "Derivação regressiva.", isCorrect: false, rationale: "Não houve redução para criar um substantivo." }
+        ],
+        hint: "Considere o acréscimo de terminação verbal a um termo recém-incorporado."
+    },
+    {
+        id: 23,
+        category: "Morfologia - Morfema Zero",
+        question: "Na palavra 'mês', em comparação ao seu plural 'meses', diz-se que a marca de singular é representada por um:",
+        options: [
+            { text: "Morfema zero (ou ausência de desinência).", isCorrect: true, rationale: "A ausência do morfema '-es' indica o número singular na oposição 'mês' / 'mes-es'." },
+            { text: "Prefixo subentendido.", isCorrect: false, rationale: "Não há prefixação na estruturação de número." },
+            { text: "Sufixo nulo derivacional.", isCorrect: false, rationale: "Indicação numérica é marca flexional, não derivacional." },
+            { text: "Infixo eufônico.", isCorrect: false, rationale: "Não se trata de inserção interna no radical." }
+        ],
+        hint: "Conceito linguístico empregado para indicar quando a ausência de um elemento sinaliza a forma padrão/singular."
+    },
+    {
+        id: 24,
+        category: "Morfologia - Graus do Substantivo",
+        question: "A palavra 'riacho' é um substantivo derivado que apresenta grau diminutivo formado por:",
+        options: [
+            { text: "Sufixação erudita/erudito-popular (-acho).", isCorrect: true, rationale: "O sufixo '-acho' liga-se ao radical 'rio' formando a ideia diminutiva sintética." },
+            { text: "Processo analítico com adjetivo.", isCorrect: false, rationale: "Forma analítica exige adjetivo (ex: rio pequeno)." },
+            { text: "Derivação regressiva.", isCorrect: false, rationale: "Não deriva de ação verbal." },
+            { text: "Composição por aglutinação.", isCorrect: false, rationale: "Não há dois radicais distintos." }
+        ],
+        hint: "Identifique o sufixo diminutivo sintético preso ao radical."
+    },
+    {
+        id: 25,
+        category: "Morfologia - Classificação de Advérbios",
+        question: "A palavra 'tampouco' é classificada morfologicamente como advérbio com valor de:",
+        options: [
+            { text: "Negação (com sentido de 'também não').", isCorrect: true, rationale: "'Tampouco' significa 'também não' ou 'nem', sendo um advérbio de negação." },
+            { text: "Intensidade (com sentido de 'muito pouco').", isCorrect: false, rationale: "É erro comum confundir 'tampouco' com 'tão pouco' (intensidade)." },
+            { text: "Modo.", isCorrect: false, rationale: "Não indica a maneira de realização da ação." },
+            { text: "Dúvida.", isCorrect: false, rationale: "Não traz incerteza." }
+        ],
+        hint: "Atenção para não confundir com a locução de intensidade 'tão pouco'."
+    },
+    {
+        id: 26,
+        category: "Morfologia - Particípio Duplo / Verbos Abundantes",
+        question: "Assinale a alternativa que preenche corretamente as lacunas: 'O candidato foi ___ pelo juiz' / 'O juiz havia ___ o candidato':",
+        options: [
+            { text: "aceito / aceitado.", isCorrect: true, rationale: "A forma irregular (aceito) é usada com os auxiliares *ser* e *estar* (voz passiva); a forma regular (aceitado) é usada com *ter* e *haver* (tempos compostos)." },
+            { text: "aceitado / aceito.", isCorrect: false, rationale: "Inverte a aplicação correta dos auxiliares." },
+            { text: "aceito / aceito.", isCorrect: false, rationale: "Uso do particípio irregular com o auxiliar *haver* desvia da norma-padrão tradicional." },
+            { text: "aceitado / aceitado.", isCorrect: false, rationale: "Forma inadequada para o uso com o auxiliar *foi*." }
+        ],
+        hint: "Auxiliares ser/estar pedem particípio irregular; ter/haver pedem particípio regular (-ado/-ido)."
+    },
+    {
+        id: 27,
+        category: "Morfologia - Pronome Relativo",
+        question: "Assinale a opção em que o pronome relativo estabelece ideia de posse entre dois substantivos:",
+        options: [
+            { text: "Cujo.", isCorrect: true, rationale: "O pronome relativo 'cujo' (e suas flexões) liga dois substantivos estabelecendo relação de posse entre eles." },
+            { text: "Que.", isCorrect: false, rationale: "Pronome relativo universal, não expressa posse por si só." },
+            { text: "O qual.", isCorrect: false, rationale: "Substitui antecedente sem ideia inerente de posse." },
+            { text: "Onde.", isCorrect: false, rationale: "Uso exclusivo para indicação de lugar físico." }
+        ],
+        hint: "Pronome relativo invariável no sentido de 'do qual', 'de quem' que concorda com a coisa possuída."
+    },
+    {
+        id: 28,
+        category: "Morfologia - Prefixos de Origem Latina e Grega",
+        question: "Os prefixos 'des-' (latim) e 'a-' (grego) presentes em 'desleal' e 'ateu' compartilham o mesmo valor de:",
+        options: [
+            { text: "Negação ou oposição.", isCorrect: true, rationale: "Ambos os prefixos expressam a ideia de negação, privação ou sentido oposto." },
+            { text: "Aproximação.", isCorrect: false, rationale: "Aproximação é expressa por 'ad-'." },
+            { text: "Superioridade.", isCorrect: false, rationale: "Superioridade é expressa por 'super-' ou 'hiper-'." },
+            { text: "Repetição.", isCorrect: false, rationale: "Repetição é expressa por 're-'." }
+        ],
+        hint: "Note o sentido de carência ou negação do termo de base (sem lealdade / sem deus)."
+    },
+    {
+        id: 29,
+        category: "Morfologia - Numerais",
+        question: "Na frase 'Foi a *segunda* vez que ele tentou', a palavra destacada é classificada como:",
+        options: [
+            { text: "Numeral ordinal.", isCorrect: true, rationale: "Indica a ordem ou posição do elemento numa série (segunda)." },
+            { text: "Numeral cardinal.", isCorrect: false, rationale: "Cardinais indicam quantidade exata (um, dois, três)." },
+            { text: "Numeral multiplicativo.", isCorrect: false, rationale: "Multiplicativos indicam multiplicação (dobro, duplo)." },
+            { text: "Numeral fracionário.", isCorrect: false, rationale: "Fracionários indicam divisão/partição (meio, metade)." }
+        ],
+        hint: "Identifique a classe que expressa ordenação e sucessão."
+    },
+    {
+        id: 30,
+        category: "Morfologia - Conjunções Integrantes",
+        question: "Na frase 'Não sei *se* haverá prova amanhã', o termo destacado é morfologicamente classificado como:",
+        options: [
+            { text: "Conjunção subordinativa integrante.", isCorrect: true, rationale: "O 'se' introduz uma oração subordinada substantiva que completa o sentido do verbo 'saber'." },
+            { text: "Pronome reflexivo.", isCorrect: false, rationale: "Não indica ação refletida sobre o próprio sujeito." },
+            { text: "Partícula apassivadora.", isCorrect: false, rationale: "Não está acoplado a verbo transitivo direto para formar voz passiva." },
+            { text: "Conjunção subordinativa condicional.", isCorrect: false, rationale: "Não estabelece uma condição, mas uma dúvida/pergunta indireta integrante." }
+        ],
+        hint: "O elemento atua como conector introduzindo uma oração que pode ser substituída pelo pronome 'isso'."
+    }
+];
 
         // State Management
         let currentQuestionIdx = 0;
