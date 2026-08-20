@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Coordenação e Subordinação</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb; /* Azul padrão de português */
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        /* Fontes ajustadas para melhor legibilidade */
+        .card-content {
+            font-size: 1.6rem; 
+            line-height: 1.5;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.15rem; 
+            text-align: left;
+            color: #34495e;
+            overflow-y: auto;
+            max-height: 220px;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.3rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Sintaxe: Coordenação e Subordinação</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Período Composto</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            {
+                category: "Conceito Geral",
+                front: "Qual é a distinção estrutural básica entre <b>coordenação</b> e <b>subordinação</b> em um período composto?",
+                back: "• <b>Coordenação:</b> as orações são sintaticamente independentes (uma não exerce função sintática sobre a outra).<br>• <b>Subordinação:</b> uma oração exerce uma função sintática (sujeito, objeto, adjunto, etc.) em relação à oração principal."
+            },
+            {
+                category: "Orações Coordenadas",
+                front: "O que caracteriza uma <b>Oração Coordenada Assindética</b>?",
+                back: "É uma oração coordenada que se une às demais <b>sem o auxílio de conjunção</b>, sendo separada estruturalmente apenas por sinais de pontuação (geralmente vírgulas ou ponto e vírgula).<br><i>Ex:</i> Vim, vi, venci."
+            },
+            {
+                category: "Orações Coordenadas",
+                front: "O que caracteriza uma <b>Oração Coordenada Sindética</b>?",
+                back: "É aquela que vem introduzida por uma <b>conjunção coordenativa</b> (ou locução conjuntiva). Divide-se em cinco tipos de acordo com o sentido estabelecido pela conjunção."
+            },
+            {
+                category: "Aditivas",
+                front: "Quais são as principais conjunções das <b>Orações Coordenadas Sindéticas Aditivas</b> além de 'e'?",
+                back: "Além do 'e', destacam-se: <b>nem</b> (equivalente a e não), bem como, não só... mas também, senão também. Exprimem soma ou acréscimo de ideias."
+            },
+            {
+                category: "Adversativas",
+                front: "Por que as orações coordenadas <b>adversativas</b> exigem atenção especial quanto à mobilidade da conjunção?",
+                back: "Porque conjunções como <b>porém, contudo, todavia, entretanto e todavia</b> podem ser deslocadas na oração (ex: 'Estudou muito, <i>não obstante</i> foi reprovado'), enquanto o 'mas' deve obrigatoriamente iniciar a oração."
+            },
+            {
+                category: "Alternativas",
+                front: "Qual é o sentido principal expresso pelas <b>Orações Coordenadas Sindéticas Alternativas</b>?",
+                back: "Expressam exclusão, escolha, alternância ou retificação de ideias. Frequentemente aparecem em pares correlativos, como: <i>ou... ou, ora... ora, quer... quer, seja... seja</i>."
+            },
+            {
+                category: "Conclusivas",
+                front: "Qual é a pegadinha de prova clássica envolvendo a conjunção <b>'pois'</b> nas coordenadas conclusivas?",
+                back: "O 'pois' só é <b>conclusivo</b> quando vem <b>posposto ao verbo</b> da oração (isolado por vírgulas). Se vier anteposto ao verbo introduzindo a justificativa, será uma coordenada explicativa."
+            },
+            {
+                category: "Explicativas",
+                front: "Qual é a função semântica das <b>Orações Coordenadas Sindéticas Explicativas</b>?",
+                back: "Elas justificam, dão um motivo ou explicam a ordem ou pensamento expresso na oração anterior. São introduzidas por conjunções como <i>porque, que, pois</i> (anteposto)."
+            },
+            {
+                category: "Substantivas Subjetivas",
+                front: "Como identificar uma <b>Oração Subordinada Substantiva Subjetiva</b>?",
+                back: "Ela exerce a função sintática de <b>sujeito</b> da oração principal. Geralmente ocorre com verbos na voz passiva ou impessoais na principal, seguidos de 'que' (Ex: 'É necessário <i>que estudes</i>')."
+            },
+            {
+                category: "Substantivas Objetivas Diretas",
+                front: "Qual é a estrutura de uma <b>Oração Subordinada Substantiva Objetiva Direta</b>?",
+                back: "Funciona como objeto direto do verbo da oração principal (que é transitivo direto). Vem introduzida por conjunção integrante (Ex: 'Quero <i>que venhas</i>')."
+            },
+            {
+                category: "Substantivas Objetivas Indiretas",
+                front: "Como reconhecer uma <b>Oração Subordinada Substantiva Objetiva Indireta</b>?",
+                back: "Completa o sentido de um verbo transitivo indireto da oração principal e vem introduzida obrigatoriamente por uma <b>preposição</b> antes da conjunção integrante (Ex: 'Gosto <i>de que me elogiem</i>')."
+            },
+            {
+                category: "Substantivas Completivas Nominais",
+                front: "Qual é a diferença estrutural entre a Substantiva Objetiva Indireta e a <b>Completiva Nominal</b>?",
+                back: "• <b>Objetiva Indireta:</b> completa um <i>verbo</i> transitivo indireto.<br>• <b>Completiva Nominal:</b> completa o sentido de um <i>nome</i> (substantivo abstrato, adjetivo ou advérbio) da oração principal (Ex: 'Tenho certeza <i>de que passaras</i>')."
+            },
+            {
+                category: "Substantivas Predicativas",
+                front: "Onde se encaixa a <b>Oração Subordinada Substantiva Predicativa</b> na estrutura frasal?",
+                back: "Ela exerce a função de predicativo do sujeito, aparecendo logo após um verbo de ligação (geralmente o verbo 'ser') na oração principal (Ex: 'A verdade é <i>que não sabia</i>')."
+            },
+            {
+                category: "Substantivas Apositivas",
+                front: "Como identificar uma <b>Oração Subordinada Substantiva Apositiva</b>?",
+                back: "Exerce a função de aposto, explicando ou detalhando um termo da oração principal. Na escrita, vem habitualmente isolada por dois-pontos (Ex: 'Só desejo uma coisa: <i>que sejais felizes</i>')."
+            },
+            {
+                category: "Adjetivas Restritivas",
+                front: "Qual é a função semântica e estrutural de uma <b>Oração Subordinada Adjetiva Restritiva</b>?",
+                back: "Restringe ou limita o significado do termo antecedente. É essencial para o sentido da frase e <b>nunca vem separada por vírgulas</b> (Ex: 'Os alunos <i>que estudaram</i> passaram')."
+            },
+            {
+                category: "Adjetivas Explicativas",
+                front: "Qual é a característica distintiva das <b>Orações Subordinadas Adjetivas Explicativas</b>?",
+                back: "Acrescentam uma qualidade geral ou esclarecimento sobre o antecedente, sem restringi-lo. São obrigatoriamente isoladas por <b>vírgulas</b> (Ex: 'O Sol, <i>que é uma estrela</i>, ilumina a Terra')."
+            },
+            {
+                category: "Adverbiais Causais",
+                front: "O que expressa a <b>Oração Subordinada Adverbial Causal</b> e quais são suas principais conjunções?",
+                back: "Indica a causa, o motivo da ocorrência da oração principal. Principais conjunções: <i>porque, visto que, já que, uma vez que, como</i> (quando deslocada para o início)."
+            },
+            {
+                category: "Adverbiais Consecutivas",
+                front: "Como identificar uma <b>Oração Subordinada Adverbial Consecutiva</b>?",
+                back: "Indica a consequência ou o efeito gerado pela ação da oração principal. Costuma vir correlacionada a palavras como <i>tão, tal, tanto, tamanho</i> (Ex: 'Estudou tanto <i>que passou</i>')."
+            },
+            {
+                category: "Adverbiais Condicionais",
+                front: "O que define uma <b>Oração Subordinada Adverbial Condicional</b>?",
+                back: "Exprime uma hipótese ou condição necessária para que o fato da oração principal se realize. Conjunções típicas: <i>se, caso, contanto que, desde que</i>."
+            },
+            {
+                category: "Adverbiais Concessivas",
+                front: "Qual é a pegadinha de prova clássica sobre as <b>Orações Subordinadas Adverbiais Concessivas</b>?",
+                back: "Elas expressam uma ideia de oposição ou contraste que é insuficiente para impedir o fato principal (fato contrário admitido). Conjunções clássicas: <i>embora, conquanto, ainda que, mesmo que, malgrado</i>."
+            },
+            {
+                category: "Adverbiais Comparativas",
+                front: "O que caracteriza sintaticamente uma <b>Oração Subordinada Adverbial Comparativa</b>?",
+                back: "Estabelece uma comparação com a oração principal, expressando igualdade, superioridade ou inferioridade. Frequentemente o verbo da subordinada fica subentendido (Ex: 'Ele correu <i>como o vento</i> [corre]')."
+            },
+            {
+                category: "Adverbiais Conformativas",
+                front: "Quais conjunções introduzem as <b>Orações Subordinadas Adverbiais Conformativas</b>?",
+                back: "Indicam conformidade ou acordo em relação à ação da oração principal. Principais conjunções: <i>conforme, segundo, consoante</i> e, em certos contextos, <i>como</i>."
+            },
+            {
+                category: "Adverbiais Proporcionais",
+                front: "Qual é a estrutura típica de uma <b>Oração Subordinada Adverbial Proporcional</b>?",
+                back: "Indica proporção ou simultaneidade proporcional aos fatos da oração principal. Introduzida por locuções conjuntivas correlatas: <i>à medida que, à proporção que, quanto mais... mais</i>."
+            },
+            {
+                category: "Adverbiais Temporais",
+                front: "O que expressa a <b>Oração Subordinada Adverbial Temporal</b>?",
+                back: "Indica o tempo em que ocorre o fato da oração principal. Conjunções comuns: <i>quando, enquanto, logo que, assim que, antes que, depois que</i>."
+            },
+            {
+                category: "Adverbiais Finais",
+                front: "Qual é o objetivo principal de uma <b>Oração Subordinada Adverbial Final</b>?",
+                back: "Indica a finalidade ou o propósito com que se realiza a oração principal. Principais conjunções e locuções: <i>a fim de que, para que</i>."
+            },
+            {
+                category: "Orações Reduzidas",
+                front: "O que diferencia estruturalmente uma oração subordinada <b>desenvolvida</b> de uma <b>reduzida</b>?",
+                back: "• <b>Desenvolvida:</b> introduzida por conjunção/pronome relativo e verbo em modo pessoal.<br>• <b>Reduzida:</b> <i>não</i> possui conjunção e seu verbo está em uma forma nominal (infinitivo, gerúndio ou particípio)."
+            },
+            {
+                category: "Reduzidas de Infinitivo",
+                front: "Como classificar a oração reduzida em: 'É preciso <i>estudar para vencer</i>'?",
+                back: "A oração 'estudar' funciona como Substantiva Subjetiva reduzida de infinitivo; e 'para vencer' funciona como Subordinada Adverbial Final reduzida de infinitivo."
+            },
+            {
+                category: "Pontuação e Subordinação",
+                front: "Quando as orações subordinadas adverbiais exigem o uso obrigatório de vírgula?",
+                back: "Quando estão <b>antecipadas</b> (deslocadas antes da oração principal). Na ordem direta (principal + adverbial), a vírgula é facultativa (embora recomendada se forem longas)."
+            },
+            {
+                category: "Período Misto",
+                front: "O que é um <b>Período Misto</b> na sintaxe da língua portuguesa?",
+                back: "É aquele que contém, simultaneamente, processos de coordenação e de subordinação em sua estrutura (ex: orações coordenadas entre si que contêm orações subordinadas aninhadas)."
+            },
+            {
+                category: "Análise Estrutural",
+                front: "Qual é o primeiro passo lógico para analisar sintaticamente um período composto extenso?",
+                back: "Contar e isolar todos os <b>verbos ou locuções verbais</b> para determinar o número exato de orações, identificando em seguida os conectivos (conjunções e pronomes) que fazem a ligação entre elas."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
