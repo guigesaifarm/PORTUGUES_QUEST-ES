@@ -219,7 +219,368 @@
     <!-- JavaScript Quiz Logic -->
     <script>
         // Database of 20 Portuguese Questions
-       
+       const questionsData = [
+    {
+        id: 1,
+        category: "Funções das Classes de Palavras",
+        question: "Na frase \"O progresso rápido da tecnologia surpreendeu a todos\", as palavras 'progresso' e 'rápido' exercem, respectivamente, as funções sintáticas de:",
+        options: [
+            { text: "Núcleo do sujeito e adjunto adnominal.", isCorrect: true, rationale: "'Progresso' é um substantivo atuando como núcleo do sujeito; 'rápido' é um adjetivo que caracteriza o substantivo, atuando como adjunto adnominal." },
+            { text: "Núcleo do sujeito e predicativo do sujeito.", isCorrect: false, rationale: "'Rápido' está junto do substantivo sem verbo de ligação intermediando, logo é adjunto adnominal, não predicativo." },
+            { text: "Objeto direto e adjunto adverbial.", isCorrect: false, rationale: "'Progresso' é o sujeito da oração, não o objeto." },
+            { text: "Núcleo do sujeito e adjunto adverbial.", isCorrect: false, rationale: "'Rápido' modifica o substantivo 'progresso', portanto é adjetivo (adjunto adnominal), e não advérbio." }
+        ],
+        hint: "Observe se a palavra 'rápido' caracteriza o substantivo ou se modifica um verbo."
+    },
+    {
+        id: 2,
+        category: "Funções das Classes de Palavras",
+        question: "Na oração \"A diretora considerou o relatório insatisfeito\", a palavra 'insatisfeito' é um adjetivo que exerce a função de:",
+        options: [
+            { text: "Predicativo do objeto.", isCorrect: true, rationale: "'Insatisfeito' atribui um estado/qualidade ao objeto direto ('o relatório') por meio do julgamento do verbo 'considerou'." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "Não é mero atributo caracterizador fixo, mas sim uma classificação atribuída pelo verbo de ação/julgamento." },
+            { text: "Predicativo do sujeito.", isCorrect: false, rationale: "A qualidade 'insatisfeito' refere-se ao objeto ('o relatório'), e não ao sujeito ('a diretora')." },
+            { text: "Complemento nominal.", isCorrect: false, rationale: "Adjetivos não exercem função de complemento nominal nessa estrutura sintática." }
+        ],
+        hint: "A qualidade refere-se ao sujeito ou ao objeto direto da ação?"
+    },
+    {
+        id: 3,
+        category: "Funções das Classes de Palavras",
+        question: "Em \"Os alunos estudaram calmamente para a prova\", a palavra 'calmamente' é um advérbio que atua sintaticamente como:",
+        options: [
+            { text: "Adjunto adverbial de modo.", isCorrect: true, rationale: "O advérbio 'calmamente' modifica o verbo 'estudaram' indicando o modo como a ação foi executada." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "Advérbios não se ligam a substantivos e não atuam como adjunto adnominal." },
+            { text: "Complemento verbal.", isCorrect: false, rationale: "Adjuntos adverbiais são termos acessórios, não complementos obrigatórios." },
+            { text: "Predicativo do sujeito.", isCorrect: false, rationale: "Palavras invariáveis (advérbios) não exercem a função de predicativo." }
+        ],
+        hint: "Identifique a circunstância que o termo traz para a ação de 'estudar'."
+    },
+    {
+        id: 4,
+        category: "Funções das Classes de Palavras",
+        question: "Assinale a alternativa em que o pronome oblíquo 'nos' exerce a função de complemento nominal:",
+        options: [
+            { text: "A decisão do juiz foi favorável *nos*.", isCorrect: true, rationale: "'Favorável' é um adjetivo que exige complemento regido por preposição ('favorável a algo/alguém'). O pronome 'nos' equivale a 'a nós'." },
+            { text: "O professor *nos* chamou para a reunião.", isCorrect: false, rationale: "Aqui o pronome exerce a função de objeto direto." },
+            { text: "O chefe *nos* entregou os documentos.", isCorrect: false, rationale: "Aqui o pronome exerce a função de objeto indireto." },
+            { text: "Eles *nos* viram no parque ontem.", isCorrect: false, rationale: "Aqui o pronome exerce a função de objeto direto." }
+        ],
+        hint: "O complemento nominal completa o sentido de um nome (substantivo, adjetivo ou advérbio)."
+    },
+    {
+        id: 5,
+        category: "Funções das Classes de Palavras",
+        question: "Na frase \"O julgamento do réu ocorreu de manhã\", o segmento 'do réu' desempenha a função sintática de:",
+        options: [
+            { text: "Complemento nominal.", isCorrect: true, rationale: "'Julgamento' é um substantivo abstrato derivado de verbo e o 'réu' recebe a ação de ser julgado (sentido passivo)." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "Se a posse/relação fosse ativa seria adjunto, mas como o sentido é passivo (o réu é julgado), trata-se de complemento nominal." },
+            { text: "Agente da passiva.", isCorrect: false, rationale: "O agente da passiva exige estrutura verbal passiva, não nominal." },
+            { text: "Objeto indireto.", isCorrect: false, rationale: "Objetos ligam-se a verbos, não a substantivos abstratos." }
+        ],
+        hint: "O réu prática a ação de julgar ou sofre a ação de ser julgado?"
+    },
+    {
+        id: 6,
+        category: "Funções das Classes de Palavras",
+        question: "Em \"Ela chegou cansada da viagem\", a palavra 'cansada' (adjetivo) cumpre a função de:",
+        options: [
+            { text: "Predicativo do sujeito.", isCorrect: true, rationale: "'Cansada' atribui um estado temporário ao sujeito 'Ela' em uma oração com verbo intencional/intransitivo ('chegou')." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "Atribui um estado no momento da ação verbal, configurando predicativo." },
+            { text: "Adjunto adverbial de modo.", isCorrect: false, rationale: "'Cansada' é um adjetivo (flexiona em gênero/número) e refere-se ao sujeito, não ao verbo." },
+            { text: "Objeto direto.", isCorrect: false, rationale: "O verbo 'chegar' é intransitivo e não aceita objeto." }
+        ],
+        hint: "O termo varia para concorda com o sujeito 'Ela'."
+    },
+    {
+        id: 7,
+        category: "Funções das Classes de Palavras",
+        question: "Na oração \"O livro de história foi lido pelos alunos\", o termo 'de história' é:",
+        options: [
+            { text: "Adjunto adnominal.", isCorrect: true, rationale: "A locução adjetiva 'de história' especifica o tipo de livro (substantivo concreto), atuando como adjunto adnominal." },
+            { text: "Complemento nominal.", isCorrect: false, rationale: "Substantivos concretos ('livro') não recebem complemento nominal, apenas adjuntos." },
+            { text: "Agente da passiva.", isCorrect: false, rationale: "O agente da passiva nesta oração é 'pelos alunos'." },
+            { text: "Objeto indireto.", isCorrect: false, rationale: "O termo modifica um substantivo, não um verbo." }
+        ],
+        hint: "'Livro' é um substantivo concreto. Termos preposicionados junto a substantivos concretos são sempre adjuntos."
+    },
+    {
+        id: 8,
+        category: "Funções das Classes de Palavras",
+        question: "Na frase \"Nós gostamos do novo projeto\", a palavra 'novo' é um adjetivo que funciona como:",
+        options: [
+            { text: "Adjunto adnominal.", isCorrect: true, rationale: "Adjetivos junto ao substantivo ao qual se referem ('projeto') funcionam sintaticamente como adjuntos adnominais." },
+            { text: "Predicativo do objeto.", isCorrect: false, rationale: "Não há verbo que atribua uma nova característica ao objeto." },
+            { text: "Complemento nominal.", isCorrect: false, rationale: "'Novo' é a característica, não o complemento de um nome." },
+            { text: "Núcleo do objeto indireto.", isCorrect: false, rationale: "O núcleo do objeto indireto é o substantivo 'projeto'." }
+        ],
+        hint: "O termo apenas caracteriza diretamente o substantivo 'projeto'."
+    },
+    {
+        id: 9,
+        category: "Funções das Classes de Palavras",
+        question: "Em \"Ela fala muito bem\", as palavras 'muito' e 'bem' são advérbios. A função do advérbio 'muito' é:",
+        options: [
+            { text: "Modificar o advérbio 'bem', atuando como adjunto adverbial de intensidade.", isCorrect: true, rationale: "Advérbios podem intensificar outros advérbios. 'Muito' é adjunto adverbial de intensidade sobre 'bem'." },
+            { text: "Modificar o verbo 'fala', atuando como objeto direto.", isCorrect: false, rationale: "Advérbios não atuam como objetos." },
+            { text: "Atuar como adjunto adnominal do pronome 'Ela'.", isCorrect: false, rationale: "Advérbios não se referem a pronomes pessoais nem funcionam como adjuntos adnominais." },
+            { text: "Atuar como predicativo do sujeito.", isCorrect: false, rationale: "Advérbio não pode exercer função de predicativo." }
+        ],
+        hint: "Observe qual palavra o termo 'muito' está intensificando diretamente."
+    },
+    {
+        id: 10,
+        category: "Funções das Classes de Palavras",
+        question: "Na frase \"O relatório foi apresentado pelo auditor\", o segmento 'pelo auditor' é formado por preposição + substantivo e exerce a função de:",
+        options: [
+            { text: "Agente da passiva.", isCorrect: true, rationale: "Na voz passiva analítica, o termo regido por preposição que executa a ação verbal é o agente da passiva." },
+            { text: "Objeto indireto.", isCorrect: false, rationale: "A frase está na voz passiva e o termo pratica a ação expressa pelo verbo principal." },
+            { text: "Complemento nominal.", isCorrect: false, rationale: "Completa a locução verbal passiva indicando o praticante da ação." },
+            { text: "Adjunto adverbial de meio.", isCorrect: false, rationale: "Refere-se ao ser consciente que executa a ação, não ao meio utilizado." }
+        ],
+        hint: "Quem pratica a ação de 'apresentar' na frase que está na voz passiva?"
+    },
+    {
+        id: 11,
+        category: "Funções das Classes de Palavras",
+        question: "Em \"Comprei este carro ontem\", a palavra 'este' é um pronome demonstrativo que funciona sintaticamente como:",
+        options: [
+            { text: "Adjunto adnominal.", isCorrect: true, rationale: "Pronomes adjetivos (que acompanham substantivos) exercem a função sintática de adjunto adnominal." },
+            { text: "Núcleo do objeto direto.", isCorrect: false, rationale: "O núcleo do objeto direto é o substantivo 'carro'." },
+            { text: "Predicativo do objeto.", isCorrect: false, rationale: "Não se trata de um atributo dado ao objeto." },
+            { text: "Complemento nominal.", isCorrect: false, rationale: "Não completa o sentido de um adjetivo, advérbio ou substantivo abstrato." }
+        ],
+        hint: "Pronomes que acompanham e determinam um substantivo atuam como adjuntos."
+    },
+    {
+        id: 12,
+        category: "Funções das Classes de Palavras",
+        question: "Na frase \"Mariana é muito inteligente\", a palavra 'inteligente' é um adjetivo que exerce a função sintática de:",
+        options: [
+            { text: "Predicativo do sujeito.", isCorrect: true, rationale: "Liga-se ao sujeito 'Mariana' através do verbo de ligação 'é', atribuindo-lhe um atributo/estado." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "Quando o adjetivo é intermediado por um verbo de ligação, sua função é predicativo." },
+            { text: "Núcleo do sujeito.", isCorrect: false, rationale: "O núcleo do sujeito é o substantivo próprio 'Mariana'." },
+            { text: "Complemento nominal.", isCorrect: false, rationale: "'Inteligente' é o termo caracterizador, não um complemento." }
+        ],
+        hint: "Há um verbo de ligação ('é') ligando o atributo ao sujeito."
+    },
+    {
+        id: 13,
+        category: "Funções das Classes de Palavras",
+        question: "Na construção \"Preciso de ajuda urgente\", o substantivo 'ajuda' desempenha a função de:",
+        options: [
+            { text: "Núcleo do objeto indireto.", isCorrect: true, rationale: "O verbo 'precisar' exige complemento preposicionado ('de algo'); 'ajuda' é o núcleo desse objeto indireto." },
+            { text: "Complemento nominal.", isCorrect: false, rationale: "Completa o sentido de um verbo ('precisar'), e não de um nome." },
+            { text: "Núcleo do sujeito.", isCorrect: false, rationale: "O sujeito é oculto/desinencial ('Eu')." },
+            { text: "Adjunto adverbial.", isCorrect: false, rationale: "Trata-se de um complemento verbal obrigatório, não de uma circunstância." }
+        ],
+        hint: "Qual termo completa diretamente a regência do verbo 'precisar'?"
+    },
+    {
+        id: 14,
+        category: "Funções das Classes de Palavras",
+        question: "Em \"A leitura do livro expande horizontes\", o segmento 'do livro' completa o sentido do substantivo 'leitura'. Sua função sintática é:",
+        options: [
+            { text: "Complemento nominal.", isCorrect: true, rationale: "'Leitura' é substantivo abstrato e o 'livro' é lido (sentido passivo), caracterizando complemento nominal." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "Teria valor de adjunto se o termo regido pela preposição praticasse a ação (sentido ativo)." },
+            { text: "Objeto indireto.", isCorrect: false, rationale: "Termos ligados a substantivos nunca são objetos." },
+            { text: "Agente da passiva.", isCorrect: false, rationale: "Não há verbo na voz passiva no trecho." }
+        ],
+        hint: "Substantivo abstrato + termo preposicionado com valor passivo = ?"
+    },
+    {
+        id: 15,
+        category: "Funções das Classes de Palavras",
+        question: "Na oração \"Amanhã faremos o teste de nivelamento\", a palavra 'Amanhã' pertence à classe dos advérbios e funciona como:",
+        options: [
+            { text: "Adjunto adverbial de tempo.", isCorrect: true, rationale: "Indica a circunstância temporal em que a ação verbal ('faremos') vai ocorrer." },
+            { text: "Sujeito da oração.", isCorrect: false, rationale: "Advérbios não podem ser sujeito de oração." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "O advérbio modifica o verbo, e não um substantivo." },
+            { text: "Objeto direto.", isCorrect: false, rationale: "O objeto direto é 'o teste de nivelamento'." }
+        ],
+        hint: "Identifique que tipo de circunstância a palavra expressa em relação ao verbo 'faremos'."
+    },
+    {
+        id: 16,
+        category: "Funções das Classes de Palavras",
+        question: "Em \"O paciente permaneceu calmo durante o exame\", a classe gramatical e a função sintática de 'calmo' são, respectivamente:",
+        options: [
+            { text: "Adjetivo e predicativo do sujeito.", isCorrect: true, rationale: "'Calmo' é um adjetivo atribuído ao sujeito 'O paciente' por meio do verbo de ligação 'permaneceu'." },
+            { text: "Advérbio e adjunto adverbial de modo.", isCorrect: false, rationale: "'Calmo' varia em gênero/número (pacientes calmos), portanto é adjetivo, não advérbio." },
+            { text: "Adjetivo e adjunto adnominal.", isCorrect: false, rationale: "Há verbo de ligação na estrutura, o que exige a função de predicativo." },
+            { text: "Substantivo e núcleo do sujeito.", isCorrect: false, rationale: "'Paciente' é o núcleo do sujeito." }
+        ],
+        hint: "O termo varia (ex: 'pacientes calmos') e atribui um estado através de verbo de ligação."
+    },
+    {
+        id: 17,
+        category: "Funções das Classes de Palavras",
+        question: "Na oração \"Ofereceram um prêmio ao vencedor\", o termo 'ao vencedor' (preposição + substantivo) exerce a função de:",
+        options: [
+            { text: "Objeto indireto.", isCorrect: true, rationale: "O verbo 'oferecer' é bitransitivo (VTDI) e 'ao vencedor' é o complemento regido pela preposição 'a'." },
+            { text: "Complemento nominal.", isCorrect: false, rationale: "Completa o sentido de um verbo ('Ofereceram'), portanto é complemento verbal (objeto)." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "Complementa a ação do verbo, não um substantivo." },
+            { text: "Agente da passiva.", isCorrect: false, rationale: "A oração está na voz ativa." }
+        ],
+        hint: "Completa o verbo 'oferecer' exigindo a preposição 'a'."
+    },
+    {
+        id: 18,
+        category: "Funções das Classes de Palavras",
+        question: "Em \"Aqueles três alunos passaram no concurso\", a palavra 'três' é um numeral que exerce a função de:",
+        options: [
+            { text: "Adjunto adnominal.", isCorrect: true, rationale: "Numerais adjetivos que acompanham e quantificam um substantivo funcionam como adjunto adnominal." },
+            { text: "Núcleo do sujeito.", isCorrect: false, rationale: "O núcleo do sujeito é o substantivo 'alunos'." },
+            { text: "Complemento nominal.", isCorrect: false, rationale: "Não completa o sentido de um nome, apenas quantifica." },
+            { text: "Predicativo do sujeito.", isCorrect: false, rationale: "Não expressa um estado ou atributo intermediado por verbo." }
+        ],
+        hint: "Determine a função sintática do numeral ao lado do substantivo 'alunos'."
+    },
+    {
+        id: 19,
+        category: "Funções das Classes de Palavras",
+        question: "Na frase \"O juiz julgou o réu culpado\", o adjetivo 'culpado' funciona como:",
+        options: [
+            { text: "Predicativo do objeto.", isCorrect: true, rationale: "'Culpado' é um estado/característica atribuída ao objeto direto 'o réu' como resultado da ação de julgar." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "Não é um simples atributo do réu, mas o resultado da verificação verbal." },
+            { text: "Predicativo do sujeito.", isCorrect: false, rationale: "O juiz não é culpado; o atributo refere-se ao réu (objeto)." },
+            { text: "Complemento nominal.", isCorrect: false, rationale: "Não se trata de complemento de nome." }
+        ],
+        hint: "A característica 'culpado' aplica-se ao sujeito ('juiz') ou ao objeto ('réu')?"
+    },
+    {
+        id: 20,
+        category: "Funções das Classes de Palavras",
+        question: "Em \"Ela vive longe da cidade\", a palavra 'longe' é um advérbio de lugar. O segmento 'da cidade' exerce a função sintática de:",
+        options: [
+            { text: "Complemento nominal.", isCorrect: true, rationale: "O advérbio 'longe' exige um complemento para fechar seu sentido ('longe de algo'). Complementos de advérbios são complementos nominais." },
+            { text: "Adjunto adverbial.", isCorrect: false, rationale: "'Longe' já é o advérbio; 'da cidade' completa o sentido deste advérbio." },
+            { text: "Objeto indireto.", isCorrect: false, rationale: "Objetos ligam-se a verbos. 'Da cidade' liga-se ao advérbio 'longe'." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "Advérbios não admitem adjuntos adnominais." }
+        ],
+        hint: "Termo preposicionado que completa o sentido de um advérbio é..."
+    },
+    {
+        id: 21,
+        category: "Funções das Classes de Palavras",
+        question: "Na oração \"O atleta correu rapidamente\", a palavra 'rapidamente' é um advérbio que atua como:",
+        options: [
+            { text: "Adjunto adverbial de modo.", isCorrect: true, rationale: "Modifica o verbo de ação 'correu', descrevendo a maneira como ele correu." },
+            { text: "Predicativo do sujeito.", isCorrect: false, rationale: "Advérbios são invariáveis e não funcionam como predicativo." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "Modifica um verbo, não um substantivo." },
+            { text: "Objeto direto.", isCorrect: false, rationale: "O verbo 'correr' aqui é intransitivo; não há objeto." }
+        ],
+        hint: "Palavra terminada em '-mente' que indica como o atleta correu."
+    },
+    {
+        id: 22,
+        category: "Funções das Classes de Palavras",
+        question: "Em \"Infelizmente, não conseguimos os ingressos\", a palavra 'Infelizmente' é um advérbio cuja função é:",
+        options: [
+            { text: "Adjunto adverbial (modificador de toda a oração).", isCorrect: true, rationale: "Advérbios em início de frase separados por vírgula frequentemente modificam todo o contexto oracional." },
+            { text: "Predicativo do sujeito.", isCorrect: false, rationale: "Advérbio não pode ser predicativo." },
+            { text: "Aposto explicativo.", isCorrect: false, rationale: "Apostos são exercidos por substantivos ou pronomes, não por advérbios." },
+            { text: "Complemento nominal.", isCorrect: false, rationale: "Não completa o sentido de nenhum nome específico." }
+        ],
+        hint: "O advérbio expressa um posicionamento do falante sobre o fato inteiro."
+    },
+    {
+        id: 23,
+        category: "Funções das Classes de Palavras",
+        question: "Assinale a alternativa em que o pronome possessivo exerce a função de adjunto adnominal:",
+        options: [
+            { text: "Encontrei *meus* documentos na gaveta.", isCorrect: true, rationale: "O pronome possessivo 'meus' acompanha o substantivo 'documentos', atuando sintaticamente como adjunto adnominal." },
+            { text: "Aquele casaco é *meu*.", isCorrect: false, rationale: "Aqui o pronome possessivo atua como predicativo do sujeito." },
+            { text: "Esta caneta não é a *sua*.", isCorrect: false, rationale: "Atua como predicativo do sujeito." },
+            { text: "Dentre os carros, prefiro o *meu*.", isCorrect: false, rationale: "Atua como núcleo do objeto direto." }
+        ],
+        hint: "Procure a opção em que o pronome está diretamente ligado a um substantivo que ele determina."
+    },
+    {
+        id: 24,
+        category: "Funções das Classes de Palavras",
+        question: "Na oração \"A invenção do telefone mudou a comunicação\", o segmento 'do telefone' é:",
+        options: [
+            { text: "Complemento nominal.", isCorrect: true, rationale: "'Invenção' é substantivo abstrato. O telefone 'foi inventado' (valor passivo), logo o termo é complemento nominal." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "Seria adjunto adnominal se o telefone tivesse inventado algo (valor ativo)." },
+            { text: "Objeto indireto.", isCorrect: false, rationale: "Termos ligados a substantivos não funcionam como objeto." },
+            { text: "Agente da passiva.", isCorrect: false, rationale: "Não há voz passiva verbal na oração." }
+        ],
+        hint: "O telefone praticou a invenção ou foi inventado?"
+    },
+    {
+        id: 25,
+        category: "Funções das Classes de Palavras",
+        question: "Em \"Ela é uma professora excelente\", o adjetivo 'excelente' desempenha a função sintática de:",
+        options: [
+            { text: "Adjunto adnominal.", isCorrect: true, rationale: "'Excelente' liga-se diretamente ao substantivo 'professora' (que é o núcleo do predicativo), atuando como seu adjunto adnominal." },
+            { text: "Predicativo do sujeito.", isCorrect: false, rationale: "O predicativo do sujeito é a expressão inteira 'uma professora excelente'; 'excelente' isoladamente é adjunto adnominal do núcleo 'professora'." },
+            { text: "Complemento nominal.", isCorrect: false, rationale: "Adjetivos caracterizadores não exercem complemento nominal." },
+            { text: "Aposto.", isCorrect: false, rationale: "Não se trata de um termo explicativo destacado." }
+        ],
+        hint: "Atente-se para o termo ao qual o adjetivo está diretamente associado internamente."
+    },
+    {
+        id: 26,
+        category: "Funções das Classes de Palavras",
+        question: "Na oração \"Entregamos a encomenda à secretária\", o termo 'à secretária' (preposição + substantivo) é:",
+        options: [
+            { text: "Objeto indireto.", isCorrect: true, rationale: "Completa o sentido do verbo 'entregar' (VTDI) exigindo a preposição 'a'." },
+            { text: "Complemento nominal.", isCorrect: false, rationale: "Completa a regência de um verbo, não de um nome." },
+            { text: "Adjunto adverbial de lugar.", isCorrect: false, rationale: "Representa o ser que recebe a encomenda (alvo/beneficiário), não o local." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "Não se liga a um substantivo, mas sim ao verbo." }
+        ],
+        hint: "Responde à pergunta: entregamos a encomenda a quem?"
+    },
+    {
+        id: 27,
+        category: "Funções das Classes de Palavras",
+        question: "Em \"O bolo cheira bem\", a palavra 'bem' pertence à classe dos advérbios e exerce a função de:",
+        options: [
+            { text: "Adjunto adverbial de modo.", isCorrect: true, rationale: "Indica a maneira como a ação/propriedade de cheirar se manifesta." },
+            { text: "Predicativo do sujeito.", isCorrect: false, rationale: "Apesar de 'cheirar' poder atuar como ligação em alguns contextos, 'bem' é advérbio e funciona sintaticamente como adjunto adverbial." },
+            { text: "Objeto direto.", isCorrect: false, rationale: "Advérbio não funciona como objeto." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "O termo modifica o verbo 'cheira'." }
+        ],
+        hint: "Aponte a função sintática padrão da classe gramatical dos advérbios."
+    },
+    {
+        id: 28,
+        category: "Funções das Classes de Palavras",
+        question: "Na frase \"O medo da escuridão afeta crianças\", o termo 'da escuridão' atua como:",
+        options: [
+            { text: "Complemento nominal.", isCorrect: true, rationale: "'Medo' é substantivo abstrato e 'da escuridão' completa o sentido de quem sente o medo (alvo), sendo complemento nominal." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "A escuridão não 'sente medo' (valor ativo), ela é o alvo do medo (valor passivo)." },
+            { text: "Objeto indireto.", isCorrect: false, rationale: "Não completa verbo, completa o substantivo 'medo'." },
+            { text: "Adjunto adverbial.", isCorrect: false, rationale: "Não indica circunstância verbal." }
+        ],
+        hint: "O substantivo 'medo' é abstrato e exige complemento preposicionado."
+    },
+    {
+        id: 29,
+        category: "Funções das Classes de Palavras",
+        question: "Em \"Todos os convidados chegaram atrasados\", a palavra 'atrasados' é um adjetivo que atua como:",
+        options: [
+            { text: "Predicativo do sujeito.", isCorrect: true, rationale: "Atribui um estado aos 'convidados' (sujeito) no momento em que a ação de 'chegar' ocorre." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "Não é uma característica permanente do substantivo, mas um estado no momento da ação verbal." },
+            { text: "Adjunto adverbial de modo.", isCorrect: false, rationale: "Como flexiona no plural para concordar com 'convidados', é adjetivo (predicativo), e não advérbio." },
+            { text: "Objeto direto.", isCorrect: false, rationale: "O verbo 'chegar' é intransitivo." }
+        ],
+        hint: "Note que o termo concorda em gênero e número com o sujeito 'convidados'."
+    },
+    {
+        id: 30,
+        category: "Funções das Classes de Palavras",
+        question: "Na frase \"A construção da ponte demorou dois anos\", o termo 'da ponte' exerce a função sintática de:",
+        options: [
+            { text: "Complemento nominal.", isCorrect: true, rationale: "'Construção' é substantivo abstrato originado de verbo; a ponte é construída (paciente), configurando complemento nominal." },
+            { text: "Adjunto adnominal.", isCorrect: false, rationale: "Teria valor de adjunto se a ponte fosse o agente da construção." },
+            { text: "Sujeito da oração.", isCorrect: false, rationale: "O sujeito é 'A construção da ponte', cujo núcleo é 'construção'." },
+            { text: "Objeto indireto.", isCorrect: false, rationale: "Estar ligado a um substantivo impede que seja objeto." }
+        ],
+        hint: "Analise a relação entre o substantivo abstrato 'construção' e a ponte (a ponte constrói ou é construída?)."
+    }
+];
 
         // State Management
         let currentQuestionIdx = 0;
