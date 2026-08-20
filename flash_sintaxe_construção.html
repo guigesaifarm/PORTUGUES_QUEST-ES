@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Sintaxe e Construção Frasal</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb; /* Ajustado para o azul padrão de português */
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        /* Fontes ajustadas para melhor legibilidade */
+        .card-content {
+            font-size: 1.6rem; 
+            line-height: 1.5;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.15rem; 
+            text-align: left;
+            color: #34495e;
+            overflow-y: auto;
+            max-height: 220px;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.3rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Sintaxe e Construção Frasal na Língua Portuguesa</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Frase, Oração e Período</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            {
+                category: "Conceitos Básicos",
+                front: "Qual é a diferença fundamental entre <b>frase</b>, <b>oração</b> e <b>período</b>?",
+                back: "• <b>Frase:</b> enunciado com sentido completo (pode não ter verbo).<br>• <b>Oração:</b> frase estruturada ao redor de um verbo ou locução verbal.<br>• <b>Período:</b> frase formada por uma ou mais orações."
+            },
+            {
+                category: "Termos Essenciais",
+                front: "O que caracteriza o <b>Sujeito Indeterminado</b> e quais são as duas formas clássicas de construí-lo?",
+                back: "Ocorre quando não se quer ou não se pode identificar o agente da ação. Formas:<br>1. Verbo na 3ª pessoa do plural (sem sujeito expresso no contexto).<br>2. Verbo intransitivo, transitivo indireto ou de ligação na 3ª pessoa do singular + partícula <b>'se'</b> (índice de indeterminação do sujeito)."
+            },
+            {
+                category: "Sujeito x Voz Passiva",
+                front: "Como diferenciar o <b>Índice de Indeterminação do Sujeito</b> da <b>Partícula Apassivadora</b>?",
+                back: "• Com VTI ou VI, o 'se' é <b>Índice de Indeterminação</b> (não há sujeito paciente).<br>• Com VTD ou VTDI, o 'se' é <b>Partícula Apassivadora</b> e o termo seguinte atua como Sujeito Paciente (ex: Aluga-<i>se</i> casa / Alugam-<i>se</i> casas)."
+            },
+            {
+                category: "Orações Sem Sujeito",
+                front: "Quais são as principais situações que configuram uma <b>oração sem sujeito</b> (sujeito inexistente)?",
+                back: "Ocorrem com verbos impessoais:<br>1. Verbo <i>haver</i> no sentido de existir ou indicando tempo decorrido.<br>2. Verbos que exprimem fenômenos da natureza (chover, nevar).<br>3. Verbos <i>fazer</i>, <i>ser</i> e <i>estar</i> indicando tempo ou clima."
+            },
+            {
+                category: "Predicação Verbal",
+                front: "Qual é a diferença sintática entre um <b>Objeto Direto</b> e um <b>Objeto Indireto</b>?",
+                back: "• <b>Objeto Direto:</b> complementa verbo transitivo direto <i>sem</i> preposição obrigatória.<br>• <b>Objeto Indireto:</b> complementa verbo transitivo indireto <i>com</i> preposição exigida pela regência do verbo."
+            },
+            {
+                category: "Adjunto Adnominal",
+                front: "O que é um <b>Adjunto Adnominal</b> e a quem ele se vincula sintaticamente?",
+                back: "É o termo acessório que modifica, caracteriza ou determina um substantivo (independente de ser núcleo de sujeito, objeto, etc.). Pode ser expresso por adjetivos, artigos, numerais, pronomes adjetivos ou locuções adjetivas."
+            },
+            {
+                category: "Complemento Nominal",
+                front: "Qual é a principal diferença estrutural e semântica entre <b>Adjunto Adnominal</b> e <b>Complemento Nominal</b>?",
+                back: "• <b>Complemento Nominal:</b> completa sentido de nomes (substantivos abstratos, adjetivos ou advérbios) e tem valor <i>paciente</i>.<br>• <b>Adjunto Adnominal:</b> tem valor <i>ativo</i> ou de posse quando ligado a substantivos abstratos (ex: Resposta <i>do aluno</i> = Adjunto / Resposta <i>ao aluno</i> = Complemento)."
+            },
+            {
+                category: "Adjunto Adverbial",
+                front: "O que é um <b>Adjunto Adverbial</b> e quais circunstâncias ele expressa?",
+                back: "É o termo que indica a circunstância em que ocorre a ação verbal (ou intensifica adjetivos/advérbios). Expressa tempo, lugar, modo, causa, instrumento, finalidade, negação, dúvida, entre outras."
+            },
+            {
+                category: "Predicativo",
+                front: "Qual é a função sintática do <b>Predicativo do Sujeito</b> e do <b>Predicativo do Objeto</b>?",
+                back: "• <b>Predicativo do Sujeito:</b> atribui uma característica ao sujeito por meio de um verbo (geralmente de ligação ou intransitivo/transitivo).<br>• <b>Predicativo do Objeto:</b> atribui qualidade ou estado ao objeto direto ou indireto."
+            },
+            {
+                category: "Agente da Passiva",
+                front: "Em que tipo de estrutura sintática ocorre o <b>Agente da Passiva</b> e como ele é introduzido?",
+                back: "Ocorre exclusivamente na <b>voz passiva analítica</b>. É o termo que pratica a ação expressa pelo particípio e vem introduzido obrigatoriamente pelas preposições <b>'por'</b> (ou suas variações como pelo, pela) ou <b>'de'</b>."
+            },
+            {
+                category: "Vocativo e Aposto",
+                front: "Qual é a diferença sintática essencial entre <b>Vocativo</b> e <b>Aposto</b>?",
+                back: "• <b>Vocativo:</b> termo independente que serve para chamar, invocar ou interpelar alguém (isolado por vírgulas, não pertence à oração).<br>• <b>Aposto:</b> termo que explicita, resume ou detalha outro termo da oração."
+            },
+            {
+                category: "Período Composto por Coordenação",
+                front: "Quais são as cinco classificações tradicionais das <b>Orações Coordenadas Sindéticas</b>?",
+                back: "1. <b>Aditiva:</b> soma ideias (e, nem).<br>2. <b>Adversativa:</b> oposição/contraste (mas, porém, contudo).<br>3. <b>Alternativa:</b> escolha/exclusão (ou... ou, ora... ora).<br>4. <b>Conclusiva:</b> conclusão (portanto, logo, pois posposto).<br>5. <b>Explicativa:</b> justificativa (pois, porque, que)."
+            },
+            {
+                category: "Subordinadas Substantivas",
+                front: "Como se classificam as <b>Orações Subordinadas Substantivas</b>?",
+                back: "Podem ser: Subjetiva (sujeito), Predicativa (predicativo), Completiva Nominal (completa nome), Objetiva Direta (objeto direto), Objetiva Indireta (objeto indireto) e Apositiva (aposto)."
+            },
+            {
+                category: "Substantiva x Integrante",
+                front: "Qual é o papel das conjunções <b>'que'</b> e <b>'se'</b> nas orações subordinadas substantivas?",
+                back: "Elas funcionam como <b>conjunções integrantes</b>. Não exercem função sintática própria dentro da oração subordinada; apenas conectam a oração principal à subordinada substantiva."
+            },
+            {
+                category: "Subordinadas Adjetivas",
+                front: "Qual é a distinção semântica e pontual entre orações subordinadas adjetivas <b>restritivas</b> e <b>explicativas</b>?",
+                back: "• <b>Restritiva:</b> restringe o sentido do antecedente, <i>sem vírgulas</i>.<br>• <b>Explicativa:</b> generaliza ou explica uma característica do antecedente, <i>isolada obrigatoriamente por vírgulas</i>."
+            },
+            {
+                category: "Pronome Relativo 'O Qual'",
+                front: "Qual é a principal função sintática do pronome relativo nas <b>Orações Subordinadas Adjetivas</b>?",
+                back: "O pronome relativo (que, quem, onde, o qual) substitui o termo antecedente e exerce uma função sintática específica dentro da própria oração adjetiva (sujeito, objeto direto, adjunto adverbial, etc.)."
+            },
+            {
+                category: "Subordinadas Adverbiais",
+                front: "Quais são as nove classificações das <b>Orações Subordinadas Adverbiais</b>?",
+                back: "Causal, Comparativa, Concessiva, Condicional, Conformativa, Final, Proporcional, Temporal e Consecutiva."
+            },
+            {
+                category: "Adverbial Consecutiva x Comparativa",
+                front: "Como diferenciar uma oração subordinada adverbial <b>consecutiva</b> de uma <b>comparativa</b> introduzida por 'que'?",
+                back: "• <b>Consecutiva:</b> expressa consequência e costuma vir correlata a termos como tão, tal, tanto, tamanho na oração principal.<br>• <b>Comparativa:</b> expressa comparação de igualdade ou superioridade (geralmente com mais... que, tão... como)."
+            },
+            {
+                category: "Concessiva x Condicional",
+                front: "Qual é a nuance semântica que diferencia a oração subordinada adverbial <b>concessiva</b> da <b>condicional</b>?",
+                back: "• <b>Condicional:</b> estabelece uma hipótese para que algo ocorra (se não estudar, reprova).<br>• <b>Concessiva:</b> apresenta um fato contrário que, apesar de existir, não impede a realização do fato principal (ainda que estude, pode falhar)."
+            },
+            {
+                category: "Orações Reduzidas",
+                front: "O que caracteriza estruturalmente uma <b>oração reduzida</b> na sintaxe da língua portuguesa?",
+                back: "É uma oração cujo verbo está em uma de suas formas nominais (<b>infinitivo, gerúndio ou particípio</b>) e que não é introduzida por conjunções ou pronomes relativos."
+            },
+            {
+                category: "Pontuação na Ordem Direta",
+                front: "Quais termos da oração <b>nunca</b> podem ser separados por vírgula na ordem direta?",
+                back: "Na ordem direta (Sujeito + Verbo + Complementos), é proibido o uso de vírgula entre o <b>sujeito e o verbo</b>, bem como entre o <b>verbo e seus complementos</b> (objeto direto ou indireto)."
+            },
+            {
+                category: "Concordância Verbal Básica",
+                front: "Qual é a regra geral de concordância verbal na construção frasal?",
+                back: "O verbo concorda em número e pessoa com o seu <b>sujeito gramatical</b> (ex: 'O aluno estuda' / 'Os alunos estudam')."
+            },
+            {
+                category: "Sujeito Composto Anteposto",
+                front: "Como se comporta o verbo quando o <b>sujeito composto vem anteposto</b> ao verbo?",
+                back: "O verbo fica obrigatoriamente no <b>plural</b> (ex: 'João e Maria <i>viajaram</i>'). Só há flexões no singular em casos especiais de gradação, sinonímia ou resumo por pronomes indefinidos."
+            },
+            {
+                category: "Concordância com 'Haver'",
+                front: "Qual é o comportamento sintático do verbo <b>haver</b> na construção de frases indicando existência?",
+                back: "Quando significa existir, ocorrer ou acontecer, o verbo haver é <b>impessoal</b> e permanece obrigatoriamente na <b>3ª pessoa do singular</b>, transmitindo essa inibição de plural para os auxiliares em locuções verbais."
+            },
+            {
+                category: "Regência e Construção",
+                front: "Como a mudança de regência de um verbo pode alterar a construção sintática e o sentido de uma frase?",
+                back: "Alguns verbos mudam de significado ao mudarem sua predicação (ex: 'assistir' como ver rege VTI com 'a', enquanto 'assistir' como dar assistência pode ser VTD). Alterar a preposição altera a correção sintática."
+            },
+            {
+                category: "Paralelismo Sintático",
+                front: "O que é o <b>paralelismo sintático</b> na construção de períodos compostos e coordenações?",
+                back: "É a exigência de que elementos coordenados ou correlacionados possuam a mesma estrutura gramatical (ex: coordinar substantivo com substantivo, oração subordinada com oração subordinada equivalente)."
+            },
+            {
+                category: "Ambiguidade Sintática",
+                front: "O que gera a <b>ambiguidade sintática</b> (anfibologia) em uma frase?",
+                back: "Ocorre quando a construção frasal permite mais de uma interpretação lógica devido à posição inadequada de um termo (como um pronome relativo, adjunto adverbial ou adjunto adnominal mal posicionado)."
+            },
+            {
+                category: "Silepse (Concordância Ideológica)",
+                front: "O que é uma <b>silepse</b> e quais são os seus três tipos principais?",
+                back: "É a concordância feita com a ideia (sentimento ou contexto) e não estritamente com a gramática formal. Tipos: <br>1. <b>De gênero</b> (ex: 'São Paulo é poluída').<br>2. <b>De número</b> (ex: 'A multidão gritavam').<br>3. <b>De pessoa</b> (ex: 'Os brasileiros somos lutadores')."
+            },
+            {
+                category: "Orações Intercaladas",
+                front: "Qual é a função sintática das <b>orações intercaladas</b> (ou intervenientes) e como devem ser pontuadas?",
+                back: "Elas quebram o fluxo do discurso para dar uma explicação, autoria ou comentário (ex: 'Ele disse, <i>como sabemos</i>, a verdade'). Devem vir isoladas obrigatoriamente por <b>vírgulas, travessões ou parênteses</b>."
+            },
+            {
+                category: "Análise Sintática Completa",
+                front: "Qual é a principal estratégia lógica para iniciar a análise sintática de um período longo em provas?",
+                back: "Primeiro, localize os <b>verbos ou locuções verbais</b> para definir o número de orações; em seguida, ache o <b>sujeito</b> da oração principal e isole os termos sintáticos essenciais antes de analisar os complementos e acessórios."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
