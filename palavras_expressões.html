@@ -220,247 +220,247 @@
     <script>
         // Database of 20 Portuguese Questions
         const questionsData = [
-            {
-                id: 1,
-                category: "Demonstrativos & Referência",
-                question: "Considere a frase: \"A honestidade e a impunidade coexistem na sociedade; esta gera indignação, aquela garante a paz social.\" Os pronomes demonstrativos 'esta' e 'aquela' exercem, respectivamente, função anafórica referente a:",
-                options: [
-                    { text: "impunidade e honestidade.", isCorrect: true, rationale: "O demonstrativo 'esta' refere-se ao elemento mencionado por último (mais próximo: impunidade), enquanto 'aquela' recupera o elemento mencionado em primeiro lugar (mais distante: honestidade)." },
-                    { text: "honestidade e impunidade.", isCorrect: false, rationale: "'Esta' recupera o termo mais próximo antecedente (impunidade) e não o primeiro." },
-                    { text: "sociedade e indignação.", isCorrect: false, rationale: "'Sociedade' e 'indignação' não constituem o par coordenado que está sendo polarizado pelos demonstrativos." },
-                    { text: "impunidade e paz social.", isCorrect: false, rationale: "'Paz social' é consequência da honestidade, e não o termo referente direto retomado." }
-                ],
-                hint: "Lembre-se da regra de proximidade dos demonstrativos no texto: 'este/esta' retoma o termo mais recente e 'aquele/aquela' retoma o mais antigo."
-            },
-            {
-                id: 2,
-                category: "Anáfora vs Catáfora",
-                question: "Em qual das passagens a seguir o pronome destacado exerce função CATA FÓRICA na articulação do texto?",
-                options: [
-                    { text: "Desejo apenas isto: que todos alcancem a aprovação.", isCorrect: true, rationale: "O pronome 'isto' antecipa uma informação que ainda será declarada na oração seguinte ('que todos alcancem...'), caracterizando o recurso catafórico." },
-                    { text: "A aprovação chegou rápida; isso nos motivou bastante.", isCorrect: false, rationale: "O pronome 'isso' retoma a afirmação anterior ('A aprovação chegou rápida'), tratando-se de anáfora." },
-                    { text: "O aluno estudou muito, por isso obteve êxito.", isCorrect: false, rationale: "'Por isso' estabelece coesão anafórica de valor conclusivo/causal recuperando o fato antecedente." },
-                    { text: "Aquele foi o melhor dia de nossas vidas.", isCorrect: false, rationale: "'Aquele' funciona aqui com valor exofórico/dêitico ou anafórico em relação ao tempo vivido." }
-                ],
-                hint: "A catáfora projeta o texto para a frente, anunciando algo que ainda vai ser dito."
-            },
-            {
-                id: 3,
-                category: "Pronome Relativo e Regência",
-                question: "Assinale a alternativa que preenche corretamente a lacuna mantendo a norma-padrão da coesão relacional: \"O ideal ____ tanto lutamos exige sacrifícios diários.\"",
-                options: [
-                    { text: "pelo qual", isCorrect: true, rationale: "Quem luta, luta 'por' algo. A preposição 'por' exige fusão com o artigo do pronome relativo ('por + o qual' = 'pelo qual') ou 'por que'." },
-                    { text: "que", isCorrect: false, rationale: "A omissão da preposição 'por' exigida pela regência do verbo 'lutar' gera desvio gramatical." },
-                    { text: "ao qual", isCorrect: false, rationale: "A preposição 'a' não atende à regência do verbo 'lutar' neste contexto." },
-                    { text: "cujo", isCorrect: false, rationale: "O pronome 'cujo' exige relação de posse entre dois substantivos, inexistente aqui." }
-                ],
-                hint: "Observe a regência do verbo que vem depois do pronome relativo: quem 'luta', luta ___ algo."
-            },
-            {
-                id: 4,
-                category: "Emprego de 'Cujo'",
-                question: "Identifique a opção em que o uso do pronome relativo 'cujo' apresenta incorreção de acordo com a norma gramatical:",
-                options: [
-                    { text: "O autor cujo o livro foi premiado não compareceu.", isCorrect: true, rationale: "É proibido usar artigo definido imediatamente após o pronome 'cujo' (não se diz 'cujo o' nem 'cuja a'). O correto é 'cujo livro'." },
-                    { text: "O professor cujas aulas eram excelentes aposentou-se.", isCorrect: false, rationale: "Uso correto: 'cujas' concorda em gênero e número com o consequente 'aulas' e estabelece posse." },
-                    { text: "A árvore cujos frutos colhemos é centenária.", isCorrect: false, rationale: "Uso correto: concordância correta com 'frutos' e vínculo de posse com 'árvore'." },
-                    { text: "A empresa a cujos diretores nos dirigimos aprovou o projeto.", isCorrect: false, rationale: "Uso correto: a preposição 'a' foi devidamente anteposta por regência de 'nos dirigimos'." }
-                ],
-                hint: "Nunca se coloca artigo (o, a, os, as) logo após o pronome relativo 'cujo'."
-            },
-            {
-                id: 5,
-                category: "Expressões Referenciais",
-                question: "No trecho: \"O Cerrado vem sofrendo contínuo desmatamento. O bioma, contudo, abriga nascentes cruciais para o país.\" A expressão 'O bioma' funciona como:",
-                options: [
-                    { text: "expressão hiperonímica de caráter anafórico.", isCorrect: true, rationale: "'Bioma' é um termo de sentido mais amplo (hiperônimo) que retoma 'Cerrado' (hipônimo), garantindo a coesão sequencial sem repetição." },
-                    { text: "expressão hiponímica de caráter catafórico.", isCorrect: false, rationale: "'Bioma' não é hipônimo de Cerrado nem antecipa termo futuro." },
-                    { text: "substituição por antonímia contextual.", isCorrect: false, rationale: "Não há relação de sentidos opostos (antônimos) entre as palavras." },
-                    { text: "elipse verbal antecedente.", isCorrect: false, rationale: "Trata-se de coesão lexical por anáfora, não omissão de verbo (elipse)." }
-                ],
-                hint: "Considere se 'bioma' é um termo mais geral ou mais específico em relação a 'Cerrado'."
-            },
-            {
-                id: 6,
-                category: "Nexos Adversativos vs Concessivos",
-                question: "Em: \"Embora os custos fossem elevados, a diretoria aprovou a modernização.\" Se substituirmos a conjunção 'Embora' mantendo o sentido de oposição, mas alterando a estrutura para a coordenação adversativa, a reescrita correta é:",
-                options: [
-                    { text: "Os custos eram elevados, contudo a diretoria aprovou a modernização.", isCorrect: true, rationale: "'Contudo' é conjunção adversativa e exige o verbo no modo indicativo ('eram'), estabelecendo relação de oposição de forma coordenada." },
-                    { text: "Ainda que os custos eram elevados, a diretoria aprovou a modernização.", isCorrect: false, rationale: "'Ainda que' exige verbo no subjuntivo ('fossem') e mantém valor subordinativo concessivo." },
-                    { text: "Os custos fossem elevados, porquanto a diretoria aprovou a modernização.", isCorrect: false, rationale: "'Porquanto' é explicativo/causal e não adversativo." },
-                    { text: "Posto que os custos fossem elevados, logo a diretoria aprovou.", isCorrect: false, rationale: "'Logo' introduz conclusão, alterando a articulação semântica da frase." }
-                ],
-                hint: "Conjunções adversativas (mas, porém, contudo) coordenam orações com verbo no indicativo."
-            },
-            {
-                id: 7,
-                category: "Nexos Causais e Consecutivos",
-                question: "Assinale a alternativa em que a oração introduzida pela palavra 'que' possui valor semântico CONSECUTIVO:",
-                options: [
-                    { text: "A chuva foi tão intensa que as ruas do centro alagaram.", isCorrect: true, rationale: "A estrutura correlativa 'tão... que' expressa a consequência direta da intensidade da chuva." },
-                    { text: "É necessário que todos cumpram seus horários.", isCorrect: false, rationale: "Aqui o 'que' é conjunção integrante, introduzindo oração subordinada substantiva subjetiva." },
-                    { text: "Fique em casa, que a tempestade se aproxima.", isCorrect: false, rationale: "Neste caso, 'que' possui valor explicativo (equivalente a 'pois')." },
-                    { text: "O livro que comprei ontem é esclarecedor.", isCorrect: false, rationale: "O 'que' é pronome relativo introduzindo oração adjetiva." }
-                ],
-                hint: "Procure por termos intensificadores no antecedente como 'tão', 'tanto', 'tamanho' que levam a um resultado/consequência."
-            },
-            {
-                id: 8,
-                category: "Operador 'Pois'",
-                question: "Na frase: \"O projeto exige alto investimento; não devemos, pois, agir sem planejamento prévio.\" O operador argumentativo 'pois' assume valor:",
-                options: [
-                    { text: "conclusivo, por estar posposto ao verbo.", isCorrect: true, rationale: "Quando o 'pois' surge posposto ao verbo (entre vírgulas), sua função coesiva é estritamente conclusiva (sinônimo de 'portanto')." },
-                    { text: "causal, por relacionar dois fatos.", isCorrect: false, rationale: "O 'pois' só é causal se anteceder o verbo e não for deslocado." },
-                    { text: "explicativo, por esclarecer uma ordem.", isCorrect: false, rationale: "O 'pois' explicativo vem no início da oração coordenada, antes do verbo." },
-                    { text: "concessivo, por ponderar um obstáculo.", isCorrect: false, rationale: "'Pois' não possui valor concessivo na língua portuguesa." }
-                ],
-                hint: "Atente para a posição do 'pois' na oração: antes do verbo é causal/explicativo; depois do verbo é conclusivo."
-            },
-            {
-                id: 9,
-                category: "Uso de 'Onde'",
-                question: "De acordo com a norma-padrão de coesão referencial, o pronome 'onde' foi empregado CORRETAMENTE em:",
-                options: [
-                    { text: "A biblioteca do bairro é o local onde os estudantes se reúnem.", isCorrect: true, rationale: "O pronome 'onde' só deve ser empregado para retomar lugares físicos e concretos (como 'biblioteca')." },
-                    { text: "Aquele foi um período difícil onde todos sofreram.", isCorrect: false, rationale: "Incorreto: 'período' é indicação de tempo; deveria usar-se 'em que' ou 'no qual'." },
-                    { text: "Li um artigo onde o autor criticava a economia.", isCorrect: false, rationale: "Incorreto: 'artigo' é texto; o adequado seria 'em que' ou 'no qual'." },
-                    { text: "Houve uma reunião onde se discutiu o orçamento.", isCorrect: false, rationale: "Incorreto: 'reunião' é um evento; o correto seria 'em que' ou 'na qual'." }
-                ],
-                hint: "O pronome 'onde' deve ser reservado estritamente para lugares físicos/espaciais."
-            },
-            {
-                id: 10,
-                category: "Coesão por Elipse",
-                question: "No trecho: \"Alguns cientistas defendem a transição energética imediata; outros, a gradual.\" O mecanismo de coesão que consiste na omissão do verbo 'defendem' na segunda oração chama-se:",
-                options: [
-                    { text: "elipse (ou zeugma).", isCorrect: true, rationale: "Zeugma é o tipo específico de elipse em que se omite um termo (neste caso, o verbo 'defendem') que já foi mencionado anteriormente no texto." },
-                    { text: "catafórico nominal.", isCorrect: false, rationale: "Não há projeção catafórica, mas omissão gramatical de termo antecedente." },
-                    { text: "paráfrase explicativa.", isCorrect: false, rationale: "Paráfrase consiste na reescrita com outras palavras, e não na omissão verbal." },
-                    { text: "encapsulamento textual.", isCorrect: false, rationale: "Encapsulamento é o resumo de ideias por meio de um substantivo sintético." }
-                ],
-                hint: "Como se chama a figura de linguagem/coesão na qual se omite um termo antecedente subentendido (marcado por vírgula)?"
-            },
-            {
-                id: 11,
-                category: "Operadores de Gradação e Força",
-                question: "Na frase: \"O candidato conquistou o apoio de líderes comunitários, de empresários e até de seus opositores mais ferrenhos.\" O operador 'até' atua como:",
-                options: [
-                    { text: "operador argumentativo que introduz o argumento mais forte de uma escala ascendente.", isCorrect: true, rationale: "'Até' (assim como 'inclusive' e 'mesmo') assinala o argumento de maior força ou topo da escala argumentativa." },
-                    { text: "conjunção subordinativa temporal que indica limite de tempo.", isCorrect: false, rationale: "Neste contexto, 'até' não marca tempo limite, mas inclusão e gradação argumentativa." },
-                    { text: "elemento de coesão conclusiva de efeito restritivo.", isCorrect: false, rationale: "Não possui valor de síntese conclusiva nem restringe, mas amplia a gradação." },
-                    { text: "preposição de afastamento e exclusão temática.", isCorrect: false, rationale: "Pelo contrário, é um marcador de inclusão extensiva." }
-                ],
-                hint: "Considere a intenção do autor em colocar 'opositores mais ferrenhos' por último acompanhado de 'até'."
-            },
-            {
-                id: 12,
-                category: "Nexos Condicionais e Temporais",
-                question: "Analise a frase: \"____ assumiu o cargo de chefia, o executivo reestruturou toda a equipe.\" A locução que preenche a lacuna atribuindo sentido TEMPORAL é:",
-                options: [
-                    { text: "Assim que", isCorrect: true, rationale: "'Assim que' introduz oração subordinada adverbial temporal de imediatez no tempo." },
-                    { text: "Desde que", isCorrect: false, rationale: "Embora 'desde que' possa indicar tempo inicial, com o verbo no passado sem continuidade soa ambíguo ou condicional. 'Assim que' marca a temporalidade pontual perfeita." },
-                    { text: "Contanto que", isCorrect: false, rationale: "'Contanto que' expressa exclusivamente condição (com verbo no subjuntivo)." },
-                    { text: "A fim de que", isCorrect: false, rationale: "'A fim de que' expressa finalidade." }
-                ],
-                hint: "Qual locução marca que a ação de reestruturar ocorreu imediatamente no momento em que ele assumiu o cargo?"
-            },
-            {
-                id: 13,
-                category: "Operador 'Posto que'",
-                question: "Assinale a opção em que a locução 'posto que' foi empregada de acordo com o seu sentido escorreito de CONCESSÃO:",
-                options: [
-                    { text: "Posto que a decisão fosse impopular, manteve-se firme na sua aplicação.", isCorrect: true, rationale: "Na tradição culta da língua, 'posto que' é conectivo concessivo (sinônimo de 'embora', 'ainda que') e rege verbo no modo subjuntivo." },
-                    { text: "Não foi trabalhar hoje posto que estava muito doente.", isCorrect: false, rationale: "Uso considerado inadequado/desviante na norma culta tradicional (uso de 'posto que' como causal)." },
-                    { text: "Posto que estudou bastante, foi aprovado com louvor.", isCorrect: false, rationale: "Uso causal desviante; a relação aqui é de causa e efeito, não de concessão." },
-                    { text: "Posto que cheguei cedo, consegui o melhor assento.", isCorrect: false, rationale: "Trata-se de relação de causa/tempo, desvirtuando o caráter concessivo." }
-                ],
-                hint: "Lembre-se de que, gramaticalmente, 'posto que' equivale a 'embora' e exige verbo no subjuntivo."
-            },
-            {
-                id: 14,
-                category: "Encapsulamento Anafórico",
-                question: "Considere o texto: \"A inflação subiu, as taxas de juros dispararam e a produção industrial caiu. Esse cenário alarmante exige medidas urgentes.\" A expressão 'Esse cenário alarmante' cumpre o papel de:",
-                options: [
-                    { text: "rótulo/encapsulador anafórico que sintetiza os fatos expressos anteriormente.", isCorrect: true, rationale: "Coesão por encapsulamento (ou rótulo) ocorre quando uma expressão nominal resume e condensa todo um bloco de informações pregressas." },
-                    { text: "catáfora restritiva que antecipa as medidas urgentes.", isCorrect: false, rationale: "A expressão retoma o conjunto de fatos passados (anáfora) e não antecipa a lista de medidas." },
-                    { text: "substituição sinonímica de um único vocábulo.", isCorrect: false, rationale: "Não retoma apenas uma palavra, mas toda uma proposição complexa." },
-                    { text: "anáfora associativa por elipse de substantivo.", isCorrect: false, rationale: "Não há omissão, mas síntese explícita via nome rotulador." }
-                ],
-                hint: "O substantivo 'cenário' funciona como uma 'caixa' que sintetiza e empacota as três frases anteriores."
-            },
-            {
-                id: 15,
-                category: "Demonstrativos no Tempo",
-                question: "Indique a alternativa que preenche corretamente a lacuna, considerando o emprego dos pronomes demonstrativos para indicação temporal no momento da fala: \"____ ano de 2026 está sendo marcado por grandes inovações tecnológicas.\"",
-                options: [
-                    { text: "Este", isCorrect: true, rationale: "Para o tempo presente/vigente em relação ao momento do discurso, utiliza-se o demonstrativo 'este' (este ano = o ano atual)." },
-                    { text: "Esse", isCorrect: false, rationale: "'Esse' refere-se a um passado ou futuro relativamente próximo do momento da fala." },
-                    { text: "Aquele", isCorrect: false, rationale: "'Aquele' refere-se a um tempo distante e remoto no passado." },
-                    { text: "Aquilo", isCorrect: false, rationale: "'Aquilo' é pronome neutro e não acompanha o substantivo 'ano'." }
-                ],
-                hint: "Para o ano presente em que se fala, qual é a forma correta do pronome demonstrativo?"
-            },
-            {
-                id: 16,
-                category: "Operadores de Retificação",
-                question: "Qual dos seguintes conectivos/expressões possui a função primária de introduzir uma RETIFICAÇÃO ou correção do que foi dito anteriormente?",
-                options: [
-                    { text: "ou melhor", isCorrect: true, rationale: "A expressão 'ou melhor' (assim como 'aliás', 'digo') serve para corrigir ou reformular de modo mais preciso um enunciado prévio." },
-                    { text: "isto é", isCorrect: false, rationale: "'Isto é' e 'ou seja' possuem função de explicação, esclarecimento ou síntese, e não de retificação." },
-                    { text: "por conseguinte", isCorrect: false, rationale: "'Por conseguinte' indica conclusão/consequência." },
-                    { text: "além disso", isCorrect: false, rationale: "'Além disso' indica acréscimo/adição de argumentos." }
-                ],
-                hint: "Qual destas expressões é usada quando o falante quer corrigir formalmente uma palavra ou ideia recém-emitida?"
-            },
-            {
-                id: 17,
-                category: "Proporção vs Causa",
-                question: "Assinale a opção gramaticalmente correta em que a locução expressa ideia de PROPORCIONALIDADE:",
-                options: [
-                    { text: "À medida que os estudos avançam, as dúvidas diminuem.", isCorrect: true, rationale: "'À medida que' é a locução conjuntiva proporcional correta. (Atenção: a forma 'na medida em que' expressa causa)." },
-                    { text: "Na medida que os estudos avançam, as dúvidas diminuem.", isCorrect: false, rationale: "Incorreto: a forma 'na medida que' sem preposição 'em' é considerada gramaticalmente inexistente/híbrida." },
-                    { text: "À medida em que os estudos avançam, as dúvidas diminuem.", isCorrect: false, rationale: "Incorreto: misturou-se 'à medida que' com 'na medida em que'." },
-                    { text: "Em medida que os estudos avançam, as dúvidas diminuem.", isCorrect: false, rationale: "Forma inexistente na norma-padrão." }
-                ],
-                hint: "A locução correta de proporção é 'À medida que' (com crase e sem a preposição 'em')."
-            },
-            {
-                id: 18,
-                category: "Anáfora Associativa",
-                question: "Em: \"Chegamos a um vilarejo histórico. As casas tinham fachadas preservadas e os moradores eram acolhedores.\" O termo 'As casas' estabelece coesão com 'vilarejo' por meio de:",
-                options: [
-                    { text: "anáfora associativa (ou inferencial).", isCorrect: true, rationale: "A anáfora associativa ocorre quando o referente não foi mencionado explicitamente antes, mas é introduzido como parte integrante do conhecimento de mundo sobre o antecedente ('vilarejo' pressupõe 'casas')." },
-                    { text: "repetição lexical estrita.", isCorrect: false, rationale: "A palavra 'casas' não é repetição da palavra 'vilarejo'." },
-                    { text: "catáfora explicativa com pronome relativo.", isCorrect: false, rationale: "Não há pronome relativo nem antecipação catafórica." },
-                    { text: "elipse da expressão antecedente.", isCorrect: false, rationale: "O termo 'casas' está explicitado, não havendo omissão." }
-                ],
-                hint: "Como se chama a conexão em que o leitor deduce que 'casas' fazem parte de 'vilarejo' com base no conhecimento de mundo?"
-            },
-            {
-                id: 19,
-                category: "Ambiguidade Referencial",
-                question: "Identifique a alternativa que apresenta AMBIGUIDADE referente ao uso do pronome possessivo:",
-                options: [
-                    { text: "O gerente conversou com o funcionário sobre o seu relatório.", isCorrect: true, rationale: "Há ambiguidade: o pronome 'seu' pode se referir ao relatório do gerente ou ao relatório do funcionário. A correção exigiria 'o relatório deste' ou 'o relatório dele'." },
-                    { text: "O gerente conversou com o funcionário sobre o relatório deste.", isCorrect: false, rationale: "Sem ambiguidade: 'deste' refere-se com clareza ao termo mais próximo ('funcionário')." },
-                    { text: "O gerente disse que o relatório do funcionário estava excelente.", isCorrect: false, rationale: "Sem ambiguidade: a referência nominal 'do funcionário' é direta." },
-                    { text: "Conversamos com o gerente a respeito de suas metas.", isCorrect: false, rationale: "Não há duplo sujeito masculino para gerar dúvida sobre a quem pertence as metas." }
-                ],
-                hint: "Procure a frase em que o pronome 'seu' deixa dúvida sobre a qual das duas pessoas o objeto pertence."
-            },
-            {
-                id: 20,
-                category: "Pronomes Oblíquos Anafóricos",
-                question: "Na reescrita da frase \"O diretor convocou os assessores e apresentou as propostas aos assessores\", a substituição dos termos repetidos por pronomes oblíquos anafóricos adequados resulta em:",
-                options: [
-                    { text: "O diretor convocou-os e apresentou-lhes as propostas.", isCorrect: true, rationale: "O verbo 'convocar' é transitivo direto (exige 'os'); o verbo 'apresentar' rege complemento indireto com preposição 'a' para pessoas (exige 'lhes')." },
-                    { text: "O diretor convocou-lhes e apresentou-lhes as propostas.", isCorrect: false, rationale: "'Convocar' não rege objeto indireto 'lhes'." },
-                    { text: "O diretor convocou-os e apresentou-os as propostas.", isCorrect: false, rationale: "'Apresentou-os as propostas' é incorreto pois 'apresentar algo a alguém' exige 'lhes' para o destinatário." },
-                    { text: "O diretor convocou-nos e apresentou-os as propostas.", isCorrect: false, rationale: "Altera a pessoa gramatical ('nos' em vez de 3ª pessoa do plural)." }
-                ],
-                hint: "Diferencie a transitividade: 'convocar alguém' (VTD -> os) versus 'apresentar algo a alguém' (VTDI -> lhes)."
-            }
-        ];
+    {
+        id: 1,
+        category: "Polissemia & Contexto",
+        question: "Considere o termo destacado: \"O advogado sustentou que a *medida* adotada pelo juiz ultrapassava os limites da razoabilidade.\" O vocábulo 'medida' assume no texto o sentido contextual de:",
+        options: [
+            { text: "providência ou ato jurídico.", isCorrect: true, rationale: "No contexto do discurso jurídico e administrativo, 'medida' refere-se a uma providência, decisão ou ato formal tomado por uma autoridade." },
+            { text: "dimensão ou extensão física.", isCorrect: false, rationale: "Dimensão física é o sentido próprio de medição de tamanho/comprimento, inaplicável à atitude do juiz." },
+            { text: "unidade estipulada de cálculo.", isCorrect: false, rationale: "Unidade de cálculo (como metro ou quilo) não se aplica ao contexto de ações judiciais." },
+            { text: "grau moderado de comportamento.", isCorrect: false, rationale: "Apesar de 'medida' poder significar moderação em 'com medida', na frase refere-se à decisão em si." }
+        ],
+        hint: "Pense em qual definição de 'medida' se aplica quando se fala de ações normativas ou decisões judiciais."
+    },
+    {
+        id: 2,
+        category: "Denotação vs. Conotação",
+        question: "Assinale a alternativa em que a palavra destacada foi empregada em seu sentido estritamente DENOTATIVO (literal):",
+        options: [
+            { text: "O médico recomendou *descascar* mais alimentos e embalar menos produtos.", isCorrect: true, rationale: "Nesta frase, 'descascar' é empregado em seu sentido literal e denotativo de retirar a casca dos alimentos naturais." },
+            { text: "Aquele gerente teve que *descascar* um abacaxi enorme na reunião de hoje.", isCorrect: false, rationale: "'Descascar um abacaxi' é uma expressão metafórica (conotativa) que significa resolver um problema complexo." },
+            { text: "O candidato tentou *descascar* a imagem de seu adversário durante o debate.", isCorrect: false, rationale: "'Descascar a imagem' é figurado para criticar ou desconstruir a reputação de alguém." },
+            { text: "Após o término do contrato, o cliente resolveu *descascar* a empresa nas redes.", isCorrect: false, rationale: "'Descascar' aqui é gíria/sentido figurado para falar mal ou fazer duras críticas." }
+        ],
+        hint: "Denotação é o sentido real, dicionarizado e literal da palavra, sem metáforas ou gírias."
+    },
+    {
+        id: 3,
+        category: "Parônimos no Contexto",
+        question: "Na frase: \"O projeto de lei precisa sofrer uma pequena ____ antes de ser votado em plenário.\" A palavra que preenche a lacuna com o sentido exato de 'correção/ajuste' é:",
+        options: [
+            { text: "emenda", isCorrect: true, rationale: "'Emenda' significa correção, alteração ou acréscimo em um texto normativo/legislativo." },
+            { text: "ementa", isCorrect: false, rationale: "'Ementa' é o resumo ou síntese do conteúdo de uma lei ou acórdão, não uma alteração/correção." },
+            { text: "imissão", isCorrect: false, rationale: "'Imissão' significa ato de imitir, dar posse (como em imissão na posse)." },
+            { text: "infausto", isCorrect: false, rationale: "'Infausto' é um adjetivo que significa infeliz, desgraçado ou azarado." }
+        ],
+        hint: "Atenção ao parônimo legislativo: uma é o resumo da lei, a outra é a alteração/correção do texto."
+    },
+    {
+        id: 4,
+        category: "Inferência Contextual",
+        question: "No trecho: \"O relator apresentou um parecer *perfunctório*, demonstrando pouca disposição para se aprofundar nos autos.\" O adjetivo 'perfunctório' significa no contexto:",
+        options: [
+            { text: "superficial e feito apenas por cumprir tabela.", isCorrect: true, rationale: "O contexto ('demonstrando pouca disposição para se aprofundar') indica que 'perfunctório' significa algo apressado, superficial ou feito pro forma." },
+            { text: "minucioso e rico em detalhes técnicos.", isCorrect: false, rationale: "É o exato oposto; o texto afirma que o relator não quis se aprofundar." },
+            { text: "tendencioso e eivado de parcialidade.", isCorrect: false, rationale: "Embora possa ser uma falha, o foco da expressão é a falta de profundidade, não a falta de isenção." },
+            { text: "inconteste e imune a recursos.", isCorrect: false, rationale: "'Perfunctório' não diz respeito à validade jurídica de recurso, mas à falta de rigor no exame." }
+        ],
+        hint: "Observe a pista dada pela oração seguinte: 'demonstrando pouca disposição para se aprofundar'."
+    },
+    {
+        id: 5,
+        category: "Metáfora & Sentido Figurado",
+        question: "Em: \"Ao anunciar o corte de verbas, o diretor *jogou balde de água fria* nas expectativas da equipe.\" A expressão sublinhada assume o sentido contextual de:",
+        options: [
+            { text: "desestimular bruscamente um entusiasmo.", isCorrect: true, rationale: "A expressão figurada 'jogar um balde de água fria' significa frustrar, desanimar ou arrefecer o otimismo de alguém." },
+            { text: "provocar uma reação violenta e agressiva.", isCorrect: false, rationale: "A metáfora não foca em fúria ou agressividade, mas no arrefecimento do ânimo." },
+            { text: "esclarecer uma dúvida com dados objetivos.", isCorrect: false, rationale: "A expressão possui carga emotiva negativa de frustração, e não de esclarecimento técnico." },
+            { text: "adiar formalmente o cumprimento de uma meta.", isCorrect: false, rationale: "Não se refere ao ato burocrático de adiar, mas ao impacto psicológico do desânimo." }
+        ],
+        hint: "A água fria apaga o 'fogo' do entusiasmo. Pense no impacto emocional da notícia sobre a equipe."
+    },
+    {
+        id: 6,
+        category: "Polissemia de Vocábulos Textuais",
+        question: "Analise a frase: \"A *mão* de obra qualificada é a *mão* forte que impulsiona o desenvolvimento do país.\" O termo 'mão' empregado no texto expressa, respetivamente:",
+        options: [
+            { text: "trabalho/execução e força/suporte.", isCorrect: true, rationale: "No primeiro uso ('mão de obra'), refere-se ao trabalho humano executado; no segundo ('mão forte'), atua como metáfora de apoio, poder de sustentação ou força." },
+            { text: "lado mecânico e direção física.", isCorrect: false, rationale: "Nenhum dos empregos remete a lado de tráfego ou direção espacial." },
+            { text: "órgão anatômico e posse de bens.", isCorrect: false, rationale: "O termo não é usado no sentido denotativo de parte do corpo nem de propriedade." },
+            { text: "medida de volume e controle autoritário.", isCorrect: false, rationale: "'Mão' não funciona como unidade de volume no contexto de trabalho e desenvolvimento." }
+        ],
+        hint: "Analise o que 'mão' representa nas expressões 'mão de obra' e 'mão forte' no contexto socioeconômico."
+    },
+    {
+        id: 7,
+        category: "Substituição Sinonímica Contextual",
+        question: "No trecho: \"O cientista buscou *chancelar* sua hipótese por meio de rigorosos testes em laboratório.\" O verbo 'chancelar' pode ser substituído, sem alteração de sentido no contexto, por:",
+        options: [
+            { text: "validar.", isCorrect: true, rationale: "'Chancelar' no contexto científico/acadêmico significa aprovar, autenticar, confirmar ou validar uma tese/hipótese." },
+            { text: "refutar.", isCorrect: false, rationale: "'Refutar' significa contestar ou desmentir, o que é o oposto de chancelar." },
+            { text: "postergar.", isCorrect: false, rationale: "'Postergar' significa adiar ou deixar para depois." },
+            { text: "divulgar.", isCorrect: false, rationale: "'Divulgar' é tornar público; 'chancelar' é dar aprovação/validade." }
+        ],
+        hint: "Quando alguém coloca um selo/chancela em algo, está dando aprovação e legitimidade."
+    },
+    {
+        id: 8,
+        category: "Ambiguidade Lexical",
+        question: "Assinale a alternativa em que a palavra 'capital' foi empregada com o sentido de 'de importância fundamental/decisiva':",
+        options: [
+            { text: "A educação básica desempenha um papel capital na redução da desigualdade.", isCorrect: true, rationale: "Aqui 'capital' é um adjetivo que significa essencial, primordial, vital ou de suma importância." },
+            { text: "O investidor aplicou todo o seu capital no mercado de ações.", isCorrect: false, rationale: "Neste caso, 'capital' é substantivo e significa patrimônio, recursos financeiros ou dinheiro." },
+            { text: "Brasília é a capital federal do Brasil.", isCorrect: false, rationale: "Aqui 'capital' refere-se à cidade sede do governo de um estado ou país." },
+            { text: "A empresa necessita de mais capital de giro para honrar pagamentos.", isCorrect: false, rationale: "'Capital de giro' refere-se a ativos financeiros para manutenção das operações." }
+        ],
+        hint: "Procure a frase onde 'capital' funciona como um adjetivo equivalente a 'principal' ou 'essencial'."
+    },
+    {
+        id: 9,
+        category: "Orientação Semântica de Adjetivos",
+        question: "Assinale a frase em que o adjetivo 'alto' assume sentido figurado de 'elevado valor moral ou hierárquico':",
+        options: [
+            { text: "O comissionado exercia um alto cargo na administração pública.", isCorrect: true, rationale: "'Alto cargo' refere-se à hierarquia, posição de comando ou prestígio, e não à estatura física." },
+            { text: "O atleta realizou um salto alto durante a competição.", isCorrect: false, rationale: "Sentido literal de dimensão física vertical do salto." },
+            { text: "O edifício mais alto da cidade foi inaugurado ontem.", isCorrect: false, rationale: "Sentido literal referente à extensão vertical da construção." },
+            { text: "O som alto do paredão incomodou os vizinhos durante a madrugada.", isCorrect: false, rationale: "'Alto' refere-se ao volume de som (intensidade acústica)." }
+        ],
+        hint: "Identifique em qual opção 'alto' não mede metros ou decibéis, mas importância/status."
+    },
+    {
+        id: 10,
+        category: "Sentido de Conectivos & Expressões",
+        question: "Na frase: \"O projeto é viability técnica; *a rigor*, contudo, falta-lhe embasamento financeiro.\" A expressão 'a rigor' exprime o sentido de:",
+        options: [
+            { text: "em análise estrita e precisa.", isCorrect: true, rationale: "'A rigor' significa 'rigorosamente falando', 'em sentido estrito' ou levando em conta os critérios exatos." },
+            { text: "de forma precipitada e parcial.", isCorrect: false, rationale: "Incorreto; traz ideia oposta ao cuidado e precisão do termo." },
+            { text: "em caráter provisório e emergencial.", isCorrect: false, rationale: "'A rigor' não se refere a tempo ou transitoriedade." },
+            { text: "com base em opinião popular.", isCorrect: false, rationale: "Refere-se ao rigor técnico/conceitual, não ao senso comum." }
+        ],
+        hint: "'A rigor' deriva da palavra 'rigor'. Pense no que significa analisar algo com estrito rigor."
+    },
+    {
+        id: 11,
+        category: "Parônimos e Homônimos",
+        question: "Considere os pares de frases:\nI. O juiz resolveu ____ o mandato do prefeito.\nII. O motorista tentou ____ a infração cometida.\nAs lacunas devem ser preenchidas, respectivamente, com:",
+        options: [
+            { text: "cassar / elidir", isCorrect: true, rationale: "'Cassar' significa anular/tornar sem efeito direitos ou mandatos. 'Elidir' significa eliminar, suprimir ou afastar (evitar) a falta/infração." },
+            { text: "caçar / ilidir", isCorrect: false, rationale: "'Caçar' é perseguir animais; 'ilidir' significa refutar/destruir argumento." },
+            { text: "cassar / ilidir", isCorrect: false, rationale: "Embora 'cassar' esteja correto, 'ilidir' é usado para refutar provas/presunções em direito, e não para sanar/evitar ato." },
+            { text: "caçar / elidir", isCorrect: false, rationale: "'Caçar' refere-se a abatimento de caça/animais na floresta." }
+        ],
+        hint: "Diferencie 'cassar' (direitos políticos) de 'caçar' (animais), e observe qual verbo expressa eliminar/evitar a infração."
+    },
+    {
+        id: 12,
+        category: "Significação Contextual por Antonymia",
+        question: "No trecho: \"O discurso do palestrante foi marcado por um tom *sóbrio*, sem arroubos ou exageros emocionais.\" O termo que expressa a ideia OPOSTA ao sentido contextual de 'sóbrio' é:",
+        options: [
+            { text: "exuberante.", isCorrect: true, rationale: "No contexto, 'sóbrio' significa moderado, discreto, comedido. Seu oposto direto é 'exuberante', 'efusivo' ou 'exagerado'." },
+            { text: "ponderado.", isCorrect: false, rationale: "'Ponderado' é sinônimo de sóbrio no contexto de um discurso equilibrado." },
+            { text: "lúcido.", isCorrect: false, rationale: "'Lúcido' é sinônimo/afinidade semântica com sobriedade mental." },
+            { text: "conciso.", isCorrect: false, rationale: "'Conciso' (sucinto) dialoga com a moderação da sobriedade." }
+        ],
+        hint: "O texto diz que o tom sóbrio é 'sem exageros'. Portanto, o antônimo deve significar exatamente o excesso."
+    },
+    {
+        id: 13,
+        category: "Expressões Idiomáticas no Contexto",
+        question: "Em: \"Diante das provas irrefutáveis apresentadas pela perícia, o réu ficou *sem chão*.\" O sentido da expressão 'sem chão' equivale contextual e emocionalmente a:",
+        options: [
+            { text: "desorientado e desestabilizado.", isCorrect: true, rationale: "A expressão figurada 'ficar sem chão' indica perda de sustentação emocional, choque, desorientação ou perplexidade." },
+            { text: "desprovido de bens imóveis.", isCorrect: false, rationale: "Interpretação denotativa errônea da palavra 'chão' (terreno)." },
+            { text: "satisfeito com o desfecho.", isCorrect: false, rationale: "A expressão carrega conotação negativa de impacto psicológico." },
+            { text: "fisicamente suspenso do solo.", isCorrect: false, rationale: "Erro de leitura literal de expressão puramente figurada." }
+        ],
+        hint: "Como uma pessoa se sente emocionalmente quando a base/chão em que confiava desaparece repentinamente?"
+    },
+    {
+        id: 14,
+        category: "Polissemia Verbal",
+        question: "Na frase: \"O historiador conseguiu *correr* a cortina do tempo e revelar fatos esquecidos.\" O verbo 'correr' assume o sentido de:",
+        options: [
+            { text: "deslocar/abrir para permitir a visualização.", isCorrect: true, rationale: "No contexto de 'correr a cortina' para 'revelar fatos', o verbo significa mover o obstáculo lateralmente para expor o que estava oculto." },
+            { text: "deslocar-se velozmente a pé.", isCorrect: false, rationale: "Sentido físico/esportivo descontextualizado da frase." },
+            { text: "expulsar uma pessoa de determinado recinto.", isCorrect: false, rationale: "Uso informal ('correr com alguém'), incompatível com a frase." },
+            { text: "transcorrer a duração de uma era.", isCorrect: false, rationale: "Embora o tempo 'corra', na frase o sujeito 'historiador' é quem executa a ação de mover a cortina." }
+        ],
+        hint: "Pense na ação de 'correr as cortinas' de uma janela para deixar a luz entrar."
+    },
+    {
+        id: 15,
+        category: "Neologismos & Sentido Contextual",
+        question: "Analise o trecho: \"Na era da comunicação rápida, corremos o risco de *infoxicar* a população com volumes incalculáveis de dados inúteis.\" O termo 'infoxicar' foi construído para significar:",
+        options: [
+            { text: "intoxicar a mente pelo excesso de informações.", isCorrect: true, rationale: "Trata-se de um neologismo formado pela junção de 'informação' + 'intoxicar', indicando a saturação cognitiva por excesso de dados." },
+            { text: "infectar computadores com vírus de dados.", isCorrect: false, rationale: "Refere-se ao impacto na cognição humana/população, não a malware cibernético." },
+            { text: "informar com precisão e toxicidade zero.", isCorrect: false, rationale: "O prefixo remete a excesso nocivo, e não à ausência dele." },
+            { text: "censurar dados em redes públicas.", isCorrect: false, rationale: "Não se refere ao bloqueio/censura, mas ao bombardeio exagerado de dados." }
+        ],
+        hint: "Observe a junção de duas palavras conhecidas: INFORMAÇÃO + INTOXICAR."
+    },
+    {
+        id: 16,
+        category: "Uso do Termo 'Sensível'",
+        question: "No trecho do relatório técnico: \"Os dados coletados contêm informações *sensíveis* e devem ser mantidos sob sigilo absoluto.\" O adjetivo 'sensíveis' significa:",
+        options: [
+            { text: "confidenciais e sujeitas a riscos de segurança.", isCorrect: true, rationale: "No contexto de segurança de dados e legislação (como a LGPD), 'dados sensíveis' são dados íntimos ou protegidos por sigilo restrito." },
+            { text: "dotadas de empatia e emoção humana.", isCorrect: false, rationale: "Dados não possuem sentimentos nem emoções interpessoais." },
+            { text: "fáceis de serem percebidas pelos sentidos.", isCorrect: false, rationale: "Sentido físico/fisiológico (perceptível ao tato/visão), inaplicável a sigilo." },
+            { text: "instáveis e sujeitas a erros de cálculo.", isCorrect: false, rationale: "'Sensível' aqui não significa incorreto ou impreciso, mas reservado." }
+        ],
+        hint: "Pense na Lei Geral de Proteção de Dados (LGPD) e no que significa uma 'informação sensível'."
+    },
+    {
+        id: 17,
+        category: "Conotação Política e Social",
+        question: "Em: \"O projeto aprovado na Câmara traz em seu bojo uma série de *gargalos* que podem travar os investimentos.\" A palavra 'gargalos' foi empregada no sentido de:",
+        options: [
+            { text: "obstáculos ou pontos de estrangulamento que dificultam o fluxo.", isCorrect: true, rationale: "Metaforicamente, 'gargalo' (a parte estreita de uma garrafa) representa dificuldades, restrições ou entraves que desaceleram um processo." },
+            { text: "aberturas que facilitam a entrada de recursos.", isCorrect: false, rationale: "O texto diz que 'podem travar', logo representa uma restrição e não facilitação." },
+            { text: "elementos decorativos de valor secundário.", isCorrect: false, rationale: "O impacto descrito ('travar investimentos') mostra que é um fator crítico, não decorativo." },
+            { text: "Canais formais de denúncia de corrupção.", isCorrect: false, rationale: "Gargalo não tem relação com ouvidoria ou denúncias." }
+        ],
+        hint: "Imagine o gargalo de uma garrafa: o que acontece com a passagem do líquido quando chega a essa parte mais estreita?"
+    },
+    {
+        id: 18,
+        category: "Carga Semântica de Adjetivos",
+        question: "Na frase: \"O juiz proferiu uma sentença *salutar* para a preservação do meio ambiente.\" O vocábulo 'salutar' quer dizer:",
+        options: [
+            { text: "benéfica e favorável à saúde/bem-estar coletivo.", isCorrect: true, rationale: "'Salutar' é o que traz saúde, é saudável, proveitoso, benéfico ou favorável ao interesse público." },
+            { text: "rígida e punitiva ao extremo.", isCorrect: false, rationale: "A palavra não conota severidade ou punição, mas efeito positivo/saudável." },
+            { text: "improvisada sem respaldo na lei.", isCorrect: false, rationale: "Não há conotação de irregularidade técnica no adjetivo." },
+            { text: "passível de anulação por tribunal superior.", isCorrect: false, rationale: "'Salutar' expressa um juízo de valor positivo sobre os efeitos da decisão." }
+        ],
+        hint: "Associe a palavra 'salutar' à sua raiz latina relacionada à 'saúde' e ao bem-estar."
+    },
+    {
+        id: 19,
+        category: "Polissemia de 'Espécie'",
+        question: "Assinale a alternativa em que a palavra 'espécie' foi empregada no sentido de 'dinheiro em cédulas/moeda física':",
+        options: [
+            { text: "O comprador efetuou o pagamento do veículo integralmente em espécie.", isCorrect: true, rationale: "A expressão 'em espécie' no comércio e direito financeiro significa pagamento feito em dinheiro vivo (papel-moeda)." },
+            { text: "Aquela planta pertence a uma espécie rara da Mata Atlântica.", isCorrect: false, rationale: "Sentido biológico/taxonômico da palavra." },
+            { text: "Não toleramos qualquer espécie de desrespeito nesta instituição.", isCorrect: false, rationale: "Significa 'tipo', 'qualidade' ou 'modalidade' de atitude." },
+            { text: "O jurista publicou uma espécie de manual para iniciantes.", isCorrect: false, rationale: "Significa 'semelhança', algo aproximado a um manual." }
+        ],
+        hint: "Procuramos a expressão utilizada no mercado financeiro e comercial para vendas à vista sem cartão ou cheque."
+    },
+    {
+        id: 20,
+        category: "Compreensão de Expressão Contextual",
+        question: "No trecho: \"O gestor resolveu *colocar os pingos nos is* durante a reunião geral para evitar novos mal-entendidos.\" A expressão destacada indica que o gestor buscou:",
+        options: [
+            { text: "esclarecer minuciosamente todos os pontos e eliminar ambiguidades.", isCorrect: true, rationale: "'Colocar os pingos nos is' é um idioma que significa detalhar, pontuar com clareza absoluta e tirar qualquer dúvida sobre um assunto." },
+            { text: "punir severamente os funcionários atrasados.", isCorrect: false, rationale: "A expressão foca no esclarecimento da verdade/fatos, não em aplicar sanções disciplinares." },
+            { text: "revisar a ortografia dos documentos da empresa.", isCorrect: false, rationale: "Interpretação literal e ingênua do termo 'pingos nos is'." },
+            { text: "cancelar os projetos que não apresentavam lucro.", isCorrect: false, rationale: "Não guarda relação com cancelamento de investimentos, mas com diálogo e transparência." }
+        ],
+        hint: "Por que alguém colocaria o pingo em cada letra 'i'? Para deixar a escrita totalmente perfeita e sem confusão."
+    }
+];
 
         // State Management
         let currentQuestionIdx = 0;
