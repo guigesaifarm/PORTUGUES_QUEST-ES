@@ -219,248 +219,369 @@
     <!-- JavaScript Quiz Logic -->
     <script>
         // Database of 20 Portuguese Questions
-        const questionsData = [
-            {
-                id: 1,
-                category: "Demonstrativos & Referência",
-                question: "Considere a frase: \"A honestidade e a impunidade coexistem na sociedade; esta gera indignação, aquela garante a paz social.\" Os pronomes demonstrativos 'esta' e 'aquela' exercem, respectivamente, função anafórica referente a:",
-                options: [
-                    { text: "impunidade e honestidade.", isCorrect: true, rationale: "O demonstrativo 'esta' refere-se ao elemento mencionado por último (mais próximo: impunidade), enquanto 'aquela' recupera o elemento mencionado em primeiro lugar (mais distante: honestidade)." },
-                    { text: "honestidade e impunidade.", isCorrect: false, rationale: "'Esta' recupera o termo mais próximo antecedente (impunidade) e não o primeiro." },
-                    { text: "sociedade e indignação.", isCorrect: false, rationale: "'Sociedade' e 'indignação' não constituem o par coordenado que está sendo polarizado pelos demonstrativos." },
-                    { text: "impunidade e paz social.", isCorrect: false, rationale: "'Paz social' é consequência da honestidade, e não o termo referente direto retomado." }
-                ],
-                hint: "Lembre-se da regra de proximidade dos demonstrativos no texto: 'este/esta' retoma o termo mais recente e 'aquele/aquela' retoma o mais antigo."
-            },
-            {
-                id: 2,
-                category: "Anáfora vs Catáfora",
-                question: "Em qual das passagens a seguir o pronome destacado exerce função CATA FÓRICA na articulação do texto?",
-                options: [
-                    { text: "Desejo apenas isto: que todos alcancem a aprovação.", isCorrect: true, rationale: "O pronome 'isto' antecipa uma informação que ainda será declarada na oração seguinte ('que todos alcancem...'), caracterizando o recurso catafórico." },
-                    { text: "A aprovação chegou rápida; isso nos motivou bastante.", isCorrect: false, rationale: "O pronome 'isso' retoma a afirmação anterior ('A aprovação chegou rápida'), tratando-se de anáfora." },
-                    { text: "O aluno estudou muito, por isso obteve êxito.", isCorrect: false, rationale: "'Por isso' estabelece coesão anafórica de valor conclusivo/causal recuperando o fato antecedente." },
-                    { text: "Aquele foi o melhor dia de nossas vidas.", isCorrect: false, rationale: "'Aquele' funciona aqui com valor exofórico/dêitico ou anafórico em relação ao tempo vivido." }
-                ],
-                hint: "A catáfora projeta o texto para a frente, anunciando algo que ainda vai ser dito."
-            },
-            {
-                id: 3,
-                category: "Pronome Relativo e Regência",
-                question: "Assinale a alternativa que preenche corretamente a lacuna mantendo a norma-padrão da coesão relacional: \"O ideal ____ tanto lutamos exige sacrifícios diários.\"",
-                options: [
-                    { text: "pelo qual", isCorrect: true, rationale: "Quem luta, luta 'por' algo. A preposição 'por' exige fusão com o artigo do pronome relativo ('por + o qual' = 'pelo qual') ou 'por que'." },
-                    { text: "que", isCorrect: false, rationale: "A omissão da preposição 'por' exigida pela regência do verbo 'lutar' gera desvio gramatical." },
-                    { text: "ao qual", isCorrect: false, rationale: "A preposição 'a' não atende à regência do verbo 'lutar' neste contexto." },
-                    { text: "cujo", isCorrect: false, rationale: "O pronome 'cujo' exige relação de posse entre dois substantivos, inexistente aqui." }
-                ],
-                hint: "Observe a regência do verbo que vem depois do pronome relativo: quem 'luta', luta ___ algo."
-            },
-            {
-                id: 4,
-                category: "Emprego de 'Cujo'",
-                question: "Identifique a opção em que o uso do pronome relativo 'cujo' apresenta incorreção de acordo com a norma gramatical:",
-                options: [
-                    { text: "O autor cujo o livro foi premiado não compareceu.", isCorrect: true, rationale: "É proibido usar artigo definido imediatamente após o pronome 'cujo' (não se diz 'cujo o' nem 'cuja a'). O correto é 'cujo livro'." },
-                    { text: "O professor cujas aulas eram excelentes aposentou-se.", isCorrect: false, rationale: "Uso correto: 'cujas' concorda em gênero e número com o consequente 'aulas' e estabelece posse." },
-                    { text: "A árvore cujos frutos colhemos é centenária.", isCorrect: false, rationale: "Uso correto: concordância correta com 'frutos' e vínculo de posse com 'árvore'." },
-                    { text: "A empresa a cujos diretores nos dirigimos aprovou o projeto.", isCorrect: false, rationale: "Uso correto: a preposição 'a' foi devidamente anteposta por regência de 'nos dirigimos'." }
-                ],
-                hint: "Nunca se coloca artigo (o, a, os, as) logo após o pronome relativo 'cujo'."
-            },
-            {
-                id: 5,
-                category: "Expressões Referenciais",
-                question: "No trecho: \"O Cerrado vem sofrendo contínuo desmatamento. O bioma, contudo, abriga nascentes cruciais para o país.\" A expressão 'O bioma' funciona como:",
-                options: [
-                    { text: "expressão hiperonímica de caráter anafórico.", isCorrect: true, rationale: "'Bioma' é um termo de sentido mais amplo (hiperônimo) que retoma 'Cerrado' (hipônimo), garantindo a coesão sequencial sem repetição." },
-                    { text: "expressão hiponímica de caráter catafórico.", isCorrect: false, rationale: "'Bioma' não é hipônimo de Cerrado nem antecipa termo futuro." },
-                    { text: "substituição por antonímia contextual.", isCorrect: false, rationale: "Não há relação de sentidos opostos (antônimos) entre as palavras." },
-                    { text: "elipse verbal antecedente.", isCorrect: false, rationale: "Trata-se de coesão lexical por anáfora, não omissão de verbo (elipse)." }
-                ],
-                hint: "Considere se 'bioma' é um termo mais geral ou mais específico em relação a 'Cerrado'."
-            },
-            {
-                id: 6,
-                category: "Nexos Adversativos vs Concessivos",
-                question: "Em: \"Embora os custos fossem elevados, a diretoria aprovou a modernização.\" Se substituirmos a conjunção 'Embora' mantendo o sentido de oposição, mas alterando a estrutura para a coordenação adversativa, a reescrita correta é:",
-                options: [
-                    { text: "Os custos eram elevados, contudo a diretoria aprovou a modernização.", isCorrect: true, rationale: "'Contudo' é conjunção adversativa e exige o verbo no modo indicativo ('eram'), estabelecendo relação de oposição de forma coordenada." },
-                    { text: "Ainda que os custos eram elevados, a diretoria aprovou a modernização.", isCorrect: false, rationale: "'Ainda que' exige verbo no subjuntivo ('fossem') e mantém valor subordinativo concessivo." },
-                    { text: "Os custos fossem elevados, porquanto a diretoria aprovou a modernização.", isCorrect: false, rationale: "'Porquanto' é explicativo/causal e não adversativo." },
-                    { text: "Posto que os custos fossem elevados, logo a diretoria aprovou.", isCorrect: false, rationale: "'Logo' introduz conclusão, alterando a articulação semântica da frase." }
-                ],
-                hint: "Conjunções adversativas (mas, porém, contudo) coordenam orações com verbo no indicativo."
-            },
-            {
-                id: 7,
-                category: "Nexos Causais e Consecutivos",
-                question: "Assinale a alternativa em que a oração introduzida pela palavra 'que' possui valor semântico CONSECUTIVO:",
-                options: [
-                    { text: "A chuva foi tão intensa que as ruas do centro alagaram.", isCorrect: true, rationale: "A estrutura correlativa 'tão... que' expressa a consequência direta da intensidade da chuva." },
-                    { text: "É necessário que todos cumpram seus horários.", isCorrect: false, rationale: "Aqui o 'que' é conjunção integrante, introduzindo oração subordinada substantiva subjetiva." },
-                    { text: "Fique em casa, que a tempestade se aproxima.", isCorrect: false, rationale: "Neste caso, 'que' possui valor explicativo (equivalente a 'pois')." },
-                    { text: "O livro que comprei ontem é esclarecedor.", isCorrect: false, rationale: "O 'que' é pronome relativo introduzindo oração adjetiva." }
-                ],
-                hint: "Procure por termos intensificadores no antecedente como 'tão', 'tanto', 'tamanho' que levam a um resultado/consequência."
-            },
-            {
-                id: 8,
-                category: "Operador 'Pois'",
-                question: "Na frase: \"O projeto exige alto investimento; não devemos, pois, agir sem planejamento prévio.\" O operador argumentativo 'pois' assume valor:",
-                options: [
-                    { text: "conclusivo, por estar posposto ao verbo.", isCorrect: true, rationale: "Quando o 'pois' surge posposto ao verbo (entre vírgulas), sua função coesiva é estritamente conclusiva (sinônimo de 'portanto')." },
-                    { text: "causal, por relacionar dois fatos.", isCorrect: false, rationale: "O 'pois' só é causal se anteceder o verbo e não for deslocado." },
-                    { text: "explicativo, por esclarecer uma ordem.", isCorrect: false, rationale: "O 'pois' explicativo vem no início da oração coordenada, antes do verbo." },
-                    { text: "concessivo, por ponderar um obstáculo.", isCorrect: false, rationale: "'Pois' não possui valor concessivo na língua portuguesa." }
-                ],
-                hint: "Atente para a posição do 'pois' na oração: antes do verbo é causal/explicativo; depois do verbo é conclusivo."
-            },
-            {
-                id: 9,
-                category: "Uso de 'Onde'",
-                question: "De acordo com a norma-padrão de coesão referencial, o pronome 'onde' foi empregado CORRETAMENTE em:",
-                options: [
-                    { text: "A biblioteca do bairro é o local onde os estudantes se reúnem.", isCorrect: true, rationale: "O pronome 'onde' só deve ser empregado para retomar lugares físicos e concretos (como 'biblioteca')." },
-                    { text: "Aquele foi um período difícil onde todos sofreram.", isCorrect: false, rationale: "Incorreto: 'período' é indicação de tempo; deveria usar-se 'em que' ou 'no qual'." },
-                    { text: "Li um artigo onde o autor criticava a economia.", isCorrect: false, rationale: "Incorreto: 'artigo' é texto; o adequado seria 'em que' ou 'no qual'." },
-                    { text: "Houve uma reunião onde se discutiu o orçamento.", isCorrect: false, rationale: "Incorreto: 'reunião' é um evento; o correto seria 'em que' ou 'na qual'." }
-                ],
-                hint: "O pronome 'onde' deve ser reservado estritamente para lugares físicos/espaciais."
-            },
-            {
-                id: 10,
-                category: "Coesão por Elipse",
-                question: "No trecho: \"Alguns cientistas defendem a transição energética imediata; outros, a gradual.\" O mecanismo de coesão que consiste na omissão do verbo 'defendem' na segunda oração chama-se:",
-                options: [
-                    { text: "elipse (ou zeugma).", isCorrect: true, rationale: "Zeugma é o tipo específico de elipse em que se omite um termo (neste caso, o verbo 'defendem') que já foi mencionado anteriormente no texto." },
-                    { text: "catafórico nominal.", isCorrect: false, rationale: "Não há projeção catafórica, mas omissão gramatical de termo antecedente." },
-                    { text: "paráfrase explicativa.", isCorrect: false, rationale: "Paráfrase consiste na reescrita com outras palavras, e não na omissão verbal." },
-                    { text: "encapsulamento textual.", isCorrect: false, rationale: "Encapsulamento é o resumo de ideias por meio de um substantivo sintético." }
-                ],
-                hint: "Como se chama a figura de linguagem/coesão na qual se omite um termo antecedente subentendido (marcado por vírgula)?"
-            },
-            {
-                id: 11,
-                category: "Operadores de Gradação e Força",
-                question: "Na frase: \"O candidato conquistou o apoio de líderes comunitários, de empresários e até de seus opositores mais ferrenhos.\" O operador 'até' atua como:",
-                options: [
-                    { text: "operador argumentativo que introduz o argumento mais forte de uma escala ascendente.", isCorrect: true, rationale: "'Até' (assim como 'inclusive' e 'mesmo') assinala o argumento de maior força ou topo da escala argumentativa." },
-                    { text: "conjunção subordinativa temporal que indica limite de tempo.", isCorrect: false, rationale: "Neste contexto, 'até' não marca tempo limite, mas inclusão e gradação argumentativa." },
-                    { text: "elemento de coesão conclusiva de efeito restritivo.", isCorrect: false, rationale: "Não possui valor de síntese conclusiva nem restringe, mas amplia a gradação." },
-                    { text: "preposição de afastamento e exclusão temática.", isCorrect: false, rationale: "Pelo contrário, é um marcador de inclusão extensiva." }
-                ],
-                hint: "Considere a intenção do autor em colocar 'opositores mais ferrenhos' por último acompanhado de 'até'."
-            },
-            {
-                id: 12,
-                category: "Nexos Condicionais e Temporais",
-                question: "Analise a frase: \"____ assumiu o cargo de chefia, o executivo reestruturou toda a equipe.\" A locução que preenche a lacuna atribuindo sentido TEMPORAL é:",
-                options: [
-                    { text: "Assim que", isCorrect: true, rationale: "'Assim que' introduz oração subordinada adverbial temporal de imediatez no tempo." },
-                    { text: "Desde que", isCorrect: false, rationale: "Embora 'desde que' possa indicar tempo inicial, com o verbo no passado sem continuidade soa ambíguo ou condicional. 'Assim que' marca a temporalidade pontual perfeita." },
-                    { text: "Contanto que", isCorrect: false, rationale: "'Contanto que' expressa exclusivamente condição (com verbo no subjuntivo)." },
-                    { text: "A fim de que", isCorrect: false, rationale: "'A fim de que' expressa finalidade." }
-                ],
-                hint: "Qual locução marca que a ação de reestruturar ocorreu imediatamente no momento em que ele assumiu o cargo?"
-            },
-            {
-                id: 13,
-                category: "Operador 'Posto que'",
-                question: "Assinale a opção em que a locução 'posto que' foi empregada de acordo com o seu sentido escorreito de CONCESSÃO:",
-                options: [
-                    { text: "Posto que a decisão fosse impopular, manteve-se firme na sua aplicação.", isCorrect: true, rationale: "Na tradição culta da língua, 'posto que' é conectivo concessivo (sinônimo de 'embora', 'ainda que') e rege verbo no modo subjuntivo." },
-                    { text: "Não foi trabalhar hoje posto que estava muito doente.", isCorrect: false, rationale: "Uso considerado inadequado/desviante na norma culta tradicional (uso de 'posto que' como causal)." },
-                    { text: "Posto que estudou bastante, foi aprovado com louvor.", isCorrect: false, rationale: "Uso causal desviante; a relação aqui é de causa e efeito, não de concessão." },
-                    { text: "Posto que cheguei cedo, consegui o melhor assento.", isCorrect: false, rationale: "Trata-se de relação de causa/tempo, desvirtuando o caráter concessivo." }
-                ],
-                hint: "Lembre-se de que, gramaticalmente, 'posto que' equivale a 'embora' e exige verbo no subjuntivo."
-            },
-            {
-                id: 14,
-                category: "Encapsulamento Anafórico",
-                question: "Considere o texto: \"A inflação subiu, as taxas de juros dispararam e a produção industrial caiu. Esse cenário alarmante exige medidas urgentes.\" A expressão 'Esse cenário alarmante' cumpre o papel de:",
-                options: [
-                    { text: "rótulo/encapsulador anafórico que sintetiza os fatos expressos anteriormente.", isCorrect: true, rationale: "Coesão por encapsulamento (ou rótulo) ocorre quando uma expressão nominal resume e condensa todo um bloco de informações pregressas." },
-                    { text: "catáfora restritiva que antecipa as medidas urgentes.", isCorrect: false, rationale: "A expressão retoma o conjunto de fatos passados (anáfora) e não antecipa a lista de medidas." },
-                    { text: "substituição sinonímica de um único vocábulo.", isCorrect: false, rationale: "Não retoma apenas uma palavra, mas toda uma proposição complexa." },
-                    { text: "anáfora associativa por elipse de substantivo.", isCorrect: false, rationale: "Não há omissão, mas síntese explícita via nome rotulador." }
-                ],
-                hint: "O substantivo 'cenário' funciona como uma 'caixa' que sintetiza e empacota as três frases anteriores."
-            },
-            {
-                id: 15,
-                category: "Demonstrativos no Tempo",
-                question: "Indique a alternativa que preenche corretamente a lacuna, considerando o emprego dos pronomes demonstrativos para indicação temporal no momento da fala: \"____ ano de 2026 está sendo marcado por grandes inovações tecnológicas.\"",
-                options: [
-                    { text: "Este", isCorrect: true, rationale: "Para o tempo presente/vigente em relação ao momento do discurso, utiliza-se o demonstrativo 'este' (este ano = o ano atual)." },
-                    { text: "Esse", isCorrect: false, rationale: "'Esse' refere-se a um passado ou futuro relativamente próximo do momento da fala." },
-                    { text: "Aquele", isCorrect: false, rationale: "'Aquele' refere-se a um tempo distante e remoto no passado." },
-                    { text: "Aquilo", isCorrect: false, rationale: "'Aquilo' é pronome neutro e não acompanha o substantivo 'ano'." }
-                ],
-                hint: "Para o ano presente em que se fala, qual é a forma correta do pronome demonstrativo?"
-            },
-            {
-                id: 16,
-                category: "Operadores de Retificação",
-                question: "Qual dos seguintes conectivos/expressões possui a função primária de introduzir uma RETIFICAÇÃO ou correção do que foi dito anteriormente?",
-                options: [
-                    { text: "ou melhor", isCorrect: true, rationale: "A expressão 'ou melhor' (assim como 'aliás', 'digo') serve para corrigir ou reformular de modo mais preciso um enunciado prévio." },
-                    { text: "isto é", isCorrect: false, rationale: "'Isto é' e 'ou seja' possuem função de explicação, esclarecimento ou síntese, e não de retificação." },
-                    { text: "por conseguinte", isCorrect: false, rationale: "'Por conseguinte' indica conclusão/consequência." },
-                    { text: "além disso", isCorrect: false, rationale: "'Além disso' indica acréscimo/adição de argumentos." }
-                ],
-                hint: "Qual destas expressões é usada quando o falante quer corrigir formalmente uma palavra ou ideia recém-emitida?"
-            },
-            {
-                id: 17,
-                category: "Proporção vs Causa",
-                question: "Assinale a opção gramaticalmente correta em que a locução expressa ideia de PROPORCIONALIDADE:",
-                options: [
-                    { text: "À medida que os estudos avançam, as dúvidas diminuem.", isCorrect: true, rationale: "'À medida que' é a locução conjuntiva proporcional correta. (Atenção: a forma 'na medida em que' expressa causa)." },
-                    { text: "Na medida que os estudos avançam, as dúvidas diminuem.", isCorrect: false, rationale: "Incorreto: a forma 'na medida que' sem preposição 'em' é considerada gramaticalmente inexistente/híbrida." },
-                    { text: "À medida em que os estudos avançam, as dúvidas diminuem.", isCorrect: false, rationale: "Incorreto: misturou-se 'à medida que' com 'na medida em que'." },
-                    { text: "Em medida que os estudos avançam, as dúvidas diminuem.", isCorrect: false, rationale: "Forma inexistente na norma-padrão." }
-                ],
-                hint: "A locução correta de proporção é 'À medida que' (com crase e sem a preposição 'em')."
-            },
-            {
-                id: 18,
-                category: "Anáfora Associativa",
-                question: "Em: \"Chegamos a um vilarejo histórico. As casas tinham fachadas preservadas e os moradores eram acolhedores.\" O termo 'As casas' estabelece coesão com 'vilarejo' por meio de:",
-                options: [
-                    { text: "anáfora associativa (ou inferencial).", isCorrect: true, rationale: "A anáfora associativa ocorre quando o referente não foi mencionado explicitamente antes, mas é introduzido como parte integrante do conhecimento de mundo sobre o antecedente ('vilarejo' pressupõe 'casas')." },
-                    { text: "repetição lexical estrita.", isCorrect: false, rationale: "A palavra 'casas' não é repetição da palavra 'vilarejo'." },
-                    { text: "catáfora explicativa com pronome relativo.", isCorrect: false, rationale: "Não há pronome relativo nem antecipação catafórica." },
-                    { text: "elipse da expressão antecedente.", isCorrect: false, rationale: "O termo 'casas' está explicitado, não havendo omissão." }
-                ],
-                hint: "Como se chama a conexão em que o leitor deduce que 'casas' fazem parte de 'vilarejo' com base no conhecimento de mundo?"
-            },
-            {
-                id: 19,
-                category: "Ambiguidade Referencial",
-                question: "Identifique a alternativa que apresenta AMBIGUIDADE referente ao uso do pronome possessivo:",
-                options: [
-                    { text: "O gerente conversou com o funcionário sobre o seu relatório.", isCorrect: true, rationale: "Há ambiguidade: o pronome 'seu' pode se referir ao relatório do gerente ou ao relatório do funcionário. A correção exigiria 'o relatório deste' ou 'o relatório dele'." },
-                    { text: "O gerente conversou com o funcionário sobre o relatório deste.", isCorrect: false, rationale: "Sem ambiguidade: 'deste' refere-se com clareza ao termo mais próximo ('funcionário')." },
-                    { text: "O gerente disse que o relatório do funcionário estava excelente.", isCorrect: false, rationale: "Sem ambiguidade: a referência nominal 'do funcionário' é direta." },
-                    { text: "Conversamos com o gerente a respeito de suas metas.", isCorrect: false, rationale: "Não há duplo sujeito masculino para gerar dúvida sobre a quem pertence as metas." }
-                ],
-                hint: "Procure a frase em que o pronome 'seu' deixa dúvida sobre a qual das duas pessoas o objeto pertence."
-            },
-            {
-                id: 20,
-                category: "Pronomes Oblíquos Anafóricos",
-                question: "Na reescrita da frase \"O diretor convocou os assessores e apresentou as propostas aos assessores\", a substituição dos termos repetidos por pronomes oblíquos anafóricos adequados resulta em:",
-                options: [
-                    { text: "O diretor convocou-os e apresentou-lhes as propostas.", isCorrect: true, rationale: "O verbo 'convocar' é transitivo direto (exige 'os'); o verbo 'apresentar' rege complemento indireto com preposição 'a' para pessoas (exige 'lhes')." },
-                    { text: "O diretor convocou-lhes e apresentou-lhes as propostas.", isCorrect: false, rationale: "'Convocar' não rege objeto indireto 'lhes'." },
-                    { text: "O diretor convocou-os e apresentou-os as propostas.", isCorrect: false, rationale: "'Apresentou-os as propostas' é incorreto pois 'apresentar algo a alguém' exige 'lhes' para o destinatário." },
-                    { text: "O diretor convocou-nos e apresentou-os as propostas.", isCorrect: false, rationale: "Altera a pessoa gramatical ('nos' em vez de 3ª pessoa do plural)." }
-                ],
-                hint: "Diferencie a transitividade: 'convocar alguém' (VTD -> os) versus 'apresentar algo a alguém' (VTDI -> lhes)."
-            }
-        ];
+       const questionsData = [
+    {
+        id: 1,
+        category: "Correlação Verbal e Modo Subjuntivo",
+        question: "Assinale a alternativa em que a correlação entre os tempos e modos verbais está de acordo com a norma-padrão da língua portuguesa:",
+        options: [
+            { text: "Se o projeto obtivesse apoio financeiro, a execução das obras ocorrerá dentro do prazo estabelecido.", isCorrect: false, rationale: "Incorreto: O pretérito imperfeito do subjuntivo ('obtivesse') exige correlação com o futuro do pretérito do indicativo ('ocorreria')." },
+            { text: "Se o projeto obtivesse apoio financeiro, a execução das obras ocorreria dentro do prazo estabelecido.", isCorrect: true, rationale: "Correto: Há perfeita harmonia entre o pretérito imperfeito do subjuntivo ('obtivesse') e o futuro do pretérito do indicativo ('ocorreria')." },
+            { text: "Se o projeto obtiver apoio financeiro, a execução das obras ocorreria dentro do prazo estabelecido.", isCorrect: false, rationale: "Incorreto: O futuro do subjuntivo ('obtiver') correlaciona-se com o futuro do presente ('ocorrerá')." },
+            { text: "Se o projeto tivesse obtido apoio financeiro, a execução das obras ocorrerá dentro do prazo estabelecido.", isCorrect: false, rationale: "Incorreto: O pretérito mais-que-perfeito composto do subjuntivo ('tivesse obtido') exige futuro do pretérito composto ('teria ocorrido')." }
+        ],
+        hint: "A estrutura hipotética no imperfeito do subjuntivo (-sse) correlaciona-se com o futuro do pretérito (-ria)."
+    },
+    {
+        id: 2,
+        category: "Futuro do Subjuntivo de Verbos Irregulares",
+        question: "Considere a frase: \"Quando a diretoria ________ (manter) a decisão e ________ (rever) os cálculos, o contrato será assinado.\" As formas verbais que preenchem corretamente as lacunas são:",
+        options: [
+            { text: "manter — rever", isCorrect: false, rationale: "Incorreto: Utilizou-se o infinitivo impessoal em vez do futuro do subjuntivo." },
+            { text: "mantiver — revir", isCorrect: true, rationale: "Correto: Os verbos derivados de 'ter' e 'ver' fazem o futuro do subjuntivo em '-tiver' ('mantiver') e '-vir' ('revir')." },
+            { text: "mantiver — vir", isCorrect: false, rationale: "Incorreto: 'vir' é futuro do subjuntivo de 'ver', mas o verbo em questão é o derivado 'rever' ('revir')." },
+            { text: "manterá — reverá", isCorrect: false, rationale: "Incorreto: A conjunção temporal 'quando' exige o modo subjuntivo, não o indicativo." }
+        ],
+        hint: "Verbos derivados de 'ter' e 'ver' seguem a conjugação dos primitivos no futuro do subjuntivo: 'se eu tiver' -> 'se ele mantiver'; 'se eu vir' -> 'se ele revir'."
+    },
+    
+    {
+        id: 3,
+        category: "Pretérito Mais-Que-Perfeito do Indicativo",
+        question: "Na frase \"Quando a perícia chegou ao local, o investigador principal já *tinha colhido* todas as evidências\", a locução verbal destacada equivale gramaticalmente à forma simples:",
+        options: [
+            { text: "colhera", isCorrect: true, rationale: "Correto: A locução do pretérito mais-que-perfeito composto ('tinha colhido') equivale exatamente à forma simples do pretérito mais-que-perfeito do indicativo ('colhera')." },
+            { text: "colheu", isCorrect: false, rationale: "Incorreto: 'colheu' é pretérito perfeito simples, marcando ação pontual no passado, sem indicar anterioridade em relação a outra ação passada." },
+            { text: "colheria", isCorrect: false, rationale: "Incorreto: 'colheria' é futuro do pretérito, indicando fato posterior a um momento no passado." },
+            { text: "colhia", isCorrect: false, rationale: "Incorreto: 'colhia' é pretérito imperfeito, indicando processo duradouro ou habitual no passado." }
+        ],
+        hint: "O pretérito mais-que-perfeito expressa ação anterior a outra ação passada e apresenta a desinência '-ra'."
+    },
+    {
+        id: 4,
+        category: "Emprego do Pretérito Imperfeito do Indicativo",
+        question: "Assinale a alternativa em que o pretérito imperfeito do indicativo expressa uma ação habitual ou repetitiva ocorrida no passado:",
+        options: [
+            { text: "Na infância, ele *caminhava* todas as tardes até o parque da cidade.", isCorrect: true, rationale: "Correto: O pretérito imperfeito ('caminhava') expressa um hábito, uma rotina contínua ou iterativa no passado." },
+            { text: "Ontem, ele *caminhou* até o parque para encontrar os colegas.", isCorrect: false, rationale: "Incorreto: 'caminhou' é pretérito perfeito, expressando ação pontual concluída no passado." },
+            { text: "Se ele *caminhasse* mais, teria melhor saúde cardiovascular.", isCorrect: false, rationale: "Incorreto: 'caminhasse' é pretérito imperfeito do subjuntivo, expressando condição/hipótese." },
+            { text: "Ele já *caminhara* bastante quando a chuva começou a cair.", isCorrect: false, rationale: "Incorreto: 'caminhara' é pretérito mais-que-perfeito do indicativo." }
+        ],
+        hint: "O pretérito imperfeito do indicativo (-ava / -ia) indica ações costumeiras, duradouras ou contínuas no passado."
+    },
+    {
+        id: 5,
+        category: "Uso do Presente do Indicativo com Valor de Futuro",
+        question: "Na frase do cotidiano \"Amanhã eu *embarco* para Brasília logo no primeiro voo\", o verbo destacado está flexionado no:",
+        options: [
+            { text: "presente do indicativo, empregado com valor de futuro próximo.", isCorrect: true, rationale: "Correto: O presente do indicativo é frequentemente usado estilisticamente para exprimir fatos futuros tidos como certos ou bem próximos." },
+            { text: "futuro do presente do indicativo, na sua forma reduzida.", isCorrect: false, rationale: "Incorreto: A forma do futuro do presente é 'embarcarei'; 'embarco' é morfologicamente presente." },
+            { text: "presente do subjuntivo, expressando um desejo imediato.", isCorrect: false, rationale: "Incorreto: A forma do presente do subjuntivo seria '(que eu) embarque'." },
+            { text: "pretérito perfeito do indicativo, com valor de ação concluída.", isCorrect: false, rationale: "Incorreto: Trata-se do presente, não do pretérito." }
+        ],
+        hint: "Atente para a diferença entre a forma morfológica (presente) e o valor semântico temporal no contexto (futuro marcado pelo advérbio 'Amanhã')."
+    },
+    {
+        id: 6,
+        category: "Imperativo Afirmativo e Negativo",
+        question: "Considere a frase afirmativa no imperativo: \"*Fala* a verdade e *vence* teus medos!\". Ao converter essa frase para a forma negativa, obtém-se corretamente:",
+        options: [
+            { text: "Não fala a verdade e não vence teus medos!", isCorrect: false, rationale: "Incorreto: O imperativo negativo não utiliza as formas do imperativo afirmativo derivadas do presente do indicativo sem o 's'." },
+            { text: "Não fales a verdade e não venças teus medos!", isCorrect: true, rationale: "Correto: O imperativo negativo deriva integralmente do presente do subjuntivo (tu fales / tu venças)." },
+            { text: "Não fale a verdade e não vença teus medos!", isCorrect: false, rationale: "Incorreto: Misturou a 2ª pessoa ('teus') com a 3ª pessoa do imperativo ('fale/vença')." },
+            { text: "Não falarás a verdade e não vencerás teus medos!", isCorrect: false, rationale: "Incorreto: Utilizou-se o futuro do presente em lugar do modo imperativo." }
+        ],
+        hint: "O Imperativo Negativo é idêntico ao Presente do Subjuntivo para todas as pessoas gramaticais."
+    },
+    {
+        id: 7,
+        category: "Conjugação do Verbo 'Prover' e 'Prover-se'",
+        question: "Assinale a alternativa que preenche corretamente a lacuna: \"Se o Estado ________ os recursos necessários a tempo, o desastre teria sido evitado.\"",
+        options: [
+            { text: "provesse", isCorrect: true, rationale: "Correto: O verbo 'prover' é regular no pretérito imperfeito do subjuntivo: 'provesse' (diferente de 'prover', derivado de 'vir', que faz 'proviesse')." },
+            { text: "proviesse", isCorrect: false, rationale: "Incorreto: 'proviesse' pertence ao verbo 'provir' (originar-se, vir de), e não ao verbo 'prover' (abastecer, fornecer)." },
+            { text: "prover", isCorrect: false, rationale: "Incorreto: Utilizou-se o infinitivo no lugar do subjuntivo." },
+            { text: "provisse", isCorrect: false, rationale: "Incorreto: Forma inexistente na norma-padrão da língua portuguesa." }
+        ],
+        hint: "Não confunda PROVER (abastecer - que faz provesse/proveu) com PROVIR (originar de VIR - que faz proviesse/proveio)."
+    },
+    {
+        id: 8,
+        category: "Futuro do Pretérito para Cortesia/Hipótese",
+        question: "Em qual das passagens abaixo o futuro do pretérito do indicativo é utilizado com a função estilística de abrandar uma declaração ou exprimir polidez/cortesia?",
+        options: [
+            { text: "Eu *gostaria* de pedir alguns esclarecimentos sobre o edital, se for possível.", isCorrect: true, rationale: "Correto: O futuro do pretérito ('gostaria') é usado como recurso de polidez e atenuação de pedidos no atendimento e na escrita formal." },
+            { text: "Caso chovesse, a cerimônia *ocorreria* no auditório coberto.", isCorrect: false, rationale: "Incorreto: Aqui expressa estritamente uma consequência condicionada no campo das hipóteses." },
+            { text: "Ele afirmou que *chegaria* às oito horas da manhã.", isCorrect: false, rationale: "Incorreto: Trata-se de um futuro relativo a um momento passado no discurso indireto." },
+            { text: "Naquela época, ele *teria* cerca de vinte anos de idade.", isCorrect: false, rationale: "Incorreto: Expressa uma probabilidade ou estimativa aproximada no passado." }
+        ],
+        hint: "O futuro do pretérito atenua tom imperativo ou direto de um pedido, tornando-o cortês."
+    },
+    {
+        id: 9,
+        category: "Modo Subjuntivo em Orações Subordinadas Adjetivas",
+        question: "Analise a diferença semântico-verbal entre as frases:\n1. Procura-se um funcionário que *fala* três idiomas.\n2. Procura-se um funcionário que *fale* three idiomas.\nA respeito dos modos verbais empregados, é correto afirmar:",
+        options: [
+            { text: "Em 1, o modo indicativo indica que o indivíduo buscado é específico e sabidamente existente; em 2, o subjuntivo indica que o perfil é genérico ou hipotético.", isCorrect: true, rationale: "Correto: O modo indicativo garante a existência de um ser determinado, enquanto o subjuntivo projeta uma busca por alguém indeterminado/hipotético." },
+            { text: "Em 1, o verbo está incorreto pois orações adjetivas exigem obrigatoriamente o modo subjuntivo.", isCorrect: false, rationale: "Incorreto: Ambas estão gramaticalmente corretas, mas expressam nuances semânticas distintas." },
+            { text: "Em 2, o modo subjuntivo é usado para indicar uma ação passada concluída com sucesso.", isCorrect: false, rationale: "Incorreto: O presente do subjuntivo indica eventualidade ou hipótese futura/presente." },
+            { text: "Ambas as frases possuem rigorosamente o mesmo significado, variando apenas o nível de formalidade.", isCorrect: false, rationale: "Incorreto: Há diferença semântica clara quanto à determinação do indivíduo." }
+        ],
+        hint: "Indicativo = certeza/existência real. Subjuntivo = hipótese/perfil desejado, sem garantia de existência prévia."
+    },
+    {
+        id: 10,
+        category: "Flexão de Verbos Abundantes e Particípio",
+        question: "Assinale a alternativa que preenche corretamente a lacuna, observando o uso adequado do particípio com o verbo auxiliar 'ter': \"A equipe já tinha ________ todos os relatórios antes do prazo final.\"",
+        options: [
+            { text: "entregado", isCorrect: true, rationale: "Correto: Com os verbos auxiliares 'ter' e 'haver', deve-se utilizar a forma regular do particípio (terminada em -ado/-ido): 'tinha entregado'." },
+            { text: "entregue", isCorrect: false, rationale: "Incorreto: A forma irregular/curta ('entregue') é usada prioritariamente com os verbos auxiliares 'ser' e 'estar' (voz passiva)." },
+            { text: "entregado-se", isCorrect: false, rationale: "Incorreto: A adição do pronome altera o sentido sintático da frase transitiva direta." },
+            { text: "entregado ou entregue indistintamente.", isCorrect: false, rationale: "Incorreto: A norma culta prescreve a forma longa para a voz ativa com 'ter/haver'." }
+        ],
+        hint: "Regra clássica dos particípios abundantes: Com TER e HAVER usa-se o particípio longo (-ADO/-IDO). Com SER e ESTAR usa-se o curto."
+    },
+    {
+        id: 11,
+        category: "Conjugação do Verbo 'Requerer'",
+        question: "Assinale a opção que apresenta a correta flexão do verbo 'requerer' na 3ª pessoa do singular do pretérito perfeito do indicativo:",
+        options: [
+            { text: "O advogado requereu a juntada das novas provas aos autos.", isCorrect: true, rationale: "Correto: O verbo 'requerer' NÃO segue o verbo 'querer' no pretérito perfeito. Ele é regular nesta flexão: 'requereu' (e não 'requis')." },
+            { text: "O advogado requis a juntada das novas provas aos autos.", isCorrect: false, rationale: "Incorreto: 'Requis' é forma errônea (pressupõe atração indevida da conjugação de 'querer')." },
+            { text: "O advogado requeriu a juntada das novas provas aos autos.", isCorrect: false, rationale: "Incorreto: Forma inexistente na norma culta." },
+            { text: "O advogado requerera a juntada das novas provas aos autos.", isCorrect: false, rationale: "Incorreto: 'Requerera' é pretérito mais-que-perfeito, não pretérito perfeito." }
+        ],
+        hint: "'Querer' faz 'quis' no passado. Mas 'REQUERER' é regular no pretérito perfeito: ele 'requereu'."
+    },
+    {
+        id: 12,
+        category: "Presente do Subjuntivo de Verbos em -EAR e -IAR",
+        question: "Preencha a lacuna com a forma verbal adequada do verbo 'mediar': \"Espera-se que o juiz ________ a audiência com total imparcialidade.\"",
+        options: [
+            { text: "medie", isCorrect: false, rationale: "Incorreto: O verbo 'mediar' pertence ao grupo MARPIO (mediar, ansiar, remediar, incendiar, odiar) e recebe um 'i' nas formas rizotônicas." },
+            { text: "medeie", isCorrect: true, rationale: "Correto: Verbos do grupo MARPIO trocam o 'i' do radical por 'ei' quando a tônica cai no radical (eu medeio, que ele medeie)." },
+            { text: "media", isCorrect: false, rationale: "Incorreto: 'Media' é presente do indicativo e falta o acréscimo da irregularidade do grupo." },
+            { text: "mediei", isCorrect: false, rationale: "Incorreto: 'Mediei' é 1ª pessoa do pretérito perfeito do indicativo." }
+        ],
+        hint: "Lembre-se da regra do MARPIO (Mediar, Ansiar, Remediar, Incendiar, Odiar): ganham 'ei' no presente (medeie, anseie, odeie)."
+    },
+    {
+        id: 13,
+        category: "Tempo Verbal em Orações Concessivas",
+        question: "Na frase: \"*Ainda que a empresa apresente* lucros elevados, os investimentos em inovação continuarão congelados.\" O verbo em destaque está flexionado no modo e tempo:",
+        options: [
+            { text: "Presente do Subjuntivo", isCorrect: true, rationale: "Correto: A locução concessiva 'ainda que' exige obrigatoriamente o modo subjuntivo, estando o verbo 'apresente' no presente desse modo." },
+            { text: "Presente do Indicativo", isCorrect: false, rationale: "Incorreto: No indicativo a forma seria 'apresenta'." },
+            { text: "Futuro do Subjuntivo", isCorrect: false, rationale: "Incorreto: No futuro do subjuntivo a forma seria 'apresentar'." },
+            { text: "Pretérito Imperfeito do Subjuntivo", isCorrect: false, rationale: "Incorreto: No imperfeito do subjuntivo a forma seria 'apresentasse'." }
+        ],
+        hint: "A conjunção concessiva 'ainda que' projeta fato hipotético/concessivo atual, regendo o Presente do Subjuntivo."
+    },
+    {
+        id: 14,
+        category: "Formas Nominais: Infinitivo Flexionado",
+        question: "Assinale a opção em que o uso do infinitivo flexionado é obrigatório de acordo com a norma-padrão:",
+        options: [
+            { text: "É importante os fiscais *analisarem* todos os documentos com cautela.", isCorrect: true, rationale: "Correto: Havendo sujeito próprio e explícito ('os fiscais') antecedendo a oração reduzida, o infinitivo deve ser flexionado no plural." },
+            { text: "Os alunos vieram para *estudar* para a prova de biologia.", isCorrect: false, rationale: "Incorreto: Como o sujeito é o mesmo da oração principal ('os alunos'), o infinitivo pode permanecer não flexionado." },
+            { text: "Eles preferem não *falar* sobre os problemas de ontem.", isCorrect: false, rationale: "Incorreto: Verbo locutivo/auxiliar com mesmo sujeito dispensa flexão." },
+            { text: "Devemos *combater* a corrupção em todas as instâncias.", isCorrect: false, rationale: "Incorreto: Em locuções verbais, o verbo principal no infinitivo não se flexiona." }
+        ],
+        hint: "Flexiona-se o infinitivo quando ele possui um sujeito claríssimo e diferente do sujeito da oração principal."
+    },
+    {
+        id: 15,
+        category: "Conjugação do Verbo 'Intervir'",
+        question: "Assinale a frase em que o verbo 'intervir' foi corretamente flexionado no pretérito perfeito do indicativo:",
+        options: [
+            { text: "O diretor interveio imediatamente na discussão dos diretores.", isCorrect: true, rationale: "Correto: O verbo 'intervir' deriva de 'vir', devendo ser conjugado como tal no pretérito perfeito: ele 'veio' -> ele 'interveio'." },
+            { text: "O diretor interviu imediatamente na discussão dos diretores.", isCorrect: false, rationale: "Incorreto: 'Interviu' é erro crasso provocado pela falsa analogia com verbos em -ir como 'pediu' ou 'iu'." },
+            { text: "O diretor intervindo imediatamente na discussão dos diretores.", isCorrect: false, rationale: "Incorreto: Utilizou-se o gerúndio no lugar da forma conjugada." },
+            { text: "O diretor intervira imediatamente na discussão dos diretores.", isCorrect: false, rationale: "Incorreto: 'Intervira' é pretérito mais-que-perfeito." }
+        ],
+        hint: "O verbo 'intervir' segue exatamente o verbo 'vir': Se ele VEIO, ele INTERVEIO."
+    },
+    {
+        id: 16,
+        category: "Uso do Gerúndio e Gerundismo",
+        question: "Assinale a alternativa que apresenta o uso adequado do gerúndio segundo a gramática normativa, sem incorrer em 'gerundismo' vicioso:",
+        options: [
+            { text: "Aguarde um momento, pois o atendente vai estar transferindo sua ligação.", isCorrect: false, rationale: "Incorreto: Exemplo clássico de gerundismo vicioso (locução tripla indicando ação instantânea)." },
+            { text: "O cientista passará a tarde analisando as amostras coletadas no campo.", isCorrect: true, rationale: "Correto: Uso legítimo do gerúndio para indicar uma ação duradoura, contínua ou em processamento no tempo." },
+            { text: "Em relação ao seu pedido, nós vamos estar enviando o e-mail em breve.", isCorrect: false, rationale: "Incorreto: Gerundismo artificial para uma ação pontual futura." },
+            { text: "Entre em contato amanhã que nós vamos estar resolvendo o seu problema.", isCorrect: false, rationale: "Incorreto: Gerundismo inadequado." }
+        ],
+        hint: "O gerúndio é correto para expressar ações de longa duração ou simultâneas, não para substituir o futuro de ações pontuais."
+    },
+    {
+        id: 17,
+        category: "Conjugação do Verbo 'Caber'",
+        question: "Assinale a alternativa que preenche corretamente a lacuna no pretérito imperfeito do subjuntivo: \"Se ________ mais pessoas na sala, a palestra teria ocorrido lá mesmo.\"",
+        options: [
+            { text: "coubesse", isCorrect: true, rationale: "Correto: O verbo 'caber' faz no pretérito perfeito 'coube' e no imperfeito do subjuntivo 'coubesse'." },
+            { text: "cabesse", isCorrect: false, rationale: "Incorreto: 'Cabesse' é forma inexistente decorrente da falsa regularização do radical." },
+            { text: "caberá", isCorrect: false, rationale: "Incorreto: Trata-se do futuro do presente do indicativo." },
+            { text: "couber", isCorrect: false, rationale: "Incorreto: 'Couber' é futuro do subjuntivo." }
+        ],
+        hint: "A raiz do passado de CABER troca 'a' por 'ou': eu coube -> se coubesse."
+    },
+    {
+        id: 18,
+        category: "Tempo Verbal em Discurso Indireto",
+        question: "Ao converter do discurso direto para o indireto o enunciado: \"O gestor afirmou: '*Analisarei* os requerimentos amanhã'\", a forma verbal em destaque deve ser alterada para:",
+        options: [
+            { text: "analisaria", isCorrect: true, rationale: "Correto: O futuro do presente ('analisarei') do discurso direto transforma-se em futuro do pretérito ('analisaria') no discurso indireto ancorado no passado." },
+            { text: "analisará", isCorrect: false, rationale: "Incorreto: Mantém a perspectiva do discurso direto, gerando desalinhamento temporal." },
+            { text: "analisou", isCorrect: false, rationale: "Incorreto: Converte erroneamente o futuro em pretérito perfeito." },
+            { text: "analisasse", isCorrect: false, rationale: "Incorreto: Converte o futuro do indicativo em pretérito imperfeito do subjuntivo." }
+        ],
+        hint: "No discurso indireto, o Futuro do Presente do indicativo muda para Futuro do Pretérito."
+    },
+    {
+        id: 19,
+        category: "Conjugação do Verbo 'Ver' vs. 'Vir'",
+        question: "Assinale a opção gramaticalmente correta em relação ao emprego dos verbos 'ver' e 'vir' no futuro do subjuntivo:",
+        options: [
+            { text: "Se você *ver* o professor na biblioteca, entregue-lhe este documento.", isCorrect: false, rationale: "Incorreto: 'Ver' no futuro do subjuntivo faz 'vir' (se você vir)." },
+            { text: "Se você *vir* o professor na biblioteca, entregue-lhe este documento.", isCorrect: true, rationale: "Correto: O futuro do subjuntivo do verbo VER é 'vir' (se eu vir, se tu vires, se ele vir...)." },
+            { text: "Se você *viver* o professor na biblioteca, entregue-lhe este documento.", isCorrect: false, rationale: "Incorreto: 'Viver' é outro verbo." },
+            { text: "Se você *vier* o professor na biblioteca, entregue-lhe este documento.", isCorrect: false, rationale: "Incorreto: 'Vier' é futuro do subjuntivo do verbo VIR (deslocamento), não de VER." }
+        ],
+        hint: "Lembre-se: Para o verbo VER no futuro do subjuntivo -> 'Se eu vir'. Para o verbo VIR -> 'Se eu vier'."
+    },
+    {
+        id: 20,
+        category: "Pretérito Perfeito vs. Pretérito Imperfeito",
+        question: "Observe o trecho: \"Enquanto a secretária *atendia* o telefone, o cliente *entrou* na sala sem bater.\" Os tempos verbais destacados indicam, respectivamente:",
+        options: [
+            { text: "Ação contínua/duradoura em andamento no passado (imperfeito) e ação pontual que a interrompeu (perfeito).", isCorrect: true, rationale: "Correto: O pretérito imperfeito cria o cenário em plano de fundo (duração), enquanto o pretérito perfeito insere a ação pontual que corta o processo." },
+            { text: "Duas ações perfeitamente concluídas e simultâneas no passado.", isCorrect: false, rationale: "Incorreto: Os aspectos verbais diferem (durativo vs. pontual)." },
+            { text: "Ação hipotética não realizada e consequência futura certa.", isCorrect: false, rationale: "Incorreto: Ambos pertencem ao modo indicativo no tempo passado." },
+            { text: "Ação passada anterior a outra ação também passada.", isCorrect: false, rationale: "Incorreto: Essa é a função do pretérito mais-que-perfeito." }
+        ],
+        hint: "Pretérito Imperfeito = Ação contínua/duração (cenário). Pretérito Perfeito = Ação pontual pontual (evento)."
+    },
+    {
+        id: 21,
+        category: "Conjugação dos Verbos 'Pôr' e Derivados",
+        question: "Assinale a opção com a flexão verbal incorreta do verbo 'propor':",
+        options: [
+            { text: "Se a diretoria *propusesse* um acordo, aceitaríamos.", isCorrect: false, rationale: "Correto: 'Propusesse' é pretérito imperfeito do subjuntivo regular de propor." },
+            { text: "Quando o relator *propor* as mudanças, debateremos o texto.", isCorrect: true, rationale: "Incorreto: O futuro do subjuntivo de propor é 'propuser' (derivado de pôr -> puser), e não 'propor'." },
+            { text: "O advogado *propôs* uma solução alternativa para o litígio.", isCorrect: false, rationale: "Correto: 'Propôs' é pretérito perfeito do indicativo." },
+            { text: "Eles *propuseram* novas metas para o próximo trimestre.", isCorrect: false, rationale: "Correto: 'Propuseram' é 3ª pessoa do plural do pretérito perfeito." }
+        ],
+        hint: "Todos os derivados de PÔR seguem 'puser' no futuro do subjuntivo: se ele propuser, se ele compuser, se ele dispuser."
+    },
+    {
+        id: 22,
+        category: "Emprego de Verbos Defectivos",
+        question: "Sobre os verbos defectivos (aqueles que não possuem conjugação completa), assinale a alternativa gramaticalmente aceita na norma culta:",
+        options: [
+            { text: "Eu *falho* sempre que tento realizar esta tarefa complexa.", isCorrect: false, rationale: "Incorreto: 'Falhar' é regular. A questão pede a particularidade dos defectivos como 'falir'." },
+            { text: "O comerciante *faliu* após sucessivas crises financeiras no setor.", isCorrect: true, rationale: "Correto: O verbo 'falir' é defectivo e não possui 1ª pessoa do presente do indicativo, mas flexiona-se normalmente nos tempos do pretérito (faliu, falira, falira)." },
+            { text: "Eu *falo* o orçamento da empresa para economizar custos.", isCorrect: false, rationale: "Incorreto: Não existe a forma 'falo' para o verbo falir no presente do indicativo." },
+            { text: "Que eu *fala* a empresa não é a intenção dos sócios.", isCorrect: false, rationale: "Incorreto: O verbo falir não possui presente do subjuntivo." }
+        ],
+        hint: "Verbos defectivos como 'falir' só possuem no presente as formas em que a tônica cai na desinência (nós falimos, vós falis), mas funcionam plenamente no passado."
+    },
+    {
+        id: 23,
+        category: "Vozes Verbais e Tempo Verbal",
+        question: "Ao converter a oração na voz passiva analítica \"O edital *fora publicado* pelo órgão responsável\" para a voz ativa, a forma verbal correta será:",
+        options: [
+            { text: "publicou", isCorrect: false, rationale: "Incorreto: 'Publicou' é pretérito perfeito, enquanto 'fora publicado' está no pretérito mais-que-perfeito." },
+            { text: "publicara", isCorrect: true, rationale: "Correto: 'fora publicado' é a voz passiva do pretérito mais-que-perfeito, cuja correspondente ativa simples é 'publicara'." },
+            { text: "publicaria", isCorrect: false, rationale: "Incorreto: 'Publicaria' é futuro do pretérito." },
+            { text: "publicava", isCorrect: false, rationale: "Incorreto: 'Publicava' é pretérito imperfeito." }
+        ],
+        hint: "Mantenha rigorosamente o mesmo tempo verbal ao mudar a voz: 'fora publicado' = pretérito mais-que-perfeito (-ra)."
+    },
+    {
+        id: 24,
+        category: "Conjugação do Verbo 'Valer'",
+        question: "Assinale a alternativa que preenche corretamente a lacuna no presente do subjuntivo: \"É preciso que a lei ________ para todos os cidadãos, sem exceções.\"",
+        options: [
+            { text: "valha", isCorrect: true, rationale: "Correto: A 1ª pessoa do presente do indicativo do verbo valer é 'eu valho', da qual se deriva todo o presente do subjuntivo: que ele valha." },
+            { text: "vala", isCorrect: false, rationale: "Incorreto: Forma errônea que desconsidera a alteração no radical originada da 1ª pessoa." },
+            { text: "valerá", isCorrect: false, rationale: "Incorreto: Trata-se de futuro do presente do indicativo." },
+            { text: "valha-se", isCorrect: false, rationale: "Incorreto: Adição indevida do pronome reflexivo ao contexto." }
+        ],
+        hint: "Derivação do Presente do Subjuntivo: Eu valho (Indicativo) -> Que ele VALHA (Subjuntivo)."
+    },
+    {
+        id: 25,
+        category: "Modo Imperativo na 3ª Pessoa (Você)",
+        question: "Para transformar a frase no modo imperativo dirigida ao pronome de tratamento 'Você', mantendo a correção gramatical: \"________ (vir) aqui e ________ (trazer) os relatórios!\"",
+        options: [
+            { text: "Vem — traze", isCorrect: false, rationale: "Incorreto: 'Vem' e 'traze' são formas da 2ª pessoa do singular (Tu)." },
+            { text: "Venha — traga", isCorrect: true, rationale: "Correto: As formas da 3ª pessoa (Você) do imperativo derivam diretamente da 3ª pessoa do presente do subjuntivo (que você venha / que você traga)." },
+            { text: "Vens — trazes", isCorrect: false, rationale: "Incorreto: São flexões do presente do indicativo do tu." },
+            { text: "Vinha — trazia", isCorrect: false, rationale: "Incorreto: São flexões do pretérito imperfeito do indicativo." }
+        ],
+        hint: "Para 'Você', as formas do imperativo são idênticas ao Presente do Subjuntivo: Venha / Traga."
+    },
+    {
+        id: 26,
+        category: "Aspecto Verbal Incoativo e Cessativo",
+        question: "Nas frases:\n1. O paciente *começou a caminhar* pelo corredor.\n2. O paciente *parou de caminhar* pelo corredor.\nAs locuções verbais expressam, quanto ao aspecto verbal, respectivamente:",
+        options: [
+            { text: "Início de uma ação (incoativo) e interrupção/término de uma ação (cessativo).", isCorrect: true, rationale: "Correto: O verbo auxiliar 'começar a' marca a fase inicial (incoativo) e 'parar de' indica o término da ação durativa (cessativo)." },
+            { text: "Ação concluída no passado e ação hipotética futura.", isCorrect: false, rationale: "Incorreto: Ambas as locuções relatam fatos passados sob recortes de aspecto temporal distintos." },
+            { text: "Repetição habitual e ação iminente não realizada.", isCorrect: false, rationale: "Incorreto: O aspecto frequentativo exige auxiliares como 'costumar' ou 'tornar a'." },
+            { text: "Modo indicativo e modo subjuntivo puramente.", isCorrect: false, rationale: "Incorreto: A análise de aspecto transcende a mera classificação de modo." }
+        ],
+        hint: "Aspecto incoativo = início da ação. Aspecto cessativo = fim ou interrupção da ação."
+    },
+    {
+        id: 27,
+        category: "Conjugação de Verbos Abundantes: Salvar e Enxugar",
+        question: "Assinale a opção com o uso correto dos particípios nas frases a seguir:\nI. O bombeiro tinha ________ a criança do incêndio.\nII. O incêndio foi ________ pelo corpo de bombeiros.",
+        options: [
+            { text: "salvo — salvado", isCorrect: false, rationale: "Incorreto: Inverteu a regra clássica de aplicação dos particípios regulares e irregulares." },
+            { text: "salvado — salvo", isCorrect: true, rationale: "Correto: Usa-se a forma regular ('salvado') com o auxiliar 'ter', e a forma curta/irregular ('salvo') com a voz passiva analítica e auxiliar 'ser/foi'." },
+            { text: "salvo — salvo", isCorrect: false, rationale: "Incorreto: Desrespeita a preferência normativa da forma longa com o auxiliar ter." },
+            { text: "salvado — salvado", isCorrect: false, rationale: "Incorreto: A forma 'salvado' na voz passiva com verbo ser não é recomendada pela norma culta." }
+        ],
+        hint: "Com TER -> Salvado (longo). Com SER/FOI -> Salvo (curto)."
+    },
+    {
+        id: 28,
+        category: "Correlação Verbal com Futuro do Subjuntivo",
+        question: "Assinale a alternativa que apresenta erro de correlação temporal/verbal:",
+        options: [
+            { text: "Quando eu chegar em casa, telefonarei para o médico.", isCorrect: false, rationale: "Correto: Futuro do subjuntivo ('chegar') correlacionado ao futuro do presente ('telefonarei')." },
+            { text: "Assim que os documentos estiverem prontos, avisaremos os clientes.", isCorrect: false, rationale: "Correto: Futuro do subjuntivo ('estiverem') correlacionado ao futuro do presente ('avisaremos')." },
+            { text: "Enquanto você estudar com dedicação, alcançará seus objetivos.", isCorrect: false, rationale: "Correto: Futuro do subjuntivo ('estudar') com futuro do presente ('alcançará')." },
+            { text: "Se a encomenda chegar amanhã, eu entregava ao destinatário.", isCorrect: true, rationale: "Incorreto: Erro de correlação. O futuro do subjuntivo ('chegar') exige futuro do presente ('entregarei'), e não pretérito imperfeito ('entregava')." }
+        ],
+        hint: "O Futuro do Subjuntivo DEVE correlacionar-se com o Futuro do Presente (ou imperativo), nunca com o pretérito."
+    },
+    {
+        id: 29,
+        category: "Uso do Infinitivo Pessoal vs. Impessoal",
+        question: "Assinale a frase em que o uso do infinitivo IMPESSOAL (sem flexão) está correto de acordo com a norma-padrão:",
+        options: [
+            { text: "Os cidadãos foram impedidos de *manifestar* suas opiniões livremente.", isCorrect: true, rationale: "Correto: Após preposição ligada a verbo antecedente ('impedidos de'), quando o sujeito do infinitivo é o mesmo do verbo principal, prefere-se o infinitivo impessoal." },
+            { text: "Para eles *entender* a matéria, foi necessário mais tempo de aula.", isCorrect: false, rationale: "Incorreto: Como o infinitivo possui sujeito próprio e explícito ('eles'), deve-se flexionar: 'entenderem'." },
+            { text: "Ao *chegar* os convidados, a festa teve início imediato.", isCorrect: false, rationale: "Incorreto: Com sujeito pós-posto explícito no plural ('os convidados'), a flexão é obrigatória: 'Ao chegarem os convidados'." },
+            { text: "É fundamental *estudarmos* todos os dias para passar no concurso.", isCorrect: false, rationale: "Incorreto: Não incorre em erro absoluto, mas o item pede a frase com o impessoal estrito exigido pela regra." }
+        ],
+        hint: "Quando regido por preposição e ligado ao mesmo sujeito da oração principal, o infinitivo não precisa ser flexionado."
+    },
+    {
+        id: 30,
+        category: "Conjugação do Verbo 'Opor' no Subjuntivo",
+        question: "Preencha as lacunas com as formas adequadas do verbo 'opor-se': \"Caso os diretores se ________ ao projeto, é provável que os acionistas também se ________.\"",
+        options: [
+            { text: "oporem — oporão", isCorrect: false, rationale: "Incorreto: 'Oporem' é infinitivo flexionado e 'oporão' é futuro do indicativo, violando a exigência do modo subjuntivo pela conjunção 'caso'." },
+            { text: "opusessem — oponham", isCorrect: false, rationale: "Incorreto: Incompatibilidade entre pretérito imperfeito do subjuntivo e presente do subjuntivo." },
+            { text: "oponham — oponham", isCorrect: true, rationale: "Correto: A conjunção 'caso' exige o Presente do Subjuntivo nas duas orações subordinadas: 'caso se oponham... se oponham'." },
+            { text: "oporiam — opusessem", isCorrect: false, rationale: "Incorreto: Mistura indevida de futuro do pretérito com subjuntivo." }
+        ],
+        hint: "A conjunção 'CASO' exige o verbo no Presente do Subjuntivo (Caso eles se oponham)."
+    }
+];
 
         // State Management
         let currentQuestionIdx = 0;
