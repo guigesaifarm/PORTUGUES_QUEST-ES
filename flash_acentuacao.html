@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Acentuação Gráfica</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb; /* Azul padrão */
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .card-content {
+            font-size: 1.6rem; 
+            line-height: 1.4;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.15rem; 
+            text-align: left;
+            color: #34495e;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.3rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Domínio Completo da Acentuação Gráfica</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Acentuação</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            {
+                category: "Oxítonas",
+                front: "Qual é a regra de acentuação gráfica para as palavras <b>oxítonas</b>?",
+                back: "Acentuam-se as oxítonas terminadas em: <b>A(s)</b>, <b>E(s)</b>, <b>O(s)</b>, <b>EM</b> e <b>ENS</b> (Ex: <i>sofá</i>, <i>café</i>, <i>cipó</i>, <i>armazém</i>, <i>parabéns</i>)."
+            },
+            {
+                category: "Oxítonas",
+                front: "Palavras oxítonas terminadas em <b>-i</b> ou <b>-u</b> (ex: siri, caju) levam acento?",
+                back: "<b>Não!</b> Em regra, oxítonas terminadas em -i ou -u isoladas não são acentuadas (Ex: <i>siri</i>, <i>caju</i>, <i>umbu</i>, <i>tapioca</i> não levam acento)."
+            },
+            {
+                category: "Paroxítonas",
+                front: "Qual é a regra geral de acentuação para as palavras <b>paroxítonas</b>?",
+                back: "Acentuam-se as paroxítonas que <b>não</b> terminam em A(s), E(s), O(s), EM, ENS. Ou seja, terminadas em L, N, R, X, PS, Ã(s), ÃO(s), I(s), U(s), Ditongo oral (Ex: <i>táxi</i>, <i>fóssil</i>, <i>órfã</i>, <i>júri</i>)."
+            },
+            {
+                category: "Paroxítonas",
+                front: "Por que a palavra <b>lápis</b> é acentuada?",
+                back: "Porque é uma palavra <b>paroxítona</b> terminada na letra <b>'s'</b> (precedida de vogal não pertencente ao grupo a, e, o, em, ens), o que atrai a regra de acentuação das paroxítonas."
+            },
+            {
+                category: "Proparoxítonas",
+                front: "Qual é a regra de acentuação para as palavras <b>proparoxítonas</b>?",
+                back: "<b>Todas</b> as palavras proparoxítonas (aquelas cuja sílaba tônica é a antepenúltima) são obrigatoriamente acentuadas sem exceção (Ex: <i>lâmpada</i>, <i>médico</i>, <i>pássaro</i>, <i>ês-tu-do</i> não, mas <i>frivolo/frivolo</i> depende, todas as proparoxítonas reais levam acento)."
+            },
+            {
+                category: "Monossílabos Tônicos",
+                front: "Quais monossílabos tônicos devem receber acento gráfico obrigatório?",
+                back: "Apenas os monossílabos tônicos terminados em <b>A(s)</b>, <b>E(s)</b> e <b>O(s)</b> (Ex: <i>pá</i>, <i>pé</i>, <i>pó</i>, <i>dó</i>, <i>vês</i>, <i>más</i>). Os terminados em -i ou -u isolados não levam (ex: pi, nu)."
+            },
+            {
+                category: "Ditongos Abertos",
+                front: "O que mudou com o Novo Acordo Ortográfico para os ditongos abertos <b>-ei</b> e <b>-oi</b> em palavras paroxítonas?",
+                back: "O acento gráfico foi <b>totalmente abolido</b> em palavras paroxítonas com ditongos abertos 'ei' e 'oi' (Ex: <i>ideia</i>, <i>assembleia</i>, <i>jiboia</i>, <i>paranoico</i> escrevem-se sem acento)."
+            },
+            {
+                category: "Ditongos Abertos",
+                front: "O acento nos ditongos abertos <b>-éu</b>, <b>-ói</b> e <b>-éi</b> em palavras <b>oxítonas</b> foi mantido?",
+                back: "<b>Sim!</b> Nas palavras oxítonas e monossílabos tónicos, o acento nos ditongos abertos continua obrigatório (Ex: <i>chapéu</i>, <i>herói</i>, <i>anéis</i>, <i>corrói</i>)."
+            },
+            {
+                category: "Hiatos (I e U tônicos)",
+                front: "Qual é a regra de acentuação para o <b>'i'</b> e o <b>'u'</b> tónicos formadores de hiato?",
+                back: "Acentuam-se o 'i' e o 'u' tónicos quando formam hiato com a vogal anterior, sozinhos na sílaba (ou com 's'), desde que não venham seguidos de 'nh' (Ex: <i>saúde</i>, <i>país</i>, <i>baú</i>, <i>faisca</i>)."
+            },
+            {
+                category: "Exceção do Hiato (NH)",
+                front: "Por que a palavra <b>rainha</b> ou <b>moinho</b> não tem acento no 'i' / 'u' do hiato?",
+                back: "Porque o 'i' ou 'u' tônico do hiato vem seguido do dígrafo <b>'-nh-'</b> na sílaba seguinte. Nesses casos específicos, perde-se o acento gráfico (Ex: <i>rainha</i>, <i>moinho</i>, <i>faisoinha</i>)."
+            },
+            {
+                category: "Exceção do Hiato (Ditongo Antecedente)",
+                front: "Palavras paroxítonas com <b>'i'</b> ou <b>'u'</b> tónicos precedidos de ditongo (ex: feiura, bocaiuva) são acentuadas?",
+                back: "<b>Não!</b> O Novo Acordo Ortográfico determinou que perde o acento o 'i' ou 'u' tônico de hiato quando precedido de ditongo na mesma palavra paroxítona (Ex: <i>feiura</i>, <i>bocaiuva</i>)."
+            },
+            {
+                category: "Hiatos (OO e EE)",
+                front: "As palavras com vogais duplicadas <b>'oo'</b> (ex: voo, enjoo) e <b>'ee'</b> (ex: creem, leem) continuam acentuadas?",
+                back: "<b>Não.</b> O Novo Acordo Ortográfico eliminou o acento circunflexo em todas as vogais duplicadas 'oo' e 'ee' de formas verbais ou substantivos (Ex: <i>voo</i>, <i>enjoo</i>, <i>creem</i>, <i>leem</i>, <i>veem</i>)."
+            },
+            {
+                category: "Acento Diferencial",
+                front: "O acento diferencial foi totalmente eliminado da língua portuguesa?",
+                back: "<b>Não totalmente.</b> A maioria foi abolida (como para/para, pelo/pelo), mas manteve-se obrigatoriamente em: <b>pôde</b> (pretérito) / <b>pode</b> (presente) e <b>pôr</b> (verbo) / <b>por</b> (preposição)."
+            },
+            {
+                category: "Acento Diferencial (Pode / Pôde)",
+                front: "Qual é a diferença de acentuação entre <b>pode</b> e <b>pôde</b>?",
+                back: "• <b>Pode:</b> verbo no presente do indicativo (ele pode hoje).<br>• <b>Pôde:</b> verbo no pretérito perfeito do indicativo (ele pôde ontem). O acento circunflexo diferencia o tempo verbal."
+            },
+            {
+                category: "Acento Diferencial (Pôr / Por)",
+                front: "Por que o verbo <b>pôr</b> leva acento circunflexo em relação à preposição <b>por</b>?",
+                back: "Usa-se o acento diferencial para distinguir o verbo <b>pôr</b> (colocar) da preposição <b>por</b> (conexão), evitando ambiguidade na leitura."
+            },
+            {
+                category: "Acento de Plural (Tem / Vem)",
+                front: "Como se diferenciam no plural os verbos <b>ter</b> e <b>vir</b> em relação ao singular (ele tem / eles têm)?",
+                back: "No singular usa-se sem acento (ele <b>tem</b> / ele <b>vem</b>). No plural, recebem acento circunflexo para indicar o número: eles <b>têm</b> / eles <b>vêm</b> (e seus derivados como <i>mantêm</i>, <i>provêm</i>)."
+            },
+            {
+                category: "Derivados de Ter e Vir",
+                front: "Como se acentuam os verbos derivados de ter e vir no plural, como <b>conter</b> e <b>intervir</b>?",
+                back: "• Singular: ele contém / ele intervém (agudo).<br>• Plural: eles contêm / eles intervêm (circunflexo). Mantém-se o padrão de diferenciação de singular para plural."
+            },
+            {
+                category: "Acento Agudo vs Circunflexo",
+                front: "Qual é a diferença básica de função entre o acento agudo (´) e o circunflexo (^)?",
+                back: "• O <b>agudo</b> indica timbre aberto (ex: p<b>é</b>, av<b>ó</b>).<br>• O <b>circunflexo</b> indica timbre fechado e tonicidade (ex: ê, ô, â) e também serve como acento diferencial de tonicidade/classe gramatical."
+            },
+            {
+                category: "Trema",
+                front: "O trema (¨) ainda é utilizado em palavras da língua portuguesa padrão?",
+                back: "<b>Não em palavras portuguesas comuns.</b> Foi totalmente abolido de palavras como <i>linguiça</i>, <i>frequente</i> e <i>tranquilo</i>. Restringe-se apenas a nomes próprios estrangeiros e derivados (ex: <i>Bündchen</i>)."
+            },
+            {
+                category: "Paroxítonas Terminadas em Ditongo",
+                front: "Palavras paroxítonas terminadas em ditongo oral crescente ou decrescente (ex: série, mágoa, história) são acentuadas?",
+                back: "<b>Sim!</b> Todas as paroxítonas terminadas em ditongo oral (seguido ou não de 's') recebem acento gráfico obrigatório (Ex: <i>história</i>, <i>férias</i>, <i>pântano</i>, <i>lírio</i>)."
+            },
+            {
+                category: "Acentuação de 'Freezer' / 'Blôco'",
+                front: "Palavras estrangeiras aportuguesadas seguem as regras normais de acentuação do português?",
+                back: "<b>Sim.</b> Se forem proparoxítonas ou paroxítonas que se enquadrem nas regras (ex: <i>tênis</i>, <i>júri</i>), recebem acento conforme o padrão da ortografia oficial."
+            },
+            {
+                category: "Consoantes Finais em Paroxítonas",
+                front: "Por que palavras como <b>táxi</b>, <b>fóssil</b> e <b>repórter</b> recebem acento gráfico?",
+                back: "Porque são paroxítonas terminadas em <b>-i</b>, <b>-l</b> e <b>-r</b>, letras que não fazem parte do grupo restrito de exceções (a, e, o, em, ens), exigindo o acento."
+            },
+            {
+                category: "Monossílabos Átonos",
+                front: "Os monossílabos átonos (como o, a, de, em, por) podem receber acento gráfico?",
+                back: "<b>Nunca.</b> Os monossílabos átonos são fracos foneticamente e nunca possuem autonomia tônica ou acentuação gráfica própria."
+            },
+            {
+                category: "Acentuação em Compostos",
+                front: "Em palavras compostas unidas por hífen, como <b>pára-choque</b>, o acento foi mantido pelo Novo Acordo?",
+                back: "<b>Não!</b> O Novo Acordo aboliu o acento diferencial em formas homógrafas átonas em compostos, escrevendo-se hoje sem acento: <b>para-choque</b>, <b>para-quedas</b>, <b>para-lama</b>."
+            },
+            {
+                category: "Falso Ditongo / Hiato",
+                front: "A palavra <b>juizado</b> tem acento no 'i'? Por quê?",
+                back: "<b>Não tem acento.</b> Embora forme hiato (ju-i-za-do), o 'i' é seguido por 'z' na mesma sílaba ou não está isolado de forma a pedir acento de hiato tônico simples na regra de tonicidade estrita."
+            },
+            {
+                category: "Terminação -ao / -oes",
+                front: "Por que as palavras <b>órgão</b> e <b>órfãos</b> são acentuadas?",
+                back: "Porque são palavras <b>paroxítonas</b> terminadas em ditongo nasal representado por <b>-ão</b> / <b>-ãos</b> (que entram na regra de acentuação das paroxítonas não excluídas)."
+            },
+            {
+                category: "Palavras Oxítonas Plurais",
+                front: "Se uma palavra oxítona no singular não tem acento (ex: caju), ela ganha acento no plural (cajus)?",
+                back: "<b>Não.</b> Oxítonas terminadas em -u ou -i não são acentuadas nem no singular nem no plural (ex: <i>siris</i>, <i>cajus</i> continuam sem acento)."
+            },
+            {
+                category: "Acentuação Gráfica Geral",
+                front: "Qual é a classificação e a justificativa de acento da palavra <b>estudância</b>?",
+                back: "É uma palavra <b>paroxítona terminada em ditongo oral crescente</b> (-cia), logo recebe acento gráfico obrigatório segundo as regras de acentuação."
+            },
+            {
+                category: "Dúvida Comum em Provas",
+                front: "A palavra <b>papeis</b> tem acento agudo no 'ei'? Por quê?",
+                back: "<b>Não tem acento.</b> O Novo Acordo Ortográfico retirou o acento dos ditongos abertos 'ei' e 'oi' quando a palavra é <b>paroxítona</b> (pa-peis). Só há acento se for oxítona (ex: herói, anéis)."
+            },
+            {
+                category: "Macete de Prova",
+                front: "Qual é a ordem lógica mental para analisar a acentuação de uma palavra na hora da prova?",
+                back: "1. Descubra a sílaba tônica.<br>2. Classifique o grupo (Oxítona, Paroxítona ou Proparoxítona).<br>3. Aplique a regra específica do grupo correspondente considerando as normas do Novo Acordo."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
