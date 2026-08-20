@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Figuras de Linguagem</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb; /* Azul padrão de português */
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        /* Fontes ajustadas para melhor legibilidade */
+        .card-content {
+            font-size: 1.6rem; 
+            line-height: 1.4;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.15rem; 
+            text-align: left;
+            color: #34495e;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.3rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Domínio Completo das Figuras de Linguagem para Concursos</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Figuras de Linguagem</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            {
+                category: "Figuras de Palavras",
+                front: "O que é uma <b>Metáfora</b> e qual é a sua principal característica?",
+                back: "É uma figura de palavra que estabelece uma relação de <b>comparação implícita</b> baseada em uma semelhança (Ex: <i>'Meu amor é uma fogueira'</i>). Não utiliza conectivos comparativos."
+            },
+            {
+                category: "Figuras de Palavras",
+                front: "Qual é a principal diferença entre a <b>Metáfora</b> e a <b>Comparação (Símile)</b>?",
+                back: "A <b>Comparação</b> usa conectivos explícitos de semelhança (como, tal qual, assim como), enquanto a <b>Metáfora</b> oculta esses conectivos, fundindo os elementos diretamente."
+            },
+            {
+                category: "Figuras de Palavras",
+                front: "O que caracteriza a figura de linguagem chamada <b>Metonímia</b>?",
+                back: "É a substituição de um termo por outro devido a uma relação lógica ou de proximidade real (Ex: Ler <i>Machado de Assis</i> pelo autor em vez da obra; beber um <i>copo</i> pelo conteúdo)."
+            },
+            {
+                category: "Figuras de Palavras",
+                front: "O que é a <b>Catacrese</b> e por que ela ocorre?",
+                back: "É o uso de uma palavra fora do seu sentido original por falta de um termo específico na língua (Ex: <i>'boca do forno'</i>, <i>'braço da poltrona'</i>, <i>'dente de alho'</i>)."
+            },
+            {
+                category: "Figuras de Palavras",
+                front: "Defina o que é uma <b>Sinestesia</b> em figuras de estilo.",
+                back: "É a mesclagem ou cruzamento de diferentes <b>sentidos humanos</b> numa mesma expressão (Ex: <i>'voz doce'</i> [audição + paladar], <i>'olhar gelado'</i> [visão + tato])."
+            },
+            {
+                category: "Figuras de Palavras",
+                front: "O que diferencia a <b>Paronomásia</b> dentro das figuras de palavras?",
+                back: "É o uso de palavras parônimas (parecidas na pronúncia ou grafia, mas com significados diferentes) gerando efeito estético ou trocadilho (Ex: <i>'O cavaleiro/cavalheiro entrou na sala'</i>)."
+            },
+            {
+                category: "Figuras de Pensamento",
+                front: "O que é a <b>Antítese</b> e como ela se manifesta?",
+                back: "É a aproximação de palavras ou ideias de <b>sentidos opostos</b> (antônimos) em uma mesma frase (Ex: <i>'O amor é fogo que arde sem se ver; é ferida que dói e não se sente'</i>)."
+            },
+            {
+                category: "Figuras de Pensamento",
+                front: "Qual é a distinção essencial entre <b>Antítese</b> e <b>Paradoxo (Oxímoro)</b>?",
+                back: "A <b>Antítese</b> opõe ideias contrárias, mas possíveis. O <b>Paradoxo</b> une ideias que se contradizem de forma absurda ou ilógica, formando um sentido superior (Ex: <i>'Já estou cheio de me sentir vazio'</i>)."
+            },
+            {
+                category: "Figuras de Pensamento",
+                front: "O que caracteriza a <b>Personificação</b> ou Prosopopeia?",
+                back: "Consiste em atribuir <b>ações, sentimentos ou características humanas</b> a seres inanimados, irracionais ou abstratos (Ex: <i>'A noite sussurrava segredos à janela'</i>)."
+            },
+            {
+                category: "Figuras de Pensamento",
+                front: "O que é a <b>Hipérbole</b>?",
+                back: "É uma figura de pensamento baseada no <b>exagero intencional</b> para dar intensidade a uma ideia (Ex: <i>'Estou morrendo de sede'</i>, <i>'Ria rios de lágrimas'</i>)."
+            },
+            {
+                category: "Figuras de Pensamento",
+                front: "Como se define a <b>Ironia</b>?",
+                back: "É o uso de uma palavra ou frase com a intenção de dizer o <b>contrário do que se pensa</b> ou do sentido literal, geralmente com tom sarcástico ou de zombaria (Ex: <i>'Que aluno inteligente, tirou zero de novo!'</i>)."
+            },
+            {
+                category: "Figuras de Pensamento",
+                front: "O que é o <b>Eufemismo</b>?",
+                back: "É a figura usada para suavizar uma expressão considerada chocante, desagradável ou tabu (Ex: <i>'Ele descansou'</i> ou <i>'partiu desta para melhor'</i> no lugar de faleceu/morreu)."
+            },
+            {
+                category: "Figuras de Pensamento",
+                front: "O que caracteriza a <b>Gradação (Clímax ou Anticlímax)</b>?",
+                back: "É a disposição de ideias em uma sequência progressiva ascendente (crescente) ou descendente (decrescente) (Ex: <i>'O vento o açoitava, a tempestade o derrubava, o mundo o esmagava'</i>)."
+            },
+            {
+                category: "Figuras de Pensamento",
+                front: "O que é a <b>Apóstrofe</b>?",
+                back: "É a invocação ou chamamento enfático de alguém ou algo (que pode ser uma pessoa real, ausente, morta, ou um ser inanimado/abstrato) (Ex: <i>'Ó Deus, por que me abandonaste?'</i>)."
+            },
+            {
+                category: "Figuras de Sintaxe",
+                front: "O que é a <b>Elipse</b> em sintaxe?",
+                back: "É a omissão de um termo ou palavra que pode ser facilmente identificada e compreendida pelo contexto da frase (Ex: <i>'No mar, menos sustos'</i> - omissão do verbo haver/existir)."
+            },
+            {
+                category: "Figuras de Sintaxe",
+                front: "Qual é a diferença entre <b>Elipse</b> e <b>Zeugma</b>?",
+                back: "A <b>Elipse</b> omite um termo qualquer não mencionado antes. O <b>Zeugma</b> é um tipo específico de elipse em que se omite um termo <b>que já apareceu anteriormente</b> na frase (Ex: <i>'Eu prefiro praia; ele, campo'</i> - omissão de 'prefiro')."
+            },
+            {
+                category: "Figuras de Sintaxe",
+                front: "O que é o <b>Polissíndeto</b>?",
+                back: "É a repetição intencional de um <b>conectivo (conjunção)</b> entre orações ou palavras da mesma frase (Ex: <i>'Trabalha, e sua, e ferve, e chora, e vive'</i>)."
+            },
+            {
+                category: "Figuras de Sintaxe",
+                front: "O que caracteriza o <b>Assíndeto</b>?",
+                back: "É a ausência de conectivos (conjunções) entre orações ou termos que deveriam estar ligados, substituídos por vírgulas (Ex: <i>'Vim, vi, venci'</i>)."
+            },
+            {
+                category: "Figuras de Sintaxe",
+                front: "O que é o <b>Anacoluto</b>?",
+                back: "É uma quebra na estrutura sintática da frase, deixando um termo isolado no início sem função sintática direta com o resto da oração (Ex: <i>'Essas crianças de hoje, ninguém as entende'</i>)."
+            },
+            {
+                category: "Figuras de Sintaxe",
+                front: "O que é o <b>Hipérbato</b> (ou Inversão)?",
+                back: "É a alteração da ordem direta dos termos da oração (Sujeito + Verbo + Complementos) (Ex: <i>'Ouviram do Ipiranga as margens plácidas...'</i>)."
+            },
+            {
+                category: "Figuras de Sintaxe",
+                front: "O que é a <b>Pleonasmo (ou Redundância)</b> e quando ele é uma figura de linguagem?",
+                back: "É a repetição de uma ideia para dar ênfase. Quando não é um vício de linguagem pleonasmo vicioso (como 'subir para cima'), funciona como recurso estilístico expressivo (Ex: <i>'Morrer a tua morte'</i>)."
+            },
+            {
+                category: "Figuras de Sintaxe",
+                front: "O que é a <b>Silepse (Concordância Ideológica)</b>?",
+                back: "É a concordância feita não com a regra gramatical estrita da palavra, mas com a <b>ideia (sentido)</b> implícita. Pode ser de Gênero, Número ou Pessoa (Ex: <i>'São Paulo está poluída'</i> - concorda com cidade implícita)."
+            },
+            {
+                category: "Figuras de Som (Fônicas)",
+                front: "O que é a <b>Aliteração</b>?",
+                back: "É a repetição intencional de <b>sons consonantais</b> semelhantes em uma frase ou verso para criar efeito rítmico ou imitar sons (Ex: <i>'Vozes vêm do mar, velhas vozes...'</i>)."
+            },
+            {
+                category: "Figuras de Som (Fônicas)",
+                front: "O que caracteriza a <b>Assonância</b>?",
+                back: "É a repetição intencional de <b>sons vocálicos</b> (vogais) idênticos ou semelhantes em uma frase ou poema (Ex: <i>'O que o vaso afora o ano oora'</i> ou ecos vocálicos acentuados)."
+            },
+            {
+                category: "Figuras de Som (Fônicas)",
+                front: "O que é a <b>Onomatopeia</b>?",
+                back: "É a criação ou emprego de palavras que tentam imitar <b>sons e ruídos naturais</b> de animais, objetos ou ações (Ex: <i>'O relógio fazia tique-taque'</i>, <i>'Miau'</i>, <i>'Bum'</i>)."
+            },
+            {
+                category: "Diferenciação",
+                front: "Como classificar a frase: <i>'O trânsito estava uma verdadeira tartaruga'</i>?",
+                back: "Trata-se de uma <b>Metáfora</b>, pois compara o trânsito a uma tartaruga de forma implícita e figurada, sem o uso de conectivos comparativos explícitos."
+            },
+            {
+                category: "Diferenciação",
+                front: "Qual é a figura de linguagem presente em: <i>'Chorou rios de dinheiro para comprar o carro'</i>?",
+                back: "É uma <b>Hipérbole</b>, caracterizada pelo exagero expressivo irreal (chorar rios de dinheiro)."
+            },
+            {
+                category: "Diferenciação",
+                front: "Identifique a figura de linguagem em: <i>'O vento beijava delicadamente o meu rosto'</i>.",
+                back: "Trata-se de uma <b>Personificação (ou Prosopopeia)</b>, pois o vento executa uma ação tipicamente humana de beijar."
+            },
+            {
+                category: "Diferenciação",
+                front: "Qual figura ocorre no enunciado: <i>'Comprei um Picasso original na galeria'</i>?",
+                back: "É uma <b>Metonímia</b> (substituição do autor pela obra: a tela pintada por Picasso)."
+            },
+            {
+                category: "Macete de Prova",
+                front: "Qual é a grande chave estratégica para acertar questões de Figuras de Linguagem em concursos?",
+                back: "1. Analise se a palavra está no sentido figurado ou real.<br>2. Verifique se há foco na substituição (metonímia), na estrutura sintática (elipse/hipérbato) ou no sentido emocional/pensamento (antítese/metáfora)."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
