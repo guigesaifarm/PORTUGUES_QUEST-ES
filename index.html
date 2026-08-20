@@ -3,78 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PORTUGUES QUESTOES CONCURSO</title>
+    <title>Português & Questões de Concurso</title>
+    <!-- Google Fonts para tipografia moderna -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #028482;
-            text-align: center;
-            padding: 80px;
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --accent: #10b981;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .header-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        /* Menu Dropdown Estilizado */
         .dropdown {
             position: relative;
-            display: inline-block;
+            width: 100%;
         }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: blue;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-        .dropdown-content a {
-            color: #33FF57;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-        .dropdown-content a:hover {
-            background-color: #5e0c55;
-        }
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-        .btn {
-            font-size: 20px;
-            padding: 10px 20px;
-            margin: 25px;
+
+        .btn-main {
+            width: 100%;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 16px 24px;
+            background-color: var(--primary);
+            color: #ffffff;
             border: none;
-            border-radius: 15px;
+            border-radius: 12px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
-        .btn-page1 {
-            background-color: #FF5733;
-            color: white;
+
+        .btn-main:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
         }
-        .btn-page2 {
-            background-color: #33FF57;
-            color: white;
+
+        .arrow {
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Animação do Painel Dropdown */
+        .dropdown-content {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow);
+            z-index: 10;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 380px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dropdown.active .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown.active .arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Campo de Busca Dentro do Menu */
+        .search-box {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Links do Menu */
+        .menu-list {
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .dropdown-content a {
+            color: var(--text-dark);
+            padding: 14px 20px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: 500;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.2s, color 0.2s;
+            text-align: left;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f0f9ff;
+            color: var(--primary);
+            padding-left: 24px;
+        }
+
+        .tag {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            background: #e0f2fe;
+            color: #0369a1;
         }
     </style>
 </head>
 <body>
-    <h1>PORTUGUES QUESTOES</h1>
 
-    <div class="dropdown">
-        <button class="btn btn-page1"> Planejamento Estratégico</button>
-        <div class="dropdown-content">
-            <a href="Crase.html">CRASE</a>
-            <a href="pronomes_expressões.html">Pronomes e Expressões Referenciais</a>
-            <a href="BalancedScoredCard.html">Balanced Scored Card </a>   
-            <a href="teste.html">Teste</a>  
-             <a href="BSC.html">BSC</a>   
-            <a href="MASP.html">MASP</a>   
-            <a href="GestãodeProcessos.html">Gestão de Processos</a>   
-            <a href="SCRUMeKANBAN.html">SCRUM e KANBAN</a>   
-            <a href="SixSigma.html">SIX SIGMA</a>  
-           <a href="RiscovsRetorno.html">Risco vs Retorno</a>  
+    <div class="container">
+        <div class="header-icon">📚</div>
+        <h1>Português & Questões</h1>
+        <p class="subtitle">Selecione um tópico abaixo para iniciar seus estudos</p>
+
+        <div class="dropdown" id="customDropdown">
+            <button class="btn-main" onclick="toggleDropdown()">
+                <span>Selecione o Módulo</span>
+                <span class="arrow">▼</span>
+            </button>
             
-        </div> </div> <--- Linha corrigida
+            <div class="dropdown-content">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Filtrar tópicos..." onkeyup="filterMenu()">
+                </div>
+                <div class="menu-list" id="menuList">
+                    <a href="Crase.html">
+                        <span>Crase</span>
+                        <span class="tag">Português</span>
+                    </a>
+                    <a href="pronomes_expressoes.html">
+                        <span>Pronomes e Expressões Referenciais</span>
+                        <span class="tag">Português</span>
+                    </a>
+                    <a href="BalancedScoredCard.html">
+                        <span>Balanced Scorecard</span>
+                        <span class="tag">Gestão</span>
+                    </a>
+                    <a href="teste.html">
+                        <span>Teste</span>
+                        <span class="tag">Geral</span>
+                    </a>
+                    <a href="BSC.html">
+                        <span>BSC</span>
+                        <span class="tag">Gestão</span>
+                    </a>
+                    <a href="MASP.html">
+                        <span>MASP</span>
+                        <span class="tag">Qualidade</span>
+                    </a>
+                    <a href="GestaoDeProcessos.html">
+                        <span>Gestão de Processos</span>
+                        <span class="tag">Gestão</span>
+                    </a>
+                    <a href="SCRUMeKANBAN.html">
+                        <span>SCRUM e KANBAN</span>
+                        <span class="tag">Agile</span>
+                    </a>
+                    <a href="SixSigma.html">
+                        <span>Six Sigma</span>
+                        <span class="tag">Qualidade</span>
+                    </a>
+                    <a href="RiscovsRetorno.html">
+                        <span>Risco vs Retorno</span>
+                        <span class="tag">Finanças</span>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Lógica adicional pode ser adicionada aqui, se necessário.
+        // Alternar abertura/fechamento do dropdown ao clicar
+        function toggleDropdown() {
+            const dropdown = document.getElementById('customDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Fechar o menu caso o usuário clique fora da caixa
+        window.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('customDropdown');
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Filtrar opções em tempo real
+        function filterMenu() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const links = document.getElementById('menuList').getElementsByTagName('a');
+
+            for (let i = 0; i < links.length; i++) {
+                const text = links[i].textContent || links[i].innerText;
+                if (text.toLowerCase().indexOf(input) > -1) {
+                    links[i].style.display = "flex";
+                } else {
+                    links[i].style.display = "none";
+                }
+            }
+        }
     </script>
 </body>
 </html>
