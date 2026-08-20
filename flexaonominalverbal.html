@@ -219,7 +219,370 @@
     <!-- JavaScript Quiz Logic -->
     <script>
         // Database of 20 Portuguese Questions
-       
+
+const questionsData = [
+    {
+        id: 1,
+        category: "Flexão Verbal - Imperfeito do Subjuntivo",
+        question: "Assinale a alternativa que preenche corretamente a lacuna: 'Se o juiz ________ a liminar, o processo seria suspenso.'",
+        options: [
+            { text: "deferisse", isCorrect: true, rationale: "A correlação com o futuro do pretérito ('seria') exige o pretérito imperfeito do subjuntivo ('deferisse')." },
+            { text: "deferir", isCorrect: false, rationale: "Incorreto: 'deferir' (futuro do subjuntivo/infinitivo) desrespeita a correlação com o futuro do pretérito." },
+            { text: "defira", isCorrect: false, rationale: "Incorreto: 'defira' está no presente do subjuntivo." },
+            { text: "deferiu", isCorrect: false, rationale: "Incorreto: 'deferiu' é pretérito perfeito do indicativo." }
+        ],
+        hint: "A hipótese no passado combinada com 'seria' exige o pretérito imperfeito do subjuntivo."
+    },
+    {
+        id: 2,
+        category: "Flexão Nominal - Plural dos Substantivos Compostos",
+        question: "Indique a forma correta do plural do substantivo composto 'decreto-lei':",
+        options: [
+            { text: "decretos-leis", isCorrect: true, rationale: "Substantivo + Substantivo: ambos flexionam no plural ('decretos-leis') ou apenas o primeiro ('decretos-lei'). A forma 'decretos-leis' é plenamente aceita." },
+            { text: "decreto-leis", isCorrect: false, rationale: "Incorreto: o primeiro elemento (substantivo) também deve ir para o plural." },
+            { text: "os decreto-lei", isCorrect: false, rationale: "Incorreto: o termo admite flexão no plural." },
+            { text: "decretos-lei-s", isCorrect: false, rationale: "Incorreto: estrutura mórfica inexistente." }
+        ],
+        hint: "Em substantivos compostos por dois substantivos, ambos podem ir para o plural."
+    },
+    {
+        id: 3,
+        category: "Flexão Verbal - Verbo Requerer",
+        question: "Flexione corretamente o verbo 'requerer' na 1ª pessoa do singular do presente do indicativo: 'Eu ________ arevisão da prova.'",
+        options: [
+            { text: "requeiro", isCorrect: true, rationale: "O verbo 'requerer' é irregular e faz 'requeiro' na 1ª pessoa do singular do presente do indicativo (diferente de 'querer', que faz 'quero')." },
+            { text: "requero", isCorrect: false, rationale: "Incorreto: forma inexistente na norma-padrão." },
+            { text: "requeiro-me", isCorrect: false, rationale: "Incorreto: o verbo não é pronominal neste contexto." },
+            { text: "requera", isCorrect: false, rationale: "Incorreto: 'requera' pertence ao presente do subjuntivo." }
+        ],
+        hint: "O verbo 'requerer' não segue a mesma flexão de 'querer' na 1ª pessoa."
+    },
+    {
+        id: 4,
+        category: "Flexão Nominal - Adjetivos Compostos",
+        question: "Assinale a opção com a flexão correta do adjetivo composto na frase: 'Foram apresentadas propostas ________.'",
+        options: [
+            { text: "político-econômicas", isCorrect: true, rationale: "Nos adjetivos compostos, via de regra, apenas o último elemento varia em gênero e número." },
+            { text: "políticas-econômicas", isCorrect: false, rationale: "Incorreto: o primeiro elemento deve permanecer invariável ('político')." },
+            { text: "político-econômico", isCorrect: false, rationale: "Incorreto: o último elemento precisa concordar com o substantivo 'propostas'." },
+            { text: "políticas-econômico", isCorrect: false, rationale: "Incorreto: inversão indevida da flexão." }
+        ],
+        hint: "Apenas o último elemento do adjetivo composto vai para o plural."
+    },
+    {
+        id: 5,
+        category: "Flexão Verbal - Verbo Ter/Vir (Terceira Pessoa do Plural)",
+        question: "Assinale a alternativa que preenche corretamente as lacunas: 'Os diretores ________ da sede e ________ os relatórios.'",
+        options: [
+            { text: "vêm / têm", isCorrect: true, rationale: "Os verbos 'vir' e 'ter' recebem acento circunflexo na 3ª pessoa do plural do presente do indicativo: 'vêm' e 'têm'." },
+            { text: "vem / tem", isCorrect: false, rationale: "Incorreto: 'vem' e 'tem' (sem acento) indicam a 3ª pessoa do singular." },
+            { text: "vêem / têem", isCorrect: false, rationale: "Incorreto: grafias abolidas pelo Acordo Ortográfico ou inexistentes." },
+            { text: "vêm / tem", isCorrect: false, rationale: "Incorreto: o segundo verbo não concordou com 'Os diretores'." }
+        ],
+        hint: "A 3ª pessoa do plural dos verbos 'ter' e 'vir' exige acento circunflexo."
+    },
+    {
+        id: 6,
+        category: "Flexão Nominal - Plural dos Substantivos Metafônicos",
+        question: "Assinale a alternativa em que a palavra muda o som da vogal tônica (de 'ó' fechado para 'ó' aberto) ao passar para o plural:",
+        options: [
+            { text: "imposto (impôsto / impóstos)", isCorrect: true, rationale: "'Imposto' é um substantivo metafônico: no singular tem som fechado (/ô/) e no plural passa a som aberto (/ó/)." },
+            { text: "bolso (bôlso / bôlsos)", isCorrect: false, rationale: "Incorreto: 'bolso' mantém a vogal fechada no plural." },
+            { text: "estojo (estôjo / estôjos)", isCorrect: false, rationale: "Incorreto: 'estojo' mantém a vogal fechada no plural." },
+            { text: "esgoto (esgôto / esgôtos)", isCorrect: false, rationale: "Incorreto: 'esgoto' mantém a vogal fechada no plural." }
+        ],
+        hint: "Ocorre metafonia quando o timbre da vogal tônica muda de fechado para aberto no plural."
+    },
+    {
+        id: 7,
+        category: "Flexão Verbal - Verbo Intervir",
+        question: "Preencha a lacuna com a forma correta do verbo 'intervir': 'Se a fiscalização ________ a tempo, o dano seria evitado.'",
+        options: [
+            { text: "interviesse", isCorrect: true, rationale: "'Intervir' deriva de 'vir'. Portanto, o pretérito imperfeito do subjuntivo é 'interviesse' (assim como 'viesse')." },
+            { text: "intervisse", isCorrect: false, rationale: "Incorreto: 'intervisse' é uma forma errônea decorrente de analogia indevida." },
+            { text: "intervir", isCorrect: false, rationale: "Incorreto: 'intervir' não atende à correlação com 'seria'." },
+            { text: "interveio", isCorrect: false, rationale: "Incorreto: 'interveio' está no pretérito perfeito do indicativo." }
+        ],
+        hint: "O verbo 'intervir' conjuga-se exatamente como o verbo 'vir'."
+    },
+    {
+        id: 8,
+        category: "Flexão Nominal - Substantivos com Plural Duplo",
+        question: "Qual das opções apresenta uma palavra que aceita mais de uma forma para a flexão de plural?",
+        options: [
+            { text: "guardião (guardiões / guardiães)", isCorrect: true, rationale: "O substantivo 'guardião' admite mais de uma forma de plural (guardiões e guardiães)." },
+            { text: "lápis", isCorrect: false, rationale: "Incorreto: 'lápis' é invariável no plural." },
+            { text: "cidadão", isCorrect: false, rationale: "Incorreto: aceita apenas a forma 'cidadãos'." },
+            { text: "pincel", isCorrect: false, rationale: "Incorreto: aceita apenas a forma 'pincéis'." }
+        ],
+        hint: "Alguns substantivos terminados em '-ão' possuem múltiplas formas válidas de plural."
+    },
+    {
+        id: 9,
+        category: "Flexão Verbal - Verbo Manter",
+        question: "Indique a forma correta do verbo 'manter' na 3ª pessoa do singular do presente do indicativo:",
+        options: [
+            { text: "mantém", isCorrect: true, rationale: "Derivados de 'ter' na 3ª pessoa do singular recebem acento agudo: 'ele mantém' (e circunflexo no plural: 'eles mantêm')." },
+            { text: "mantem", isCorrect: false, rationale: "Incorreto: falta o acento agudo obrigatório em oxítonas terminadas em -em." },
+            { text: "mantêm", isCorrect: false, rationale: "Incorreto: 'mantêm' com circunflexo indica a 3ª pessoa do plural." },
+            { text: "manterá-se", isCorrect: false, rationale: "Incorreto: forma do futuro do presente com erro de colocação pronominal/flexão." }
+        ],
+        hint: "Oxítonas derivadas de 'ter' levam acento agudo no singular e circunflexo no plural."
+    },
+    {
+        id: 10,
+        category: "Flexão Nominal - Plural de Palavras Compostas com Preposição",
+        question: "Assinale a alternativa com o plural correto da palavra 'pôr do sol':",
+        options: [
+            { text: "pôres do sol", isCorrect: true, rationale: "Quando há substantivos compostos unidos por preposição, apenas o primeiro elemento flexiona no plural." },
+            { text: "pôres dos sóis", isCorrect: false, rationale: "Incorreto: o termo após a preposição não varia." },
+            { text: "pôr dos sóis", isCorrect: false, rationale: "Incorreto: o primeiro elemento deve ser flexionado." },
+            { text: "pôr do sóis", isCorrect: false, rationale: "Incorreto: combinação gramaticalmente inválida." }
+        ],
+        hint: "Em compostos ligados por preposição, flexiona-se apenas o primeiro elemento."
+    },
+    {
+        id: 11,
+        category: "Flexão Verbal - Pretérito Perfeito de Derivados",
+        question: "Assinale a frase em que a flexão do verbo 'propor' está correta no pretérito perfeito do indicativo:",
+        options: [
+            { text: "O delegado propôs novas medidas de segurança.", isCorrect: true, rationale: "'Propor' deriva de 'pôr'. Pretérito perfeito: ele pôs -> ele propôs." },
+            { text: "O delegado propôs-se e propora novas medidas de segurança.", isCorrect: false, rationale: "Incorreto: uso inadequado de tempo verbal." },
+            { text: "O delegado proposi novas medidas de segurança.", isCorrect: false, rationale: "Incorreto: forma inexistente na norma-padrão." },
+            { text: "O delegado proponhou novas medidas de segurança.", isCorrect: false, rationale: "Incorreto: erro crasso de conjugação." }
+        ],
+        hint: "O verbo 'propor' segue rigorosamente a conjugação do verbo 'pôr'."
+    },
+    {
+        id: 12,
+        category: "Flexão Nominal - Substantivos Sobrecomuns",
+        question: "Assinale a alternativa que contém um substantivo sobrecomum (que possui um único gênero para indicar ambos os sexos):",
+        options: [
+            { text: "a vítima", isCorrect: true, rationale: "'A vítima' é um substantivo sobrecomum: tem gênero gramatical fixo (feminino) tanto para homens quanto para mulheres." },
+            { text: "o estudante", isCorrect: false, rationale: "Incorreto: 'estudante' é comum de dois gêneros (o estudante / a estudante)." },
+            { text: "o jovem", isCorrect: false, rationale: "Incorreto: é comum de dois gêneros (o jovem / a jovem)." },
+            { text: "o barão", isCorrect: false, rationale: "Incorreto: é um substantivo biforme (o barão / a baronesa)." }
+        ],
+        hint: "Substantivos sobrecomuns utilizam um único artigo e palavra para os dois sexos."
+    },
+    {
+        id: 13,
+        category: "Flexão Verbal - Verbo Prazera",
+        question: "Assinale a alternativa com a correta flexão do verbo 'prazer' no pretérito perfeito do indicativo:",
+        options: [
+            { text: "aprazou / prouve", isCorrect: true, rationale: "O verbo 'prazer' (no sentido de agradar) faz 'prouve' no pretérito perfeito do indicativo." },
+            { text: "prazeu", isCorrect: false, rationale: "Incorreto: 'prazeu' é forma vulgar/inexistente na norma culta." },
+            { text: "prazera", isCorrect: false, rationale: "Incorreto: refere-se ao pretérito mais-que-perfeito." },
+            { text: "prazeu-se", isCorrect: false, rationale: "Incorreto: flexão inadequada para o verbo em questão." }
+        ],
+        hint: "O pretérito perfeito do verbo 'prazer' é irregular e grafa-se com 'prou-'."
+    },
+    {
+        id: 14,
+        category: "Flexão Nominal - Plural dos Diminutivos em -zinho",
+        question: "A flexão de plural correta da palavra 'papelzinho' é:",
+        options: [
+            { text: "papéiszinhos", isCorrect: true, rationale: "Regra do plural dos diminutivos: coloca-se a palavra base no plural ('papéis'), retira-se o 's' ('papéi') e adiciona-se '-zinhos' ('papéiszinhos')." },
+            { text: "papelzinhos", isCorrect: false, rationale: "Incorreto: descumpre a regra de colocar o substantivo base no plural antes do sufixo." },
+            { text: "papélzinhos", isCorrect: false, rationale: "Incorreto: erro na acentuação e na regra do plural." },
+            { text: "papéisinhos", isCorrect: false, rationale: "Incorreto: grafia incorreta do sufixo." }
+        ],
+        hint: "Coloque a palavra primitiva no plural, tire o 's' final e junte '-zinhos'."
+    },
+    {
+        id: 15,
+        category: "Flexão Verbal - Imperativo Afirmativo",
+        question: "A forma do imperativo afirmativo da 2ª pessoa do singular (tu) do verbo 'fazer' é:",
+        options: [
+            { text: "faz (ou faze)", isCorrect: true, rationale: "O imperativo afirmativo para 'tu' deriva do presente do indicativo sem o 's' final: tu fazes -> faz (ou faze)." },
+            { text: "faça", isCorrect: false, rationale: "Incorreto: 'faça' corresponde à 3ª pessoa (você)." },
+            { text: "fazei", isCorrect: false, rationale: "Incorreto: 'fazei' corresponde à 2ª pessoa do plural (vós)." },
+            { text: "fazes", isCorrect: false, rationale: "Incorreto: mantém o 's' do presente do indicativo." }
+        ],
+        hint: "Deriva da 2ª pessoa do presente do indicativo (tu fazes) eliminando-se a letra 's'."
+    },
+    {
+        id: 16,
+        category: "Flexão Nominal - Flexão de Gênero de Substantivos",
+        question: "Assinale a alternativa que indica corretamente o feminino do substantivo 'poeta':",
+        options: [
+            { text: "poetisa", isCorrect: true, rationale: "O feminino tradicional e dicionarizado do substantivo 'poeta' é 'poetisa'." },
+            { text: "poeta", isCorrect: false, rationale: "Incorreto: não é a forma feminina clássica." },
+            { text: "poetora", isCorrect: false, rationale: "Incorreto: forma inexistente." },
+            { text: "poetina", isCorrect: false, rationale: "Incorreto: sufixo aplicado incorretamente." }
+        ],
+        hint: "Utiliza-se o sufixo -isa para a formação do feminino desse substantivo."
+    },
+    {
+        id: 17,
+        category: "Flexão Verbal - Verbo Caber",
+        question: "Assinale a opção com a flexão correta do verbo 'caber' na 1ª pessoa do singular do presente do indicativo:",
+        options: [
+            { text: "caibo", isCorrect: true, rationale: "O verbo 'caber' é altamente irregular e forma 'caibo' na 1ª pessoa do singular do presente do indicativo." },
+            { text: "cabo", isCorrect: false, rationale: "Incorreto: 'cabo' é um substantivo, não a flexão verbal." },
+            { text: "cabeço", isCorrect: false, rationale: "Incorreto: forma inexistente na norma-padrão." },
+            { text: "caiba", isCorrect: false, rationale: "Incorreto: 'caiba' é a forma do presente do subjuntivo." }
+        ],
+        hint: "Trata-se de uma forma verbal irregular que ganha a vogal 'i' no radical."
+    },
+    {
+        id: 18,
+        category: "Flexão Nominal - Plural de Palavras Compostas (Verbo + Substantivo)",
+        question: "Qual é o plural correto da palavra composta 'guarda-roupa'?",
+        options: [
+            { text: "guarda-roupas", isCorrect: true, rationale: "Em compostos formados por Verbo + Substantivo, o verbo permanece invariável ('guarda') e o substantivo flexiona no plural ('roupas')." },
+            { text: "guardas-roupas", isCorrect: false, rationale: "Incorreto: 'guarda' aqui é verbo e não deve flexionar." },
+            { text: "guardas-roupa", isCorrect: false, rationale: "Incorreto: flexiona o elemento incorreto." },
+            { text: "os guarda-roupa", isCorrect: false, rationale: "Incorreto: o substantivo final deve ir ao plural." }
+        ],
+        hint: "A primeira palavra é um verbo (guardar), portanto permanece invariável."
+    },
+    {
+        id: 19,
+        category: "Flexão Verbal - Verbos Abundantes e Particípio",
+        question: "Assinale a frase em que o particípio verbal foi empregado corretamente:",
+        options: [
+            { text: "O documento foi entregue pelo mensageiro.", isCorrect: true, rationale: "Com os verbos auxiliares 'ser' e 'estar', utiliza-se a forma curta/irregular do particípio ('entregue')." },
+            { text: "O mensageiro tinha entregue o documento.", isCorrect: false, rationale: "Incorreto: com 'ter' e 'haver', deve-se dar preferência à forma longa do particípio regular ('entregado')." },
+            { text: "Ele havia pego o livro na biblioteca.", isCorrect: false, rationale: "Incorreto: com 'haver', usa-se 'pegado' pela norma culta tradicional." },
+            { text: "Tinha sido ganho o prêmio principal.", isCorrect: false, rationale: "Incorreto: escolha inadequada do particípio para o contexto." }
+        ],
+        hint: "Com os auxiliares 'ser' e 'estar', prefere-se a forma irregular (curta) do particípio."
+    },
+    {
+        id: 20,
+        category: "Flexão Nominal - Adjetivos Invariáveis",
+        question: "Assinale a frase gramaticalmente correta quanto à flexão do adjetivo de cor:",
+        options: [
+            { text: "Comprei duas camisas verde-oliva.", isCorrect: true, rationale: "Quando o segundo elemento do adjetivo composto de cor é um substantivo ('oliva'), o conjunto todo fica invariável." },
+            { text: "Comprei duas camisas verdes-olivas.", isCorrect: false, rationale: "Incorreto: 'oliva' é substantivo, invariabilizando o adjetivo." },
+            { text: "Comprei duas camisas verdes-oliva.", isCorrect: false, rationale: "Incorreto: não se flexiona o primeiro elemento se o segundo for substantivo." },
+            { text: "Comprei duas camisas verde-olivas.", isCorrect: false, rationale: "Incorreto: flexão incorreta do segundo elemento." }
+        ],
+        hint: "Se a cor fizer referência a um substantivo (como 'oliva' ou 'cinza'), a expressão permanece invariável."
+    },
+    {
+        id: 21,
+        category: "Flexão Verbal - Futuro do Subjuntivo de Verbos Irregulares",
+        question: "Assinale a frase com a flexão correta do verbo 'pôr' no futuro do subjuntivo:",
+        options: [
+            { text: "Quando você puser os óculos, enxergará melhor.", isCorrect: true, rationale: "O futuro do subjuntivo de 'pôr' é 'puser' (derivado do pretérito perfeito do indicativo 'puseram')." },
+            { text: "Quando você por os óculos, enxergará melhor.", isCorrect: false, rationale: "Incorreto: 'por' é a forma de infinitivo." },
+            { text: "Quando você poner os óculos, enxergará melhor.", isCorrect: false, rationale: "Incorreto: forma inexistente." },
+            { text: "Quando você pusesse os óculos, enxergará melhor.", isCorrect: false, rationale: "Incorreto: 'pusesse' é pretérito imperfeito do subjuntivo." }
+        ],
+        hint: "O futuro do subjuntivo dos verbos irregulares deriva da 3ª pessoa do plural do pretérito perfeito."
+    },
+    {
+        id: 22,
+        category: "Flexão Nominal - Plural dos Substantivos Terminados em -ÃO",
+        question: "Assinale a opção em que a palavra forma o plural com a terminação '-ãos':",
+        options: [
+            { text: "cidadão -> cidadãos", isCorrect: true, rationale: "'Cidadão' faz plural exclusivamente em 'cidadãos'." },
+            { text: "capitão -> capitãos", isCorrect: false, rationale: "Incorreto: o plural de capitão é 'capitães'." },
+            { text: "pão -> pãos", isCorrect: false, rationale: "Incorreto: o plural de pão é 'pães'." },
+            { text: "eleição -> eleiçãoes", isCorrect: false, rationale: "Incorreto: o plural de eleição é 'eleições'." }
+        ],
+        hint: "A palavra 'cidadão' aceita apenas a terminação '-ãos' para indicação do plural."
+    },
+    {
+        id: 23,
+        category: "Flexão Verbal - Verbos Defectivos",
+        question: "Sobre o verbo 'abolir', assinale a afirmação correta referente à sua flexão no presente do indicativo:",
+        options: [
+            { text: "Não possui a 1ª pessoa do singular no presente do indicativo.", isCorrect: true, rationale: "'Abolir' é um verbo defectivo e não possui a 1ª pessoa do singular do presente do indicativo (não existe 'eu abolo')." },
+            { text: "Conjuga-se como 'eu abolo'.", isCorrect: false, rationale: "Incorreto: 'abolo' não existe na norma culta." },
+            { text: "É conjugado regularmente em todas as pessoas do presente do indicativo.", isCorrect: false, rationale: "Incorreto: falta a primeira pessoa." },
+            { text: "Conjuga-se como 'eu abulem'.", isCorrect: false, rationale: "Incorreto: forma totalmente inexistente." }
+        ],
+        hint: "Verbos defectivos como 'abolir' não possuem certas formas conjugadas, especialmente a 1ª pessoa do presente."
+    },
+    {
+        id: 24,
+        category: "Flexão Nominal - Plural de Palavras Invariáveis em Compostos",
+        question: "Assinale o plural correto do termo composto 'alto-falante':",
+        options: [
+            { text: "alto-falantes", isCorrect: true, rationale: "'Alto' funciona como advérbio (invariável) e 'falante' como adjetivo/substantivo, que varia normalmente no plural." },
+            { text: "altos-falantes", isCorrect: false, rationale: "Incorreto: 'alto' é advérbio nesta palavra e não flexiona." },
+            { text: "altos-falante", isCorrect: false, rationale: "Incorreto: flexão invertida." },
+            { text: "os alto-falante", isCorrect: false, rationale: "Incorreto: o segundo elemento deve flexionar." }
+        ],
+        hint: "A primeira palavra 'alto' atua como advérbio, portanto é invariável."
+    },
+    {
+        id: 25,
+        category: "Flexão Verbal - Verbo Ver vs. Verbo Vir",
+        question: "Preencha a lacuna corretamente: 'Quando os fiscais ________ o relatório, tomarão as providências.'",
+        options: [
+            { text: "virem", isCorrect: true, rationale: "O futuro do subjuntivo do verbo 'ver' é 'virem' (quando eles virem). Não confundir com 'vierem', que é do verbo 'vir'." },
+            { text: "verem", isCorrect: false, rationale: "Incorreto: 'verem' é o infinitivo pessoal, inadequado para a conjunção 'quando'." },
+            { text: "vierem", isCorrect: false, rationale: "Incorreto: 'vierem' pertence ao verbo 'vir' (deslocamento)." },
+            { text: "virem-se", isCorrect: false, rationale: "Incorreto: alteração de sentido pela reflexividade desnecessária." }
+        ],
+        hint: "A forma no futuro do subjuntivo para o verbo 'ver' (enxergar) é 'virem'."
+    },
+    {
+        id: 26,
+        category: "Flexão Nominal - Grau dos Substantivos",
+        question: "Assinale a alternativa que apresenta um superlativo absoluto sintético correto do adjetivo 'fiel':",
+        options: [
+            { text: "fidelíssimo", isCorrect: true, rationale: "O superlativo erudito/sintético de 'fiel' é 'fidelíssimo' (do latim *fidelis*)." },
+            { text: "fielíssimo", isCorrect: false, rationale: "Incorreto: forma vernácula não erudita, rejeitada pela norma culta." },
+            { text: "mais fiel de todos", isCorrect: false, rationale: "Incorreto: trata-se de um superlativo relativo." },
+            { text: "muito fiel", isCorrect: false, rationale: "Incorreto: trata-se do superlativo absoluto analítico." }
+        ],
+        hint: "A forma erudita retoma o radical latino da palavra (*fidel-*)."
+    },
+    {
+        id: 27,
+        category: "Flexão Verbal - Presente do Subjuntivo do Verbo Haver",
+        question: "Qual é a forma correta do verbo 'haver' na 3ª pessoa do singular do presente do subjuntivo em: 'Espero que ________ soluções para o caso'?",
+        options: [
+            { text: "haja", isCorrect: true, rationale: "O presente do subjuntivo do verbo 'haver' flexiona-se como 'haja' (que ele/ela haja)." },
+            { text: "haveja", isCorrect: false, rationale: "Incorreto: forma inexistente na língua portuguesa." },
+            { text: "haverá", isCorrect: false, rationale: "Incorreto: 'haverá' está no futuro do presente do indicativo." },
+            { text: "houver", isCorrect: false, rationale: "Incorreto: 'houver' é futuro do subjuntivo ou infinitivo." }
+        ],
+        hint: "Subjuntivo que expressa desejo/hipótese introduzido por 'que': 'que haja'."
+    },
+    {
+        id: 28,
+        category: "Flexão Nominal - Plural dos Nomes Próprios",
+        question: "Assinale a alternativa em que a flexão de plural do nome próprio está de acordo com a norma-padrão:",
+        options: [
+            { text: "Os Silvas compareceram à festa.", isCorrect: true, rationale: "Os nomes próprios personativos flexionam-se no plural normalmente quando terminados em vogal ou consoante assimilável." },
+            { text: "Os Silva compareceram à festa.", isCorrect: false, rationale: "Menos recomendado quando se aplica o artigo plural determinante." },
+            { text: "Os Silves compareceram à festa.", isCorrect: false, rationale: "Incorreto: alteração indevida da terminação do nome." },
+            { text: "As Silvas-famílias compareceram à festa.", isCorrect: false, rationale: "Incorreto: estrutura inadequada." }
+        ],
+        hint: "Nomes próprios de pessoas aceitam a regra geral de pluralização quando precedidos de artigo no plural."
+    },
+    {
+        id: 29,
+        category: "Flexão Verbal - Verbo Medir",
+        question: "Qual a forma correta da 1ª pessoa do singular do presente do indicativo do verbo 'medir'?",
+        options: [
+            { text: "meço", isCorrect: true, rationale: "O verbo 'medir' é irregular na 1ª pessoa do singular do presente do indicativo, trocando o 'd' por 'ç': 'eu meço'." },
+            { text: "medo", isCorrect: false, rationale: "Incorreto: 'medo' é um substantivo que indica temor." },
+            { text: "mido", isCorrect: false, rationale: "Incorreto: forma inexistente na língua culta." },
+            { text: "medis", isCorrect: false, rationale: "Incorreto: forma correspondente à 2ª pessoa do plural." }
+        ],
+        hint: "A conjugação sofre alteração fonética no radical, mudando para 'ç'."
+    },
+    {
+        id: 30,
+        category: "Flexão Nominal - Substantivos de Gênero Aparente",
+        question: "Assinale a alternativa em que a mudança do artigo altera completamente o significado da palavra:",
+        options: [
+            { text: "o cabeça (líder) / a cabeça (parte do corpo)", isCorrect: true, rationale: "Alguns substantivos mudam completamente de sentido conforme o gênero atribuído pelo artigo." },
+            { text: "o estudante / a estudante", isCorrect: false, rationale: "Incorreto: muda apenas o sexo da pessoa, mantendo o sentido original." },
+            { text: "o colega / a colega", isCorrect: false, rationale: "Incorreto: altera apenas o sexo do referente." },
+            { text: "o artista / a artista", isCorrect: false, rationale: "Incorreto: altera apenas o gênero da pessoa." }
+        ],
+        hint: "Procure o par onde a mudança de gênero altera a definição do objeto/conceito e não o sexo."
+    }
+];
+
 
         // State Management
         let currentQuestionIdx = 0;
