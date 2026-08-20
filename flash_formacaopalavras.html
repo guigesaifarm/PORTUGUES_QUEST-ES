@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Estrutura e Formação de Palavras</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb; 
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .card-content {
+            font-size: 1.7rem; 
+            line-height: 1.5;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.2rem; 
+            text-align: left;
+            color: #34495e;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.4rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Estrutura e Formação de Palavras para Concursos</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Morfologia</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            {
+                category: "Conceito Básico",
+                front: "O que são <b>morfemas</b> na estrutura das palavras?",
+                back: "São as menores unidades portadoras de significado ou de função gramatical que compõem uma palavra (ex: radical, afixos, desinências)."
+            },
+            {
+                category: "Radical",
+                front: "Qual é a definição de <b>radical</b> e qual é a sua principal função?",
+                back: "É o morfema base que contém o significado fundamental (núcleo) da palavra. Ex: em <i>pedra</i>, <i>pedregulho</i> e <i>pedreiro</i>, o radical é <b>pedr-</b>."
+            },
+            {
+                category: "Vogal Temática",
+                front: "O que é a <b>vogal temática</b> e qual a sua diferença em relação à desinência?",
+                back: "É o morfema que se junta ao radical para preparar a palavra para receber as desinências. Nos verbos, indica a conjugação (1ª, 2ª ou 3ª). Nos nomes, indica o gênero."
+            },
+            {
+                category: "Tema",
+                front: "Como se forma o <b>Tema</b> de uma palavra?",
+                back: "O tema é a união do <b>Radical + Vogal Temática</b>. Exemplo: em <i>estudar</i>, o radical é 'estud-' e a vogal temática é '-a-', logo o tema é 'estuda-'."
+            },
+            {
+                category: "Vogais e Consoantes de Ligação",
+                front: "Para que servem as <b>vogais ou consoantes de ligação</b>?",
+                back: "São elementos que aparecem entre morfemas apenas por razões eufônicas (para facilitar a pronúncia e evitar cacofonia), sem carregar significado próprio. Ex: chul<b>e</b> + zinho = chulezinho."
+            },
+            {
+                category: "Afixos (Prefixos e Sufixos)",
+                front: "Qual é a diferença funcional entre <b>prefixo</b> e <b>sufixo</b>?",
+                back: "• <b>Prefixo:</b> Elemento colocado <i>antes</i> do radical, alterando o sentido base (Ex: <i>in</i>feliz).<br>• <b>Sufixo:</b> Elemento colocado <i>depois</i> do radical, podendo mudar a classe gramatical (Ex: feliz<i>mente</i>)."
+            },
+            {
+                category: "Desinências Nominais",
+                front: "O que indicam as <b>desinências nominais</b> em substantivos e adjetivos?",
+                back: "Indicam flexões de <b>gênero</b> (masculino/feminino, ex: alun<b>o</b> / alun<b>a</b>) e de <b>número</b> (singular/plural, ex: aluna / aluna<b>s</b>)."
+            },
+            {
+                category: "Desinências Verbais",
+                front: "Quais informações gramaticais as <b>desinências verbais</b> transmitem?",
+                back: "Indicam flexões de <b>número e pessoa</b> (desinência número-pessoal) e de <b>modo e tempo</b> (desinência modo-temporal). Ex: cantá-va-mos (-va = pretérito imperfeito; -mos = 1ª pessoa do plural)."
+            },
+            {
+                category: "Derivação Prefixal",
+                front: "O que caracteriza o processo de formação de palavras por <b>derivação prefixal</b> (ou prefixação)?",
+                back: "Consiste no acréscimo de um prefixo a um radical já existente, alterando seu sentido original. Ex: <i>ler</i> -> <b>re</b>ler; <i>correr</i> -> <b>des</b>correr."
+            },
+            {
+                category: "Derivação Sufixal",
+                front: "O que caracteriza a <b>derivação sufixal</b> (ou sufixação)?",
+                back: "Consiste no acréscimo de um sufixo a um radical, podendo alterar a classe gramatical da palavra gerada. Ex: substantivo <i>papel</i> -> adjetivo <b>papelão</b> ou verbo <i>luz</i> -> <b>luzir</b>."
+            },
+            {
+                category: "Derivação Parassintética",
+                front: "Qual é a principal regra para identificar a <b>derivação parassintética</b> (parassíntese)?",
+                back: "A palavra é formada pelo acréscimo <b>simultâneo</b> de prefixo e sufixo. O diferencial é que, se você retirar apenas o prefixo ou apenas o sufixo, a palavra deixa de existir na língua. Ex: <i>a</i> + noit + <i>ecer</i> -> anoitecer (*anoite ou *noitecer não existem)."
+            },
+            {
+                category: "Derivação Regressiva",
+                front: "Como ocorre a <b>derivação regressiva</b> e qual classe de palavra costuma ser gerada?",
+                back: "Ocorre quando uma palavra nova é criada pela <b>redução</b> da palavra primitiva (geralmente um verbo gerando um substantivo abstrato de ação). Ex: o verbo <i>atacar</i> gera o substantivo <b>o ataque</b>."
+            },
+            {
+                category: "Derivação Imprópria",
+                front: "O que é a <b>derivação imprópria</b> (ou conversão)?",
+                back: "Ocorre quando uma palavra muda de classe gramatical <b>sem sofrer alteração na sua forma física</b>, dependendo apenas do contexto. Ex: O <b>jantar</b> estava ótimo (verbo transformado em substantivo)."
+            },
+            {
+                category: "Composição por Aglutinação",
+                front: "Na composição de palavras, o que caracteriza a <b>aglutinação</b>?",
+                back: "Ocorre quando dois ou mais radicais se unem e pelo menos um deles sofre <b>alteração fonética / perda de sons</b>. Ex: planalto (plano + alto), aguardente (água + ardente)."
+            },
+            {
+                category: "Composição por Justaposição",
+                front: "O que diferencia a <b>justaposição</b> da aglutinação?",
+                back: "Na justaposição, os radicais se juntam <b>sem que haja nenhuma alteração sonora</b> ou perda de letras na junção (às vezes unidos por hífen). Ex: girassol, passatempo, pé-de-moleque."
+            },
+            {
+                category: "Hibridismo",
+                front: "O que é o <b>hibridismo</b> na formação de palavras?",
+                back: "É a formação de palavras cujos elementos constituintes (radicais ou afixos) pertencem a <b>idiomas diferentes</b> (geralmente grego e latim). Ex: <i>auto</i>móvel (grego 'auto' + latim 'móvel'); <i>buro</i>cracia (francês 'bureau' + grego 'kratos')."
+            },
+            {
+                category: "Onomatopeia",
+                front: "Defina o processo de formação de palavras conhecido como <b>onomatopeia</b>.",
+                back: "Consiste na criação de palavras que tentam imitar sons ou ruídos da realidade por meio de fonemas. Ex: <i>bum</i>, <i>tchibum</i>, <i>cucar</i> (o canto do cuco), <i>tic-tac</i>."
+            },
+            {
+                category: "Neologismo",
+                front: "O que é um <b>neologismo</b> na língua portuguesa?",
+                back: "É a criação de uma palavra nova (ou a atribuição de um novo sentido a uma palavra já existente) para suprir necessidades expressivas momentâneas ou tecnológicas. Ex: <i>tietar</i>, <i>twittar</i>, <i>deletar</i>."
+            },
+            {
+                category: "Abreviação / Redução",
+                front: "Qual é a diferença entre <b>abreviação</b> (redução) e <b>abreviatura</b>?",
+                back: "A <b>abreviação vocabular</b> reduz a palavra na fala/escrita mantendo o reconhecimento popular (Ex: <i>fotografia</i> -> foto; <i>pneumotécnico</i> -> pneu). A abreviatura é apenas uma convenção gráfica abreviada (Ex: Prof. para Professor)."
+            },
+            {
+                category: "Siglonímia",
+                front: "O que caracteriza o processo de formação por <b>siglas</b>?",
+                back: "É a formação de novas palavras a partir das letras iniciais de um conjunto de termos ou nomes próprios. Ex: <i>IBGE</i>, <i>DETRAN</i>, <i>CPF</i>. Quando a sigla é lida como uma palavra contínua, vira acrônimo (Ex: <i>UnB</i>, <i>Laser</i>)."
+            },
+            {
+                category: "Família de Palavras",
+                front: "O que são palavras <b>cognatas</b> (ou pertencentes à mesma família etimológica)?",
+                back: "São palavras que compartilham o <b>mesmo radical</b> e guardam parentesco de significado. Ex: <i>flor</i>, <i>floresta</i>, <i>floricultura</i>, <i>florescer</i>."
+            },
+            {
+                category: "Prefixos Gregos vs Latinos",
+                front: "Qual é a origem dos prefixos em palavras como <i>infiel</i> e <i>analfabeto</i>?",
+                back: "• <b>In-</b> (de infiel) é de origem <b>latina</b> e indica negação.<br>• <b>A-</b> (de analfabeto) é de origem <b>grega</b> (alfa privativo) e também indica negação ou ausência."
+            },
+            {
+                category: "Radicais Gregos Frequentes",
+                front: "O que significam os radicais gregos <b>bio</b>, <b>fono</b> e <b>geo</b>?",
+                back: "• Bio = vida (ex: biologia)<br>• Fono = som / voz (ex: telefone)<br>• Geo = terra (ex: geografia)"
+            },
+            {
+                category: "Radicais Latinos Frequentes",
+                front: "O que significam os radicais latinos <b>aqua</b>, <b>puer</b> e <b>tempus</b>?",
+                back: "• Aqua = água (ex: aqueduto)<br>• Puer = criança (ex: pueril)<br>• Tempus = tempo (ex: temporal)"
+            },
+            {
+                category: "Parassíntese vs Derivação Prefixal/Sufixal",
+                front: "Por que a palavra <i>infelizmente</i> <b>não</b> é formada por parassíntese?",
+                back: "Porque se você retirar o prefixo 'in-', sobra 'felizmente' (que existe). Se retirar o sufixo '-mente', sobra 'infeliz' (que também existe). Trata-se de derivação prefixal e sufixal <i>cumulativa</i> (separadas)."
+            },
+            {
+                category: "Vogal Temática Nominal",
+                front: "Quais são as vogais temáticas típicas dos nomes (substantivos e adjetivos)?",
+                back: "São as vogais átonas finais <b>a</b>, <b>e</b> e <b>o</b> que indicam tema nominal (Ex: cas<b>a</b>, dente<b>s</b>, livr<b>o</b>). Palavras terminadas em consoante não possuem vogal temática explícita."
+            },
+            {
+                category: "Desinência de Superlativo",
+                front: "O sufixo <b>-íssimo</b> (como em <i>altíssimo</i>) altera a classe gramatical da palavra?",
+                back: "<b>Não!</b> Ele atua como um sufixo formador de grau (superlativo sintético de adjetivos), modificando a intensidade do adjetivo sem alterar sua classe morfológica original."
+            },
+            {
+                category: "Derivação Imprópria vs Substantivação",
+                front: "O que acontece quando transformamos um adjetivo ou pronome em substantivo usando um artigo antes? (Ex: O <b>bom</b> da festa)",
+                back: "Ocorre <b>derivação imprópria</b> (substantivação). A palavra muda de classe gramatical devido à presença do determinante (artigo) que a antecede."
+            },
+            {
+                category: "Radical Grego 'Cefalo' / 'Cardio'",
+                front: "Qual é o significado dos radicais cultos gregos <b>cefalo-</b> e <b>cardio-</b>?",
+                back: "• Cefalo- = cabeça (ex: cefaleia)<br>• Cardio- = coração (ex: cardiologista)"
+            },
+            {
+                category: "Resumo: Os 6 Processos Principais",
+                front: "Quais são os <b>6 principais processos de formação de palavras</b> cobrados em provas?",
+                back: "1. Derivação (Prefixal, Sufixal, Parassintética, Regressiva, Imprópria)<br>2. Composição (Justaposição e Aglutinação)<br>3. Hibridismo<br>4. Onomatopeia<br>5. Redução / Abreviação<br>6. Neologismo"
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
