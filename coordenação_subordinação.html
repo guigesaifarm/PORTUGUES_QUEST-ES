@@ -219,248 +219,368 @@
     <!-- JavaScript Quiz Logic -->
     <script>
         // Database of 20 Portuguese Questions
-        const questionsData = [
-            {
-                id: 1,
-                category: "Demonstrativos & Referência",
-                question: "Considere a frase: \"A honestidade e a impunidade coexistem na sociedade; esta gera indignação, aquela garante a paz social.\" Os pronomes demonstrativos 'esta' e 'aquela' exercem, respectivamente, função anafórica referente a:",
-                options: [
-                    { text: "impunidade e honestidade.", isCorrect: true, rationale: "O demonstrativo 'esta' refere-se ao elemento mencionado por último (mais próximo: impunidade), enquanto 'aquela' recupera o elemento mencionado em primeiro lugar (mais distante: honestidade)." },
-                    { text: "honestidade e impunidade.", isCorrect: false, rationale: "'Esta' recupera o termo mais próximo antecedente (impunidade) e não o primeiro." },
-                    { text: "sociedade e indignação.", isCorrect: false, rationale: "'Sociedade' e 'indignação' não constituem o par coordenado que está sendo polarizado pelos demonstrativos." },
-                    { text: "impunidade e paz social.", isCorrect: false, rationale: "'Paz social' é consequência da honestidade, e não o termo referente direto retomado." }
-                ],
-                hint: "Lembre-se da regra de proximidade dos demonstrativos no texto: 'este/esta' retoma o termo mais recente e 'aquele/aquela' retoma o mais antigo."
-            },
-            {
-                id: 2,
-                category: "Anáfora vs Catáfora",
-                question: "Em qual das passagens a seguir o pronome destacado exerce função CATA FÓRICA na articulação do texto?",
-                options: [
-                    { text: "Desejo apenas isto: que todos alcancem a aprovação.", isCorrect: true, rationale: "O pronome 'isto' antecipa uma informação que ainda será declarada na oração seguinte ('que todos alcancem...'), caracterizando o recurso catafórico." },
-                    { text: "A aprovação chegou rápida; isso nos motivou bastante.", isCorrect: false, rationale: "O pronome 'isso' retoma a afirmação anterior ('A aprovação chegou rápida'), tratando-se de anáfora." },
-                    { text: "O aluno estudou muito, por isso obteve êxito.", isCorrect: false, rationale: "'Por isso' estabelece coesão anafórica de valor conclusivo/causal recuperando o fato antecedente." },
-                    { text: "Aquele foi o melhor dia de nossas vidas.", isCorrect: false, rationale: "'Aquele' funciona aqui com valor exofórico/dêitico ou anafórico em relação ao tempo vivido." }
-                ],
-                hint: "A catáfora projeta o texto para a frente, anunciando algo que ainda vai ser dito."
-            },
-            {
-                id: 3,
-                category: "Pronome Relativo e Regência",
-                question: "Assinale a alternativa que preenche corretamente a lacuna mantendo a norma-padrão da coesão relacional: \"O ideal ____ tanto lutamos exige sacrifícios diários.\"",
-                options: [
-                    { text: "pelo qual", isCorrect: true, rationale: "Quem luta, luta 'por' algo. A preposição 'por' exige fusão com o artigo do pronome relativo ('por + o qual' = 'pelo qual') ou 'por que'." },
-                    { text: "que", isCorrect: false, rationale: "A omissão da preposição 'por' exigida pela regência do verbo 'lutar' gera desvio gramatical." },
-                    { text: "ao qual", isCorrect: false, rationale: "A preposição 'a' não atende à regência do verbo 'lutar' neste contexto." },
-                    { text: "cujo", isCorrect: false, rationale: "O pronome 'cujo' exige relação de posse entre dois substantivos, inexistente aqui." }
-                ],
-                hint: "Observe a regência do verbo que vem depois do pronome relativo: quem 'luta', luta ___ algo."
-            },
-            {
-                id: 4,
-                category: "Emprego de 'Cujo'",
-                question: "Identifique a opção em que o uso do pronome relativo 'cujo' apresenta incorreção de acordo com a norma gramatical:",
-                options: [
-                    { text: "O autor cujo o livro foi premiado não compareceu.", isCorrect: true, rationale: "É proibido usar artigo definido imediatamente após o pronome 'cujo' (não se diz 'cujo o' nem 'cuja a'). O correto é 'cujo livro'." },
-                    { text: "O professor cujas aulas eram excelentes aposentou-se.", isCorrect: false, rationale: "Uso correto: 'cujas' concorda em gênero e número com o consequente 'aulas' e estabelece posse." },
-                    { text: "A árvore cujos frutos colhemos é centenária.", isCorrect: false, rationale: "Uso correto: concordância correta com 'frutos' e vínculo de posse com 'árvore'." },
-                    { text: "A empresa a cujos diretores nos dirigimos aprovou o projeto.", isCorrect: false, rationale: "Uso correto: a preposição 'a' foi devidamente anteposta por regência de 'nos dirigimos'." }
-                ],
-                hint: "Nunca se coloca artigo (o, a, os, as) logo após o pronome relativo 'cujo'."
-            },
-            {
-                id: 5,
-                category: "Expressões Referenciais",
-                question: "No trecho: \"O Cerrado vem sofrendo contínuo desmatamento. O bioma, contudo, abriga nascentes cruciais para o país.\" A expressão 'O bioma' funciona como:",
-                options: [
-                    { text: "expressão hiperonímica de caráter anafórico.", isCorrect: true, rationale: "'Bioma' é um termo de sentido mais amplo (hiperônimo) que retoma 'Cerrado' (hipônimo), garantindo a coesão sequencial sem repetição." },
-                    { text: "expressão hiponímica de caráter catafórico.", isCorrect: false, rationale: "'Bioma' não é hipônimo de Cerrado nem antecipa termo futuro." },
-                    { text: "substituição por antonímia contextual.", isCorrect: false, rationale: "Não há relação de sentidos opostos (antônimos) entre as palavras." },
-                    { text: "elipse verbal antecedente.", isCorrect: false, rationale: "Trata-se de coesão lexical por anáfora, não omissão de verbo (elipse)." }
-                ],
-                hint: "Considere se 'bioma' é um termo mais geral ou mais específico em relação a 'Cerrado'."
-            },
-            {
-                id: 6,
-                category: "Nexos Adversativos vs Concessivos",
-                question: "Em: \"Embora os custos fossem elevados, a diretoria aprovou a modernização.\" Se substituirmos a conjunção 'Embora' mantendo o sentido de oposição, mas alterando a estrutura para a coordenação adversativa, a reescrita correta é:",
-                options: [
-                    { text: "Os custos eram elevados, contudo a diretoria aprovou a modernização.", isCorrect: true, rationale: "'Contudo' é conjunção adversativa e exige o verbo no modo indicativo ('eram'), estabelecendo relação de oposição de forma coordenada." },
-                    { text: "Ainda que os custos eram elevados, a diretoria aprovou a modernização.", isCorrect: false, rationale: "'Ainda que' exige verbo no subjuntivo ('fossem') e mantém valor subordinativo concessivo." },
-                    { text: "Os custos fossem elevados, porquanto a diretoria aprovou a modernização.", isCorrect: false, rationale: "'Porquanto' é explicativo/causal e não adversativo." },
-                    { text: "Posto que os custos fossem elevados, logo a diretoria aprovou.", isCorrect: false, rationale: "'Logo' introduz conclusão, alterando a articulação semântica da frase." }
-                ],
-                hint: "Conjunções adversativas (mas, porém, contudo) coordenam orações com verbo no indicativo."
-            },
-            {
-                id: 7,
-                category: "Nexos Causais e Consecutivos",
-                question: "Assinale a alternativa em que a oração introduzida pela palavra 'que' possui valor semântico CONSECUTIVO:",
-                options: [
-                    { text: "A chuva foi tão intensa que as ruas do centro alagaram.", isCorrect: true, rationale: "A estrutura correlativa 'tão... que' expressa a consequência direta da intensidade da chuva." },
-                    { text: "É necessário que todos cumpram seus horários.", isCorrect: false, rationale: "Aqui o 'que' é conjunção integrante, introduzindo oração subordinada substantiva subjetiva." },
-                    { text: "Fique em casa, que a tempestade se aproxima.", isCorrect: false, rationale: "Neste caso, 'que' possui valor explicativo (equivalente a 'pois')." },
-                    { text: "O livro que comprei ontem é esclarecedor.", isCorrect: false, rationale: "O 'que' é pronome relativo introduzindo oração adjetiva." }
-                ],
-                hint: "Procure por termos intensificadores no antecedente como 'tão', 'tanto', 'tamanho' que levam a um resultado/consequência."
-            },
-            {
-                id: 8,
-                category: "Operador 'Pois'",
-                question: "Na frase: \"O projeto exige alto investimento; não devemos, pois, agir sem planejamento prévio.\" O operador argumentativo 'pois' assume valor:",
-                options: [
-                    { text: "conclusivo, por estar posposto ao verbo.", isCorrect: true, rationale: "Quando o 'pois' surge posposto ao verbo (entre vírgulas), sua função coesiva é estritamente conclusiva (sinônimo de 'portanto')." },
-                    { text: "causal, por relacionar dois fatos.", isCorrect: false, rationale: "O 'pois' só é causal se anteceder o verbo e não for deslocado." },
-                    { text: "explicativo, por esclarecer uma ordem.", isCorrect: false, rationale: "O 'pois' explicativo vem no início da oração coordenada, antes do verbo." },
-                    { text: "concessivo, por ponderar um obstáculo.", isCorrect: false, rationale: "'Pois' não possui valor concessivo na língua portuguesa." }
-                ],
-                hint: "Atente para a posição do 'pois' na oração: antes do verbo é causal/explicativo; depois do verbo é conclusivo."
-            },
-            {
-                id: 9,
-                category: "Uso de 'Onde'",
-                question: "De acordo com a norma-padrão de coesão referencial, o pronome 'onde' foi empregado CORRETAMENTE em:",
-                options: [
-                    { text: "A biblioteca do bairro é o local onde os estudantes se reúnem.", isCorrect: true, rationale: "O pronome 'onde' só deve ser empregado para retomar lugares físicos e concretos (como 'biblioteca')." },
-                    { text: "Aquele foi um período difícil onde todos sofreram.", isCorrect: false, rationale: "Incorreto: 'período' é indicação de tempo; deveria usar-se 'em que' ou 'no qual'." },
-                    { text: "Li um artigo onde o autor criticava a economia.", isCorrect: false, rationale: "Incorreto: 'artigo' é texto; o adequado seria 'em que' ou 'no qual'." },
-                    { text: "Houve uma reunião onde se discutiu o orçamento.", isCorrect: false, rationale: "Incorreto: 'reunião' é um evento; o correto seria 'em que' ou 'na qual'." }
-                ],
-                hint: "O pronome 'onde' deve ser reservado estritamente para lugares físicos/espaciais."
-            },
-            {
-                id: 10,
-                category: "Coesão por Elipse",
-                question: "No trecho: \"Alguns cientistas defendem a transição energética imediata; outros, a gradual.\" O mecanismo de coesão que consiste na omissão do verbo 'defendem' na segunda oração chama-se:",
-                options: [
-                    { text: "elipse (ou zeugma).", isCorrect: true, rationale: "Zeugma é o tipo específico de elipse em que se omite um termo (neste caso, o verbo 'defendem') que já foi mencionado anteriormente no texto." },
-                    { text: "catafórico nominal.", isCorrect: false, rationale: "Não há projeção catafórica, mas omissão gramatical de termo antecedente." },
-                    { text: "paráfrase explicativa.", isCorrect: false, rationale: "Paráfrase consiste na reescrita com outras palavras, e não na omissão verbal." },
-                    { text: "encapsulamento textual.", isCorrect: false, rationale: "Encapsulamento é o resumo de ideias por meio de um substantivo sintético." }
-                ],
-                hint: "Como se chama a figura de linguagem/coesão na qual se omite um termo antecedente subentendido (marcado por vírgula)?"
-            },
-            {
-                id: 11,
-                category: "Operadores de Gradação e Força",
-                question: "Na frase: \"O candidato conquistou o apoio de líderes comunitários, de empresários e até de seus opositores mais ferrenhos.\" O operador 'até' atua como:",
-                options: [
-                    { text: "operador argumentativo que introduz o argumento mais forte de uma escala ascendente.", isCorrect: true, rationale: "'Até' (assim como 'inclusive' e 'mesmo') assinala o argumento de maior força ou topo da escala argumentativa." },
-                    { text: "conjunção subordinativa temporal que indica limite de tempo.", isCorrect: false, rationale: "Neste contexto, 'até' não marca tempo limite, mas inclusão e gradação argumentativa." },
-                    { text: "elemento de coesão conclusiva de efeito restritivo.", isCorrect: false, rationale: "Não possui valor de síntese conclusiva nem restringe, mas amplia a gradação." },
-                    { text: "preposição de afastamento e exclusão temática.", isCorrect: false, rationale: "Pelo contrário, é um marcador de inclusão extensiva." }
-                ],
-                hint: "Considere a intenção do autor em colocar 'opositores mais ferrenhos' por último acompanhado de 'até'."
-            },
-            {
-                id: 12,
-                category: "Nexos Condicionais e Temporais",
-                question: "Analise a frase: \"____ assumiu o cargo de chefia, o executivo reestruturou toda a equipe.\" A locução que preenche a lacuna atribuindo sentido TEMPORAL é:",
-                options: [
-                    { text: "Assim que", isCorrect: true, rationale: "'Assim que' introduz oração subordinada adverbial temporal de imediatez no tempo." },
-                    { text: "Desde que", isCorrect: false, rationale: "Embora 'desde que' possa indicar tempo inicial, com o verbo no passado sem continuidade soa ambíguo ou condicional. 'Assim que' marca a temporalidade pontual perfeita." },
-                    { text: "Contanto que", isCorrect: false, rationale: "'Contanto que' expressa exclusivamente condição (com verbo no subjuntivo)." },
-                    { text: "A fim de que", isCorrect: false, rationale: "'A fim de que' expressa finalidade." }
-                ],
-                hint: "Qual locução marca que a ação de reestruturar ocorreu imediatamente no momento em que ele assumiu o cargo?"
-            },
-            {
-                id: 13,
-                category: "Operador 'Posto que'",
-                question: "Assinale a opção em que a locução 'posto que' foi empregada de acordo com o seu sentido escorreito de CONCESSÃO:",
-                options: [
-                    { text: "Posto que a decisão fosse impopular, manteve-se firme na sua aplicação.", isCorrect: true, rationale: "Na tradição culta da língua, 'posto que' é conectivo concessivo (sinônimo de 'embora', 'ainda que') e rege verbo no modo subjuntivo." },
-                    { text: "Não foi trabalhar hoje posto que estava muito doente.", isCorrect: false, rationale: "Uso considerado inadequado/desviante na norma culta tradicional (uso de 'posto que' como causal)." },
-                    { text: "Posto que estudou bastante, foi aprovado com louvor.", isCorrect: false, rationale: "Uso causal desviante; a relação aqui é de causa e efeito, não de concessão." },
-                    { text: "Posto que cheguei cedo, consegui o melhor assento.", isCorrect: false, rationale: "Trata-se de relação de causa/tempo, desvirtuando o caráter concessivo." }
-                ],
-                hint: "Lembre-se de que, gramaticalmente, 'posto que' equivale a 'embora' e exige verbo no subjuntivo."
-            },
-            {
-                id: 14,
-                category: "Encapsulamento Anafórico",
-                question: "Considere o texto: \"A inflação subiu, as taxas de juros dispararam e a produção industrial caiu. Esse cenário alarmante exige medidas urgentes.\" A expressão 'Esse cenário alarmante' cumpre o papel de:",
-                options: [
-                    { text: "rótulo/encapsulador anafórico que sintetiza os fatos expressos anteriormente.", isCorrect: true, rationale: "Coesão por encapsulamento (ou rótulo) ocorre quando uma expressão nominal resume e condensa todo um bloco de informações pregressas." },
-                    { text: "catáfora restritiva que antecipa as medidas urgentes.", isCorrect: false, rationale: "A expressão retoma o conjunto de fatos passados (anáfora) e não antecipa a lista de medidas." },
-                    { text: "substituição sinonímica de um único vocábulo.", isCorrect: false, rationale: "Não retoma apenas uma palavra, mas toda uma proposição complexa." },
-                    { text: "anáfora associativa por elipse de substantivo.", isCorrect: false, rationale: "Não há omissão, mas síntese explícita via nome rotulador." }
-                ],
-                hint: "O substantivo 'cenário' funciona como uma 'caixa' que sintetiza e empacota as três frases anteriores."
-            },
-            {
-                id: 15,
-                category: "Demonstrativos no Tempo",
-                question: "Indique a alternativa que preenche corretamente a lacuna, considerando o emprego dos pronomes demonstrativos para indicação temporal no momento da fala: \"____ ano de 2026 está sendo marcado por grandes inovações tecnológicas.\"",
-                options: [
-                    { text: "Este", isCorrect: true, rationale: "Para o tempo presente/vigente em relação ao momento do discurso, utiliza-se o demonstrativo 'este' (este ano = o ano atual)." },
-                    { text: "Esse", isCorrect: false, rationale: "'Esse' refere-se a um passado ou futuro relativamente próximo do momento da fala." },
-                    { text: "Aquele", isCorrect: false, rationale: "'Aquele' refere-se a um tempo distante e remoto no passado." },
-                    { text: "Aquilo", isCorrect: false, rationale: "'Aquilo' é pronome neutro e não acompanha o substantivo 'ano'." }
-                ],
-                hint: "Para o ano presente em que se fala, qual é a forma correta do pronome demonstrativo?"
-            },
-            {
-                id: 16,
-                category: "Operadores de Retificação",
-                question: "Qual dos seguintes conectivos/expressões possui a função primária de introduzir uma RETIFICAÇÃO ou correção do que foi dito anteriormente?",
-                options: [
-                    { text: "ou melhor", isCorrect: true, rationale: "A expressão 'ou melhor' (assim como 'aliás', 'digo') serve para corrigir ou reformular de modo mais preciso um enunciado prévio." },
-                    { text: "isto é", isCorrect: false, rationale: "'Isto é' e 'ou seja' possuem função de explicação, esclarecimento ou síntese, e não de retificação." },
-                    { text: "por conseguinte", isCorrect: false, rationale: "'Por conseguinte' indica conclusão/consequência." },
-                    { text: "além disso", isCorrect: false, rationale: "'Além disso' indica acréscimo/adição de argumentos." }
-                ],
-                hint: "Qual destas expressões é usada quando o falante quer corrigir formalmente uma palavra ou ideia recém-emitida?"
-            },
-            {
-                id: 17,
-                category: "Proporção vs Causa",
-                question: "Assinale a opção gramaticalmente correta em que a locução expressa ideia de PROPORCIONALIDADE:",
-                options: [
-                    { text: "À medida que os estudos avançam, as dúvidas diminuem.", isCorrect: true, rationale: "'À medida que' é a locução conjuntiva proporcional correta. (Atenção: a forma 'na medida em que' expressa causa)." },
-                    { text: "Na medida que os estudos avançam, as dúvidas diminuem.", isCorrect: false, rationale: "Incorreto: a forma 'na medida que' sem preposição 'em' é considerada gramaticalmente inexistente/híbrida." },
-                    { text: "À medida em que os estudos avançam, as dúvidas diminuem.", isCorrect: false, rationale: "Incorreto: misturou-se 'à medida que' com 'na medida em que'." },
-                    { text: "Em medida que os estudos avançam, as dúvidas diminuem.", isCorrect: false, rationale: "Forma inexistente na norma-padrão." }
-                ],
-                hint: "A locução correta de proporção é 'À medida que' (com crase e sem a preposição 'em')."
-            },
-            {
-                id: 18,
-                category: "Anáfora Associativa",
-                question: "Em: \"Chegamos a um vilarejo histórico. As casas tinham fachadas preservadas e os moradores eram acolhedores.\" O termo 'As casas' estabelece coesão com 'vilarejo' por meio de:",
-                options: [
-                    { text: "anáfora associativa (ou inferencial).", isCorrect: true, rationale: "A anáfora associativa ocorre quando o referente não foi mencionado explicitamente antes, mas é introduzido como parte integrante do conhecimento de mundo sobre o antecedente ('vilarejo' pressupõe 'casas')." },
-                    { text: "repetição lexical estrita.", isCorrect: false, rationale: "A palavra 'casas' não é repetição da palavra 'vilarejo'." },
-                    { text: "catáfora explicativa com pronome relativo.", isCorrect: false, rationale: "Não há pronome relativo nem antecipação catafórica." },
-                    { text: "elipse da expressão antecedente.", isCorrect: false, rationale: "O termo 'casas' está explicitado, não havendo omissão." }
-                ],
-                hint: "Como se chama a conexão em que o leitor deduce que 'casas' fazem parte de 'vilarejo' com base no conhecimento de mundo?"
-            },
-            {
-                id: 19,
-                category: "Ambiguidade Referencial",
-                question: "Identifique a alternativa que apresenta AMBIGUIDADE referente ao uso do pronome possessivo:",
-                options: [
-                    { text: "O gerente conversou com o funcionário sobre o seu relatório.", isCorrect: true, rationale: "Há ambiguidade: o pronome 'seu' pode se referir ao relatório do gerente ou ao relatório do funcionário. A correção exigiria 'o relatório deste' ou 'o relatório dele'." },
-                    { text: "O gerente conversou com o funcionário sobre o relatório deste.", isCorrect: false, rationale: "Sem ambiguidade: 'deste' refere-se com clareza ao termo mais próximo ('funcionário')." },
-                    { text: "O gerente disse que o relatório do funcionário estava excelente.", isCorrect: false, rationale: "Sem ambiguidade: a referência nominal 'do funcionário' é direta." },
-                    { text: "Conversamos com o gerente a respeito de suas metas.", isCorrect: false, rationale: "Não há duplo sujeito masculino para gerar dúvida sobre a quem pertence as metas." }
-                ],
-                hint: "Procure a frase em que o pronome 'seu' deixa dúvida sobre a qual das duas pessoas o objeto pertence."
-            },
-            {
-                id: 20,
-                category: "Pronomes Oblíquos Anafóricos",
-                question: "Na reescrita da frase \"O diretor convocou os assessores e apresentou as propostas aos assessores\", a substituição dos termos repetidos por pronomes oblíquos anafóricos adequados resulta em:",
-                options: [
-                    { text: "O diretor convocou-os e apresentou-lhes as propostas.", isCorrect: true, rationale: "O verbo 'convocar' é transitivo direto (exige 'os'); o verbo 'apresentar' rege complemento indireto com preposição 'a' para pessoas (exige 'lhes')." },
-                    { text: "O diretor convocou-lhes e apresentou-lhes as propostas.", isCorrect: false, rationale: "'Convocar' não rege objeto indireto 'lhes'." },
-                    { text: "O diretor convocou-os e apresentou-os as propostas.", isCorrect: false, rationale: "'Apresentou-os as propostas' é incorreto pois 'apresentar algo a alguém' exige 'lhes' para o destinatário." },
-                    { text: "O diretor convocou-nos e apresentou-os as propostas.", isCorrect: false, rationale: "Altera a pessoa gramatical ('nos' em vez de 3ª pessoa do plural)." }
-                ],
-                hint: "Diferencie a transitividade: 'convocar alguém' (VTD -> os) versus 'apresentar algo a alguém' (VTDI -> lhes)."
-            }
-        ];
+       const questionsData = [
+    {
+        id: 1,
+        category: "Coordenação: Oração Coordenada Assindética vs. Sindética",
+        question: "Assinale a alternativa que apresenta uma oração coordenada assindética seguida de uma oração coordenada sindética adversativa:",
+        options: [
+            { text: "Estudou muito para a prova; obteve, contudo, uma excelente pontuação.", isCorrect: false, rationale: "Incorreto: 'contudo' indica oposição/adversidade, mas as orações não apresentam relação de oposição de sentido adequada entre estudar e obter boa nota." },
+            { text: "O candidato preparou-se durante anos; não alcançou, porém, a classificação desejada.", isCorrect: true, rationale: "A primeira oração ('O candidato preparou-se...') não possui conectivo (assindética). A segunda introduz ideia de oposição com o conectivo 'porém' (sindética adversativa)." },
+            { text: "Não apenas realizou o curso, mas também publicou um artigo científico.", isCorrect: false, rationale: "Incorreto: 'Não apenas... mas também' estrutura uma coordenação sindética aditiva." },
+            { text: "Ou você estuda com foco, ou não obterá a aprovação no concurso.", isCorrect: false, rationale: "Incorreto: Trata-se de orações coordenadas sindéticas alternativas ('Ou... ou')." }
+        ],
+        hint: "Procure por uma primeira oração sem conjunção (assindética) e uma segunda ligada por uma conjunção de oposição (como 'porém' ou 'mas')."
+    },
+    {
+        id: 2,
+        category: "Subordinação Substantiva: Função Sintática de Sujeito",
+        question: "Na frase \"É fundamental que todos os candidatos leiam o edital com atenção\", a oração destacada exerce a função sintática de:",
+        options: [
+            { text: "Sujeito da oração principal (Oração Subordinada Substantiva Subjetiva).", isCorrect: true, rationale: "A oração principal 'É fundamental' possui verbo de ligação + predicativo do sujeito, carecendo de sujeito. A oração 'que todos os candidatos leiam o edital' funciona como o sujeito dessa oração principal." },
+            { text: "Objeto direto do verbo ser (Oração Subordinada Substantiva Objetiva Direta).", isCorrect: false, rationale: "Incorreto: Verbos de ligação como 'é' não transitam diretamente nem recebem objeto direto." },
+            { text: "Predicativo do sujeito da oração principal (Oração Subordinada Substantiva Predicativa).", isCorrect: false, rationale: "Incorreto: O predicativo já está presente na oração principal ('fundamental')." },
+            { text: "Complemento nominal do adjetivo 'fundamental' (Oração Subordinada Substantiva Completiva Nominal).", isCorrect: false, rationale: "Incorreto: 'Fundamental' é o predicativo do sujeito que é representado pela oração subordinada." }
+        ],
+        hint: "Observe que a oração principal é formada por Verbo de Ligação + Predicativo ('É fundamental'). Falta-lhe o sujeito."
+    },
+    {
+        id: 3,
+        category: "Subordinação Adjetiva: Restritiva vs. Explicativa",
+        question: "Considere o valor semântico e sintático das orações adjetivas. Assinale a opção em que a oração subordinada adjetiva altera o sentido de um subconjunto restrito para a totalidade do grupo:",
+        options: [
+            { text: "Os relatórios que apresentavam inconsistências foram auditados.", isCorrect: false, rationale: "A oração é restritiva (sem vírgulas): apenas os relatórios que tinham inconsistências foram auditados." },
+            { text: "Os relatórios, que apresentavam inconsistências, foram auditados.", isCorrect: true, rationale: "A oração é explicativa (entre vírgulas): indica que TODOS os relatórios apresentavam inconsistências e todos foram auditados." },
+            { text: "Os relatórios foram auditados porque apresentavam inconsistências.", isCorrect: false, rationale: "Trata-se de uma oração subordinada adverbial causal, e não adjetiva." },
+            { text: "Se os relatórios apresentarem inconsistências, serão auditados.", isCorrect: false, rationale: "Trata-se de uma oração subordinada adverbial condicional." }
+        ],
+        hint: "As vírgulas em uma oração adjetiva a transformam em explicativa, generalizando o atributo para todo o conjunto."
+    },
+    {
+        id: 4,
+        category: "Subordinação Adverbial: Concessiva vs. Causal",
+        question: "Assinale a alternativa que apresenta uma oração subordinada adverbial concessiva:",
+        options: [
+            { text: "Como o trânsito estava congestionado, chegamos atrasados à reunião.", isCorrect: false, rationale: "Incorreto: 'Como' no início de frase com sentido de motivo introduz oração adverbial causal." },
+            { text: "Embora o trânsito estivesse congestionado, chegamos pontualmente à reunião.", isCorrect: true, rationale: "'Embora' introduz um fato contrariante que não impede a realização da oração principal (concessão)." },
+            { text: "Caso o trânsito esteja congestionado, mudaremos o itinerário original.", isCorrect: false, rationale: "Incorreto: 'Caso' introduz oração subordinada adverbial condicional." },
+            { text: "Tanto o trânsito estava congestionado que perdemos o início do evento.", isCorrect: false, rationale: "Incorreto: 'Tanto... que' introduz oração subordinada adverbial consecutiva." }
+        ],
+        hint: "A oração concessiva traz uma oposição/ressalva que não impede o fato principal de acontecer ('embora', 'ainda que')."
+    },
+    {
+        id: 5,
+        category: "Coordenação: Conectivos Explicativos vs. Conclusivos",
+        question: "Na frase \"O réu não apresentou provas consistentes; portanto, o juiz indeferiu o pedido\", a oração em destaque é uma:",
+        options: [
+            { text: "Oração coordenada sindética conclusiva.", isCorrect: true, rationale: "A conjunção 'portanto' estabelece uma relação de conclusão lógica a partir do fato mencionado na primeira oração." },
+            { text: "Oração coordenada sindética explicativa.", isCorrect: false, rationale: "Incorreto: Conectivos explicativos (como 'pois', 'porque') justificam uma ordem ou afirmação prévia." },
+            { text: "Oração subordinada adverbial consecutiva.", isCorrect: false, rationale: "Incorreto: Apesar da proximidade semântica de causa/efeito, a presença de 'portanto' liga duas orações independentes em coordenação." },
+            { text: "Oração coordenada sindética adversativa.", isCorrect: false, rationale: "Incorreto: 'Portanto' não indica oposição, mas consequência lógica / conclusão." }
+        ],
+        hint: "Conectivos como 'portanto', 'por conseguinte' e 'assim' indicam uma ilação ou conclusão."
+    },
+    {
+        id: 6,
+        category: "Subordinação Substantiva: Completiva Nominal vs. Objetiva Indireta",
+        question: "Diferencie a Oração Subordinada Substantiva Completiva Nominal da Objetiva Indireta nas frases abaixo:\nI. \"Tenho certeza *de que cumpriremos o prazo*.\"\nII. \"O diretor de operações necessita *de que todos colaborem*.\"\n\nA classificação sintática correta das orações destacadas em I e II é, respectivamente:",
+        options: [
+            { text: "Completiva Nominal e Objetiva Indireta.", isCorrect: true, rationale: "Em I, 'de que cumpriremos o prazo' complementa o substantivo abstrato 'certeza' (complemento nominal). Em II, 'de que todos colaborem' complementa o verbo transitivo indireto 'necessita' (objeto indireto)." },
+            { text: "Objetiva Indireta e Completiva Nominal.", isCorrect: false, rationale: "Incorreto: Em I o termo regente é um nome ('certeza'), não um verbo." },
+            { text: "Objetiva Indireta e Objetiva Indireta.", isCorrect: false, rationale: "Incorreto: 'Certeza' é um substantivo e exige complemento nominal." },
+            { text: "Completiva Nominal e Completiva Nominal.", isCorrect: false, rationale: "Incorreto: 'Necessita' é forma verbal e exige objeto indireto." }
+        ],
+        hint: "Observe a classe gramatical da palavra que pede o complemento preposicionado: em I é o substantivo 'certeza'; em II é o verbo 'necessitar'."
+    },
+    {
+        id: 7,
+        category: "Subordinação Adverbial: Proporcionalidade",
+        question: "Assinale a opção em que a conjunção ou locução conjuntiva estabelece uma relação sintático-semântica de proporcionalidade entre as orações:",
+        options: [
+            { text: "À medida que os investimentos aumentam, a produtividade da equipe cresce.", isCorrect: true, rationale: "'À medida que' é uma locução conjuntiva proporcional que indica a simultaneidade progressiva das duas ações." },
+            { text: "Na medida em que os investimentos aumentam, a produtividade da equipe cresce.", isCorrect: false, rationale: "Na norma-padrão, 'na medida em que' possui valor predominantemente causal (equivalente a 'visto que')." },
+            { text: "De modo que os investimentos aumentem, a produtividade da equipe cresce.", isCorrect: false, rationale: "'De modo que' estabelece relação de consequência ou finalidade." },
+            { text: "Contanto que os investimentos aumentem, a produtividade da equipe crescerá.", isCorrect: false, rationale: "'Contanto que' estabelece relação condicional." }
+        ],
+        hint: "A locução proporcional clássica e escorreita na norma-padrão é 'À medida que' (ou 'À proporção que')."
+    },
+    {
+        id: 8,
+        category: "Subordinação Substantiva: Apositiva",
+        question: "Assinale a alternativa que apresenta uma Oração Subordinada Substantiva Apositiva:",
+        options: [
+            { text: "Apenas desejava uma coisa: que os projetos fossem aprovados sem ressalvas.", isCorrect: true, rationale: "A oração 'que os projetos fossem aprovados...' funciona como aposto do termo 'uma coisa', esclarecendo-o." },
+            { text: "É importante que os projetos sejam aprovados sem ressalvas.", isCorrect: false, rationale: "Trata-se de oração subordinada substantiva subjetiva." },
+            { text: "Convenci-me de que os projetos seriam aprovados sem ressalvas.", isCorrect: false, rationale: "Trata-se de oração subordinada substantiva objetiva indireta." },
+            { text: "Tenho esperança de que os projetos sejam aprovados sem ressalvas.", isCorrect: false, rationale: "Trata-se de oração subordinada substantiva completiva nominal." }
+        ],
+        hint: "A oração apositiva desempenha o papel de aposto, frequentemente precedida por dois-pontos ou travessão, esclarecendo um substantivo anterior."
+    },
+    {
+        id: 9,
+        category: "Orações Reduzidas: Reduzida de Gerúndio Causal",
+        question: "A oração reduzida destacada em \"*Percebendo a gravidade da situação*, o gerente convocou uma reunião de emergência\" equivale à oração desenvolvida:",
+        options: [
+            { text: "Como percebeu a gravidade da situação, o gerente convocou uma reunião de emergência.", isCorrect: true, rationale: "A oração reduzida de gerúndio expressa a causa/motivo de o gerente ter convocado a reunião ('Como percebeu...' / 'Visto que percebeu...')." },
+            { text: "Embora percebesse a gravidade da situação, o gerente convocou uma reunião de emergência.", isCorrect: false, rationale: "Incorreto: Não há ideia de concessão ou oposição de fatos." },
+            { text: "Para que percebesse a gravidade da situação, o gerente convocou uma reunião de emergência.", isCorrect: false, rationale: "Incorreto: Não há ideia de finalidade." },
+            { text: "À medida que percebia a gravidade da situação, o gerente convocou uma reunião de emergência.", isCorrect: false, rationale: "Incorreto: Não há gradação proporcional entre os dois fatos." }
+        ],
+        hint: "Substitua a oração reduzida por uma estrutura com 'Como', 'Visto que' ou 'Já que' para testar a relação de causa."
+    },
+    {
+        id: 10,
+        category: "Coordenação: Posição da Conjunção 'Pois'",
+        question: "Analise o valor sintático da conjunção 'pois' nas duas frases:\n1. \"Não saia sem agasalho, *pois* fará muito frio hoje.\"\n2. \"Ele trabalhou com dedicação total; alcançou, *pois*, o sucesso almejado.\"\n\nAs conjunções 'pois' nas frases 1 e 2 possuem valores, respectivamente, de:",
+        options: [
+            { text: "Explicativo e Conclusivo.", isCorrect: true, rationale: "O 'pois' antes do verbo introduz explicação/causa (frase 1). O 'pois' intercalado ou posposto ao verbo tem valor conclusivo (frase 2)." },
+            { text: "Conclusivo e Explicativo.", isCorrect: false, rationale: "Incorreto: A ordem das funções está invertida." },
+            { text: "Causal e Adversativo.", isCorrect: false, rationale: "Incorreto: O 'pois' posposto não indica oposição/adversidade." },
+            { text: "Adversativo e Conclusivo.", isCorrect: false, rationale: "Incorreto: 'Pois' antes do verbo não é adversativo." }
+        ],
+        hint: "Lembre-se: 'pois' antes do verbo = explicativo; 'pois' depois ou intercalado ao verbo = conclusivo."
+    },
+    {
+        id: 11,
+        category: "Subordinação Adverbial: Consecutiva vs. Comparativa",
+        question: "A frase \"Gritou tanto *que perdeu a voz durante a apresentação*\" traz uma oração subordinada adverbial:",
+        options: [
+            { text: "Consecutiva.", isCorrect: true, rationale: "A estrutura intensificadora 'tanto... que' introduz uma oração que expressa a consequência/resultado do fato expresso na oração principal." },
+            { text: "Comparativa.", isCorrect: false, rationale: "Incorreto: A comparação exige estruturas como 'mais... do que', 'como', 'tanto quanto'." },
+            { text: "Causal.", isCorrect: false, rationale: "Incorreto: O fato de perder a voz é o efeito/consequência de ter gritado tanto." },
+            { text: "Concessiva.", isCorrect: false, rationale: "Incorreto: Não há ideia de contradição ou quebra de expectativa." }
+        ],
+        hint: "A combinação do intensificador 'tanto' com a conjunção 'que' introduz uma consequência."
+    },
+    {
+        id: 12,
+        category: "Subordinação Substantiva: Predicativa",
+        question: "Assinale a alternativa cuja oração subordinada é Substantiva Predicativa:",
+        options: [
+            { text: "O maior desejo da equipe era que os resultados fossem divulgados.", isCorrect: true, rationale: "A oração principal possui sujeito ('O maior desejo da equipe') e verbo de ligação ('era'), exigindo uma oração com função de predicativo do sujeito." },
+            { text: "A equipe desejava que os resultados fossem divulgados.", isCorrect: false, rationale: "Trata-se de uma oração subordinada substantiva objetiva direta." },
+            { text: "A equipe tinha o desejo de que os resultados fossem divulgados.", isCorrect: false, rationale: "Trata-se de uma oração subordinada substantiva completiva nominal." },
+            { text: "Divulgados os resultados, a equipe comemorou o desempenho.", isCorrect: false, rationale: "Trata-se de uma oração reduzida de partícipio com valor adverbial temporal." }
+        ],
+        hint: "Busque a estrutura [Sujeito + Verbo de Ligação + Oração Subordinada (Predicativo)]."
+    },
+    {
+        id: 13,
+        category: "Coordenação: Alternância e Exclusão",
+        question: "Na oração coordenada sindética alternativa \"Ou o projeto é reestruturado, ou perderemos o financiamento internacional\", a relação semântica estabelecida pelas conjunções é de:",
+        options: [
+            { text: "Exclusão / Alternância mútua entre duas possibilidades.", isCorrect: true, rationale: "A estrutura 'Ou... ou' estabelece uma relação em que a ocorrência de uma opção exclui a ocorrência da outra." },
+            { text: "Adição gradual de hipóteses incertas.", isCorrect: false, rationale: "Incorreto: A alternância não possui valor aditivo." },
+            { text: "Concessão condicional com ressalva temporal.", isCorrect: false, rationale: "Incorreto: Não se trata de concessão nem de subordinação adverbial." },
+            { text: "Causa e consequência coordenadas.", isCorrect: false, rationale: "Incorreto: Embora haja um pano de fundo condicional, a relação sintática formal é de alternância coordenada." }
+        ],
+        hint: "As conjunções 'ou... ou' impõem uma escolha em que uma alternativa anula a outra."
+    },
+    {
+        id: 14,
+        category: "Subordinação Adverbial: Condicional em Forma Reduzida",
+        question: "A oração reduzida de infinitivo na frase \"*A continuar com esse ritmo de gastos*, a empresa decretará falência em breve\" equivale à oração desenvolvida:",
+        options: [
+            { text: "Se continuar com esse ritmo de gastos, a empresa decretará falência em breve.", isCorrect: true, rationale: "A preposição 'A' + infinitivo ('A continuar') equivale à conjunção condicional 'Se' + futuro do subjuntivo." },
+            { text: "Embora continue com esse ritmo de gastos, a empresa decretará falência em breve.", isCorrect: false, rationale: "Incorreto: A frase original não possui sentido concessivo." },
+            { text: "Quando continuar com esse ritmo de gastos, a empresa decretará falência em breve.", isCorrect: false, rationale: "Incorreto: A relação é de hipótese/condição, e não de marcação temporal factual." },
+            { text: "Porque continua com esse ritmo de gastos, a empresa decretará falência em breve.", isCorrect: false, rationale: "Incorreto: A oração verbal principal está no futuro ('decretará'), indicando hipótese futura." }
+        ],
+        hint: "A estrutura 'A + infinitivo' na abertura de frases frequentemente expressa uma condição equivalente a 'Se + verbo'."
+    },
+    {
+        id: 15,
+        category: "Subordinação Adverbial: Finalidade",
+        question: "Assinale a alternativa que apresenta uma oração subordinada adverbial final desenvolvida:",
+        options: [
+            { text: "Os engenheiros revisaram a estrutura a fim de que não houvesse acidentes na obra.", isCorrect: true, rationale: "'A fim de que' é locução conjuntiva final que introduz a oração desenvolvida com verbo no modo subjuntivo ('houvesse')." },
+            { text: "Os engenheiros revisaram a estrutura para evitar acidentes na obra.", isCorrect: false, rationale: "Trata-se de uma oração subordinada adverbial final REDUZIDA de infinitivo ('para evitar')." },
+            { text: "Como revisaram a estrutura, os engenheiros evitaram acidentes na obra.", isCorrect: false, rationale: "Trata-se de uma oração subordinada adverbial causal." },
+            { text: "Caso revisem a estrutura, os engenheiros evitarão acidentes na obra.", isCorrect: false, rationale: "Trata-se de uma oração subordinada adverbial condicional." }
+        ],
+        hint: "Atente para a diferença entre oração desenvolvida (com conjunção + verbo flexionado) e reduzida (com infinitivo)."
+    },
+    {
+        id: 16,
+        category: "Coordenação: Conectivos Adversativos e Vírgula",
+        question: "Considere o emprego da conjunção adversativa em: \"Tentou encontrar o documento em todas as pastas; não o localizou, contudo.\" A respeito da pontuação e da sintaxe dessa oração coordenada, assinale a opção correta:",
+        options: [
+            { text: "A conjunção 'contudo' está deslocada para o final da oração, devendo obrigatoriamente vir isolada ou antecedida por vírgula.", isCorrect: true, rationale: "Conjunções adversativas deslocadas da posição inicial da oração (como 'porém', 'contudo', 'todavia') exigem isolamento por vírgulas." },
+            { text: "O uso de 'contudo' no final transforma a oração em subordinada adverbial concessiva.", isCorrect: false, rationale: "Incorreto: A mudança de posição não altera a classificação sintática da oração." },
+            { text: "A conjunção deveria ser substituída por 'mas', pois 'mas' pode ser deslocado livremente para o fim da oração.", isCorrect: false, rationale: "Incorreto: A conjunção 'mas' não admite deslocamento, devendo figurar no início da oração." },
+            { text: "Houve erro de pontuação, pois o ponto e vírgula impede o uso de conjunção adversativa na oração seguinte.", isCorrect: false, rationale: "Incorreto: O ponto e vírgula é perfeitamente adequado para separar orações coordenadas extensas." }
+        ],
+        hint: "Lembre-se de que a conjunção 'mas' não pode ser deslocada na frase, enquanto 'contudo', 'porém' e 'todavia' podem vir deslocadas entre vírgulas."
+    },
+    {
+        id: 17,
+        category: "Subordinação Substantiva: Função de Objeto Direto",
+        question: "Na frase \"O diretor confirmou que as metas trimestrais foram atingidas pela equipe\", a oração subordinada exerce a função de:",
+        options: [
+            { text: "Objeto Direto do verbo transitivo direto 'confirmou'.", isCorrect: true, rationale: "Quem confirma, confirma algo. A oração 'que as metas trimestrais foram atingidas' funciona como complemento verbal direto sem preposição." },
+            { text: "Sujeito da oração principal.", isCorrect: false, rationale: "Incorreto: O sujeito da oração principal já está expresso ('O diretor')." },
+            { text: "Objeto Indireto do verbo 'confirmou'.", isCorrect: false, rationale: "Incorreto: Não há preposição regida pelo verbo 'confirmar'." },
+            { text: "Complemento Nominal do verbo 'confirmou'.", isCorrect: false, rationale: "Incorreto: Verbos recebem objetos; nomes é que recebem complementos nominais." }
+        ],
+        hint: "Identifique a transitividade do verbo 'confirmar': [Quem confirma, confirma ALGO]."
+    },
+    {
+        id: 18,
+        category: "Subordinação Adverbial: Consecutiva vs. Causal",
+        question: "Diferencie a relação causal e consecutiva nas frases:\nI. \"Como a chuva foi intensa, a cidade ficou alagada.\"\nII. \"A chuva foi tão intensa que a cidade ficou alagada.\"\n\nSintaticamente, as orações destacadas são, respectivamente:",
+        options: [
+            { text: "Subordinada Adverbial Causal (em I) e Subordinada Adverbial Consecutiva (em II).", isCorrect: true, rationale: "Em I, destaca-se o motivo/causa do alagamento ('Como a chuva foi intensa'). Em II, 'que a cidade ficou alagada' representa o efeito/consequência da intensidade da chuva." },
+            { text: "Subordinada Adverbial Consecutiva em ambas as frases.", isCorrect: false, rationale: "Incorreto: A frase I expressa a causa antes do efeito." },
+            { text: "Subordinada Adverbial Causal em ambas as frases.", isCorrect: false, rationale: "Incorreto: A oração 'que a cidade ficou alagada' é a consequência introduzida pelo 'tão... que'." },
+            { text: "Subordinada Adverbial Concessiva (em I) e Subordinada Adverbial Causal (em II).", isCorrect: false, rationale: "Incorreto: Nenhuma das orações possui valor concessivo." }
+        ],
+        hint: "Observe qual oração expressa a CAUSA (motivo prévio) e qual expressa o EFEITO (consequência gerada)."
+    },
+    {
+        id: 19,
+        category: "Orações Reduzidas: Reduzida de Particípio Temporal",
+        question: "A oração reduzida \"*Concluída a reunião de alinhamento*, todos os gestores retornaram aos seus setores\" possui valor sintático-semântico equivalente a uma oração subordinada adverbial:",
+        options: [
+            { text: "Temporal.", isCorrect: true, rationale: "'Concluída a reunião' equivale a 'Assim que a reunião foi concluída' ou 'Logo que se concluiu a reunião', marcando o tempo da ação principal." },
+            { text: "Causal.", isCorrect: false, rationale: "Incorreto: O foco primário da construção é o término cronológico do evento." },
+            { text: "Concessiva.", isCorrect: false, rationale: "Incorreto: Não estabelece relação de contraste ou quebra de expectativa." },
+            { text: "Condicional.", isCorrect: false, rationale: "Incorreto: O fato já ocorreu (particípio no passado), não sendo uma hipótese." }
+        ],
+        hint: "Reescreva a oração iniciada pelo particípio utilizando 'Assim que' ou 'Logo que'."
+    },
+    {
+        id: 20,
+        category: "Subordinação Adjetiva: Emprego do Pronome Relativo 'Cujo'",
+        question: "Assinale a opção em que o pronome relativo introduz uma oração subordinada adjetiva de forma sintática e gramaticalmente correta:",
+        options: [
+            { text: "O autor cujo o livro foi premiado concedeu uma entrevista coletiva.", isCorrect: false, rationale: "Incorreto: É proibido o uso de artigo definido imediatamente após o pronome relativo 'cujo' ('cujo o' é erro grave)." },
+            { text: "O autor cujo livro foi premiado concedeu uma entrevista coletiva.", isCorrect: true, rationale: "Correto: O pronome 'cujo' establishes relação de posse (livro do autor) e concorda em gênero e número com o consequente ('livro') sem artigo." },
+            { text: "O autor que o seu livro foi premiado concedeu uma entrevista coletiva.", isCorrect: false, rationale: "Incorreto: Construção pleonástica inadequada segundo a norma culta." },
+            { text: "O autor a cujo livro foi premiado concedeu uma entrevista coletiva.", isCorrect: false, rationale: "Incorreto: O verbo 'foi premiado' não rege a preposição 'a' para o seu sujeito ('livro')." }
+        ],
+        hint: "O pronome relativo 'cujo' nunca aceita artigo posterior (não existe 'cujo o' nem 'cuja a')."
+    },
+    {
+        id: 21,
+        category: "Coordenação: Adição com Conectivo Negativo",
+        question: "Na frase \"O jovem candidato não compareceu à entrevista, *nem justificou a sua ausência*\", a oração em destaque é uma:",
+        options: [
+            { text: "Oração coordenada sindética aditiva.", isCorrect: true, rationale: "O conectivo 'nem' equivale a 'e não', somando duas ações negativas coordenadas entre si." },
+            { text: "Oração coordenada sindética alternativa.", isCorrect: false, rationale: "Incorreto: Não há ideia de opção/alternância, mas sim de adição de duas omissões." },
+            { text: "Oração subordinada adverbial condicional.", isCorrect: false, rationale: "Incorreto: Não se trata de uma estrutura de subordinação." },
+            { text: "Oração coordenada sindética explicativa.", isCorrect: false, rationale: "Incorreto: Não justifica o fato anterior, apenas adiciona outro fato negativo." }
+        ],
+        hint: "A conjunção 'nem' tem valor de adição negativa ('e não')."
+    },
+    {
+        id: 22,
+        category: "Subordinação Adverbial: Comparativa",
+        question: "Assinale a opção que contém uma Oração Subordinada Adverbial Comparativa:",
+        options: [
+            { text: "O palestrante abordou os conceitos com clareza, assim como fizera o especialista no painel anterior.", isCorrect: true, rationale: "'Assim como' estabelece um confronto comparativo de igualdade entre o modo de palestrar de dois indivíduos." },
+            { text: "Como o especialista abordou os conceitos com clareza, todos compreenderam o tema.", isCorrect: false, rationale: "O 'como' em início de frase expressa causa." },
+            { text: "O especialista abordou os conceitos como a diretoria havia determinado.", isCorrect: false, rationale: "O 'como' estabelece relação de conformidade (conforme a diretoria havia determinado)." },
+            { text: "Como o especialista havia previsto, o tema gerou debate entre os participantes.", isCorrect: false, rationale: "Trata-se de oração subordinada adverbial conformativa." }
+        ],
+        hint: "Identifique em qual alternativa a conjunção 'como' é usada para aproximar duas realidades comparando-as."
+    },
+    {
+        id: 23,
+        category: "Subordinação Substantiva: Nomenclatura Gramatical Brasileira",
+        question: "A Nomenclatura Gramatical Brasileira (NGB) reconhece formalmente quantas e quais classificações para as Orações Subordinadas Substantivas?",
+        options: [
+            { text: "6 classificações: Subjetiva, Objetiva Direta, Objetiva Indireta, Completiva Nominal, Predicativa e Apositiva.", isCorrect: true, rationale: "São exatamente 6 os tipos de orações subordinadas substantivas previstos pela norma gramatical tradicional (NGB)." },
+            { text: "5 classificações: Causal, Concessiva, Condicional, Consecutiva e Final.", isCorrect: false, rationale: "Incorreto: Essas pertencem ao grupo das orações subordinadas adverbiais." },
+            { text: "2 classificações: Explicativa e Restritiva.", isCorrect: false, rationale: "Incorreto: Essas pertencem ao grupo das orações subordinadas adjetivas." },
+            { text: "4 classificações: Aditiva, Adversativa, Alternativa e Conclusiva.", isCorrect: false, rationale: "Incorreto: Essas pertencem ao grupo das orações coordenadas sindéticas." }
+        ],
+        hint: "A Nomenclatura Gramatical Brasileira (NGB) estabelece exatamente seis tipos de orações subordinadas substantivas."
+    },
+    {
+        id: 24,
+        category: "Subordinação Adverbial: Conformativa",
+        question: "A frase \"O projeto foi executado *segundo as orientações estipuladas no manual*\" traz uma oração reduzida que pode ser desenvolvida por meio do conectivo:",
+        options: [
+            { text: "conforme", isCorrect: true, rationale: "'Segundo', 'conforme' e 'consoante' são conectivos que expressam relação de conformidade / adequação a uma regra." },
+            { text: "embora", isCorrect: false, rationale: "'Embora' possui sentido concessivo." },
+            { text: "porquanto", isCorrect: false, rationale: "'Porquanto' possui sentido causal." },
+            { text: "visto que", isCorrect: false, rationale: "'Visto que' possui sentido causal." }
+        ],
+        hint: "Procure a conjunção equivalente a 'de acordo com' ou 'segundo'."
+    },
+    {
+        id: 25,
+        category: "Processo Misto: Coordenação e Subordinação no Período Composto",
+        question: "Analise o período: \"O pesquisador recolheu as amostras no campo, mas não realizou os testes laboratoriais porque o equipamento estava danificado.\" A respeito da estrutura desse período composto, é correto afirmar:",
+        options: [
+            { text: "É um período composto por coordenação e subordinação, contendo duas orações coordenadas entre si e uma subordinada adverbial causal.", isCorrect: true, rationale: "'O pesquisador recolheu...' e 'mas não realizou...' são orações coordenadas entre si (ligadas pela adversativa 'mas'). A oração 'porque o equipamento...' é subordinada adverbial causal em relação à segunda." },
+            { text: "É um período composto exclusivamente por coordenação sindética e assindética.", isCorrect: false, rationale: "Incorreto: A presença de 'porque' introduz uma oração subordinada adverbial." },
+            { text: "É um período composto exclusivamente por subordinação adjetiva e substantiva.", isCorrect: false, rationale: "Incorreto: 'mas' é uma conjunção coordenativa adversativa." },
+            { text: "Trata-se de um período simples com várias兵 locuções verbais intercaladas.", isCorrect: false, rationale: "Incorreto: Há múltiplos verbos/predicados e diferentes relações sintáticas entre as orações." }
+        ],
+        hint: "Identifique as conjunções 'mas' (coordenativa adversativa) e 'porque' (subordinativa causal) para classificar a estrutura mista."
+    },
+    {
+        id: 26,
+        category: "Subordinação Adverbial: Modos Verbais e Conectivos",
+        question: "Assinale a alternativa em que a alteração do conectivo subordinativo mantém o verbo no modo subjuntivo sem exigir readequação da flexão:",
+        options: [
+            { text: "Substituir 'Caso haja' por 'Se houver'.", isCorrect: false, rationale: "'Caso' exige presente do subjuntivo ('haja'), enquanto 'Se' exige futuro do subjuntivo ('houver')." },
+            { text: "Substituir 'Embora estude' por 'Ainda que estude'.", isCorrect: true, rationale: "Tanto 'Embora' quanto 'Ainda que' são conectivos concessivos que regem o verbo no mesmo tempo do modo subjuntivo ('estude')." },
+            { text: "Substituir 'Por mais que tente' por 'Apesar de tentar'.", isCorrect: false, rationale: "'Apesar de' exige o verbo no infinitivo ('tentar')." },
+            { text: "Substituir 'Para que consiga' por 'A fim de conseguir'.", isCorrect: false, rationale: "'A fim de' reduz a oração para o infinitivo ('conseguir')." }
+        ],
+        hint: "Procure dois conectivos concessivos que pertençam à mesma classe e exijam exatamente a mesma forma no subjuntivo."
+    },
+    {
+        id: 27,
+        category: "Subordinação Substantiva: Função de Complemento Nominal",
+        question: "Na frase \"Todos os presentes estavam convictos *de que a proposta seria aceita*\", a oração em destaque é classificada como:",
+        options: [
+            { text: "Oração Subordinada Substantiva Completiva Nominal.", isCorrect: true, rationale: "A oração complementa o adjetivo 'convictos' (termo regente nominal preposicionado)." },
+            { text: "Oração Subordinada Substantiva Objetiva Indireta.", isCorrect: false, rationale: "Incorreto: 'Convictos' é adjetivo, não verbo." },
+            { text: "Oração Subordinada Adverbial Causal.", isCorrect: false, rationale: "Incorreto: Trata-se do complemento necessário para o sentido do adjetivo 'convictos'." },
+            { text: "Oração Subordinada Adjetiva Explicativa.", isCorrect: false, rationale: "Incorreto: Não é introduzida por pronome relativo e não qualifica um substantivo." }
+        ],
+        hint: "'Convictos' é um adjetivo. A oração preposicionada que completa o sentido de um adjetivo exerce a função de complemento nominal."
+    },
+    {
+        id: 28,
+        category: "Orações Reduzidas: Reduzida de Infinitivo Substantiva",
+        question: "A frase \"*Viajar pelo mundo* era o seu maior sonho de infância\" apresenta uma oração reduzida de infinitivo com função de:",
+        options: [
+            { text: "Sujeito (Oração Subordinada Substantiva Subjetiva Reduzida de Infinitivo).", isCorrect: true, rationale: "'Viajar pelo mundo' é o sujeito do verbo 'era' ('Isso era o seu maior sonho')." },
+            { text: "Objeto Direto (Oração Subordinada Substantiva Objetiva Direta Reduzida).", isCorrect: false, rationale: "Incorreto: 'Era' é verbo de ligação, não transitivo direto." },
+            { text: "Predicativo do Sujeito (Oração Subordinada Substantiva Predicativa Reduzida).", isCorrect: false, rationale: "Incorreto: O predicativo do sujeito é 'o seu maior sonho de infância'." },
+            { text: "Adjunto Adverbial de Lugar.", isCorrect: false, rationale: "Incorreto: Toda a estrutura nominalizada funciona como núcleo do sujeito." }
+        ],
+        hint: "Substitua toda a oração reduzida por 'Isso': \"[Isso] era o seu maior sonho de infância\". 'Isso' é o sujeito."
+    },
+    {
+        id: 29,
+        category: "Coordenação: Polissíndete (Recurso Estilístico Sintático)",
+        question: "Assinale a alternativa que apresenta o recurso da polissíndete na coordenação de orações:",
+        options: [
+            { text: "Trabalha, e luta, e persevera, e não se rende diante das adversidades.", isCorrect: true, rationale: "A repetição intencional e reiterada da conjunção coordenativa 'e' caracteriza a figura de sintaxe denominada polissíndete." },
+            { text: "Vim, vi, venci a batalha com determinação.", isCorrect: false, rationale: "A ausência de conjunções entre orações coordenadas caracteriza a assíndete (assíndeto)." },
+            { text: "Estudou muito, mas não conseguiu a nota mínima.", isCorrect: false, rationale: "Uso normal de conjunção adversativa em coordenação sindética." },
+            { text: "Ou você fala a verdade, ou permanece em silêncio.", isCorrect: false, rationale: "Uso de conjunção correlativa alternativa padrão." }
+        ],
+        hint: "Polissíndete é a repetição enfática de uma mesma conjunção coordenativa (geralmente 'e' ou 'ou')."
+    },
+    {
+        id: 30,
+        category: "Subordinação Adverbial: Temporal vs. Condicional",
+        question: "Na frase \"*Desde que o novo diretor assumiu o cargo*, as metas de produtividade foram superadas mensalmente\", a oração destacada possui valor sintático de:",
+        options: [
+            { text: "Oração Subordinada Adverbial Temporal.", isCorrect: true, rationale: "'Desde que' acompanhado de verbo no modo indicativo ('assumiu') marca um ponto de partida no tempo (valor temporal)." },
+            { text: "Oração Subordinada Adverbial Condicional.", isCorrect: false, rationale: "Incorreto: Para ser condicional, exigiria verbo no modo subjuntivo ('desde que o novo diretor assuma...')." },
+            { text: "Oração Subordinada Adverbial Concessiva.", isCorrect: false, rationale: "Incorreto: Não há ideia de impedimento/ressalva." },
+            { text: "Oração Subordinada Substantiva Objetiva Indireta.", isCorrect: false, rationale: "Incorreto: Não complementa um verbo transitivo indireto." }
+        ],
+        hint: "Preste atenção ao modo verbal: 'desde que' + indicativo indica TEMPO; 'desde que' + subjuntivo indica CONDIÇÃO."
+    }
+];
 
         // State Management
         let currentQuestionIdx = 0;
