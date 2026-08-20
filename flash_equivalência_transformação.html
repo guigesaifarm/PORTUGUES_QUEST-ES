@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Equivalência e Transformação de Estruturas</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb; /* Ajustado para o azul padrão de português */
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        /* Fontes ajustadas para melhor legibilidade */
+        .card-content {
+            font-size: 1.6rem; 
+            line-height: 1.5;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.15rem; 
+            text-align: left;
+            color: #34495e;
+            overflow-y: auto;
+            max-height: 220px;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.3rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Equivalência e Transformação de Estruturas na Língua Portuguesa</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Conceito Geral</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            {
+                category: "Conceito de Reescrita",
+                front: "O que avaliam as questões de <b>equivalência e reescrita de frases</b> em concursos públicos?",
+                back: "Avaliam se uma nova estrutura mantém o sentido original do texto (preservação semântica) e se atende rigorosamente a todas as normas da gramática normativa (correção sintática)."
+            },
+            {
+                category: "Voz Passiva Analítica",
+                front: "Como transformar uma oração da <b>voz ativa</b> para a <b>voz passiva analítica</b>?",
+                back: "O Objeto Direto vira Sujeito Paciente, o Sujeito vira Agente da Passiva, e o verbo principal vai para o particípio, acompanhado do verbo auxiliar <i>ser</i> no mesmo tempo da ativa (Ex: 'O gato pegou o rato' -> 'O rato <i>foi pego</i> pelo gato')."
+            },
+            {
+                category: "Voz Passiva Sintética",
+                front: "Como transformar uma frase em voz passiva analítica para a <b>voz passiva sintética</b> (pronominal)?",
+                back: "Utiliza-se o verbo na 3ª pessoa acompanhado da partícula apassivadora <b>'se'</b> (Ex: 'Casas são vendidas' -> '<i>Vendem-se</i> casas'). O sujeito paciente passa a concordar com o verbo."
+            },
+            {
+                category: "Impossibilidade de Passiva",
+                front: "Toda oração da voz ativa pode ser convertida para a voz passiva?",
+                back: "<b>Não.</b> Apenas orações com verbos <b>transitivos diretos</b> ou <b>transitivos diretos e indiretos</b> admitem conversão para a voz passiva. Verbos intransitivos ou transitivos indiretos não podem."
+            },
+            {
+                category: "Discurso Direto / Indireto",
+                front: "Na transformação do <b>discurso direto para o indireto</b>, o que ocorre com os tempos verbais do pretérito perfeito?",
+                back: "Geralmente, o pretérito perfeito do discurso direto passa para o <b>pretérito mais-que-perfeito</b> (ou locução equivalente) no discurso indireto (Ex: Ele disse: 'Comprei o carro' -> Ele disse que <i>comprara</i> o carro)."
+            },
+            {
+                category: "Pronomes no Discurso Indireto",
+                front: "Como se transformam os pronomes demonstrativos e de 1ª pessoa ao passar uma frase do discurso direto para o indireto?",
+                back: "Eles sofrem deslocamento de perspectiva para a 3ª pessoa e para o passado/distância (Ex: 'Quero este livro hoje' -> Ele disse que <i>queria aquele</i> livro <i>naquele</i> dia)."
+            },
+            {
+                category: "Orações Subordinadas Adjetivas",
+                front: "Qual é a equivalência estrutural entre uma <b>oração subordinada adjetiva restritiva</b> e um <b>adjetivo/locução adjetiva</b>?",
+                back: "Muitas vezes, uma oração adjetiva pode ser reduzida a um adjetivo correspondente (Ex: 'Homens <i>que têm coragem</i>' equivale a 'Homens <i>corajosos</i>')."
+            },
+            {
+                category: "Orações Reduzidas",
+                front: "O que é uma <b>oração reduzida</b> e como ela se equipara a uma oração desenvolvida?",
+                back: "É aquela cujo verbo está em uma forma nominal (infinitivo, gerúndio ou particípio) e não possui conectivo. Ela equivale a uma desenvolvida introduzida por conjunção ou pronome (Ex: 'Ao chegar...' equivale a 'Quando cheguei...')."
+            },
+            {
+                category: "Reduzida de Gerúndio",
+                front: "Uma oração reduzida de gerúndio ('<i>Chovendo</i>, não irei') costuma equivaler a qual tipo de oração desenvolvida?",
+                back: "Equivale tipicamente a uma oração subordinada adverbial desenvolvida, geralmente causal ou condicional ('<i>Já que chove</i>, não irei' ou '<i>Se chover</i>, não irei')."
+            },
+            {
+                category: "Orações Coordenadas Explicativas",
+                front: "As orações coordenadas explicativas ('pois', 'porque') podem ser substituídas por quais estruturas equivalentes?",
+                back: "Podem ser convertidas em orações subordinadas adverbiais causais desenvolvidas (Ex: 'Não fui, <i>pois</i> estava doente' equivale a 'Não fui <i>porque</i> estava doente')."
+            },
+            {
+                category: "Inversão de Orações Adverbiais",
+                front: "O que acontece com a pontuação ao deslocar uma oração subordinada adverbial desenvolvida da <b>direita para a esquerda</b> (início da frase)?",
+                back: "Ela passa a ser obrigatoriamente isolada por <b>vírgula</b>, pois estará deslocada de sua ordem direta (Ex: 'Fiquei feliz <i>quando te vi</i>' -> '<i>Quando te vi</i>, fiquei feliz')."
+            },
+            {
+                category: "Substituição Concessiva",
+                front: "A conjunção concessiva 'embora' pode ser substituída mantendo a equivalência semântica por quais termos?",
+                back: "Por outras concessivas como: <i>ainda que, mesmo que, conquanto, malgrado, posto que</i> (seguidas de verbo no subjuntivo)."
+            },
+            {
+                category: "Substituição Causal",
+                front: "Quais conectivos garantem equivalência exata de sentido ao substituir a conjunção causal 'já que'?",
+                back: "Podem ser substituídos por: <i>visto que, pois que, uma vez que, dado que, como</i> (quando antecipado)."
+            },
+            {
+                category: "Transformação da Condicional",
+                front: "Como reescrever a oração condicional '<i>Se</i> não estudares, reprovarás' usando estrutura equivalente sem o 'se'?",
+                back: "Pode-se usar a inversão com o imperativo ou estruturas equivalentes dependendo da banca, mas mantendo a hipótese (Ex: 'Caso não estudares...' ou com inversões estruturais de gerúndio/infinitivo condicional)."
+            },
+            {
+                category: "Substituição Proporcional",
+                front: "A expressão proporcional 'à medida que' pode ser substituída sem alteração de sentido por qual outra?",
+                back: "Por <b>'à proporção que'</b>. Cuidado para não confundir com 'ao passo que' (que pode ter leve nuance temporal/adversativa) ou 'na medida em que' (que é puramente causal)."
+            },
+            {
+                category: "Troca de 'Na medida em que'",
+                front: "A locução 'na medida em que' expressa qual sentido e por o que pode ser substituída?",
+                back: "Expressa sentido <b>causal</b> ('já que', 'porque'). É um erro grave substituí-la por 'à medida que' (que é proporcional)."
+            },
+            {
+                category: "Equivalência de Conclusão",
+                front: "Quais conectivos podem substituir o operador conclusivo 'portanto' sem prejuízo semântico?",
+                back: "Podem ser substituídos por: <i>logo, por conseguinte, por isso, assim, pois</i> (quando posposto ao verbo)."
+            },
+            {
+                category: "Substituição Adversativa",
+                front: "O conectivo adversativo 'contudo' pode ser substituído por qual grupo de equivalentes?",
+                back: "Por <i>todavia, entretanto, no entanto, mas, senão</i> (com restrição de contexto)."
+            },
+            {
+                category: "Transposição de Adjunto Adnominal",
+                front: "Como transformar um <b>adjunto adnominal</b> (ex: 'política governamental') em uma oração equivalente?",
+                back: "Pode ser transformado em uma oração subordinada adjetiva restritiva ('política <i>que pertence ao governo</i>' ou 'política <i>do governo</i>')."
+            },
+            {
+                category: "Transposição de Oração Adjetiva",
+                front: "É sempre possível transformar qualquer oração adjetiva explicativa em um adjetivo simples?",
+                back: "<b>Não.</b> Apenas orações adjetivas cujos verbos e termos internos possam ser condensados em um conceito qualificativo simples aceitam essa redução sem perda de sentido."
+            },
+            {
+                category: "Transformação de Substantivo em Verbo",
+                front: "Na reescrita, transformar um nome abstrato em verbo ('A ocorrência da explosão' -> 'A bomba explodiu') altera o quê na estrutura?",
+                back: "Modifica a classe gramatical principal e reorganiza os termos sintáticos (o adjunto adnominal vira sujeito e a estrutura nominal ganha predicação verbal própria)."
+            },
+            {
+                category: "Uso do Infinitivo Pessoal",
+                front: "Como transformar a oração 'Para os alunos passarem' usando uma estrutura desenvolvida equivalente?",
+                back: "Equivale a uma oração subordinada adverbial final desenvolvida: 'Para que <i>os alunos passem</i>'."
+            },
+            {
+                category: "Equivalência de Voz Passiva com 'Se'",
+                front: "A frase 'Alugam-se apartamentos' equivale a qual estrutura na voz passiva analítica?",
+                back: "Equivale a: 'Apartamentos <i>são alugados</i>'."
+            },
+            {
+                category: "Mudança de Colocação Pronominal",
+                front: "Em questões de reescrita, a alteração de próclise para ênclise (ou vice-versa) é aceita livremente?",
+                back: "<b>Não.</b> A colocação pronominal obedece a regras rígidas de gramática normativa (como palavras atrativas). Uma reescrita que ignore a próclise obrigatória torna o texto incorreto."
+            },
+            {
+                category: "Transformação de Período Composto",
+                front: "Como transformar dois períodos simples em um período composto por subordinação substantiva?",
+                back: "Utiliza-se uma conjunção integrante ('que' ou 'se') para subordinar a segunda ideia à primeira (Ex: 'Quero isto: você vencer' -> 'Quero <i>que você vença</i>')."
+            },
+            {
+                category: "Equivalência Temporal",
+                front: "A expressão temporal 'Assim que chegou' pode ser substituída por quais equivalentes exatos?",
+                back: "Por: <i>logo que, tão soon as (em inglês, não), mal chegou, <i>no momento em que</i> chegou, <i>desde que</i>."
+            },
+            {
+                category: "Supressão de Vírgulas e Mudança",
+                front: "O que ocorre na reescrita se retirarmos as vírgulas de uma oração subordinada adjetiva <b>explicativa</b>?",
+                back: "Ela se transforma em uma oração adjetiva <b>restritiva</b>, alterando drasticamente o sentido semântico do texto (restringindo o universo do antecedente)."
+            },
+            {
+                category: "Equivalência de Orações Substantivas",
+                front: "Como transformar uma oração subordinada substantiva subjetiva reduzida em desenvolvida?",
+                back: "Desenvolve-se a forma nominal inserindo a conjunção integrante 'que' e ajustando o verbo ao modo adequado (Ex: 'É preciso estudar' -> 'É preciso <i>que se estude</i>')."
+            },
+            {
+                category: "Reescrita por Substituição Lexical",
+                front: "Ao substituir uma palavra por um sinônimo em uma reescrita de prova, o que deve ser rigorosamente verificado?",
+                back: "Deve-se verificar se o sinônimo preserva o <b>registro linguístico</b> (formal/informal), o sentido contextual exato e a compatibilidade com a regência dos termos ao redor."
+            },
+            {
+                category: "Ouro para Provas de Reescrita",
+                front: "Qual é a pegadinha clássica das bancas em questões de equivalência de textos?",
+                back: "A banca apresenta uma reescrita gramaticalmente perfeita, mas que <b>distorce o sentido original</b> do autor ou altera uma relação lógico-semântica (ex: trocar causa por consequência)."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
