@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interativo: Articulação do Texto e Coesão</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Aumenta a base de todas as fontes do site */
+    html {
+        font-size: 19px; /* O padrão é 16px. Aumente para 18px ou 20px */
+    }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-sm">
+                    <i class="fa-solid fa-[#fa-book-open] text-xl"></i>
+                    <i class="fa-solid fa-pen-nib text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 leading-tight">Quiz de Língua Portuguesa</h1>
+                    <p class="text-xs text-slate-500">Articulação do Texto: Pronomes, Referenciação e Nexos</p>
+                </div>
+            </div>
+
+            <!-- Mode Selector & Stats -->
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex bg-slate-100 p-1 rounded-lg text-xs font-semibold">
+                    <button id="btnModeStudy" onclick="setMode('study')" class="px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm">
+                        <i class="fa-solid fa-[#fa-graduation-cap] mr-1"></i> Modo Estudo
+                    </button>
+                    <button id="btnModeExam" onclick="setMode('exam')" class="px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900">
+                        <i class="fa-solid fa-stopwatch mr-1"></i> Modo Simulado
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 bg-brand-50 text-brand-700 px-3 py-1.5 rounded-lg border border-brand-100 text-sm font-semibold">
+                    <i class="fa-solid fa-trophy text-brand-500"></i>
+                    <span id="scoreDisplay">0 / 20</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- Sidebar Navigation Grid (Desktop) -->
+        <aside class="lg:col-span-1 order-2 lg:order-1 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col h-fit">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Navegador</h2>
+                <span id="progressPercent" class="text-xs font-semibold text-brand-600">0% concluído</span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4">
+                <div id="progressBar" class="bg-brand-600 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Question Grid Buttons -->
+            <div id="questionGrid" class="grid grid-cols-5 gap-2 mb-4">
+                <!-- Javascript will insert 20 question buttons here -->
+            </div>
+
+            <!-- Legend -->
+            <div class="text-xs text-slate-500 border-t border-slate-100 pt-3 space-y-1.5">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-slate-200 inline-block"></span>
+                    <span>Não respondida</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-brand-600 inline-block"></span>
+                    <span>Respondida</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span>
+                    <span>Marcada p/ revisão</span>
+                </div>
+            </div>
+
+            <button onclick="finishQuiz()" class="mt-5 w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded-lg transition shadow">
+                <i class="fa-solid fa-flag-checkered mr-2"></i> Finalizar Quiz
+            </button>
+        </aside>
+
+        <!-- Question Section -->
+        <section class="lg:col-span-3 order-1 lg:order-2 flex flex-col justify-between">
+            
+            <!-- Quiz Screen -->
+            <div id="quizCard" class="bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm mb-4 min-h-[420px] flex flex-col justify-between">
+                <div>
+                    <!-- Header Question Info -->
+                    <div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100">
+                        <div class="flex items-center gap-2">
+                            <span id="questionCategory" class="px-2.5 py-1 bg-brand-50 text-brand-700 text-xs font-semibold rounded-md border border-brand-100">
+                                Categoria
+                            </span>
+                            <span id="questionNumberBadge" class="text-xs font-semibold text-slate-400">
+                                Questão 1 de 20
+                            </span>
+                        </div>
+                        <button id="btnBookmark" onclick="toggleBookmark()" class="text-slate-400 hover:text-amber-500 text-sm font-medium transition flex items-center gap-1.5">
+                            <i class="fa-regular fa-bookmark"></i>
+                            <span class="hidden sm:inline">Revisar</span>
+                        </button>
+                    </div>
+
+                    <!-- Question Text -->
+                    <div class="mb-6">
+                        <h3 id="questionTitle" class="text-base sm:text-lg font-semibold text-slate-900 leading-relaxed">
+                            Carregando questão...
+                        </h3>
+                    </div>
+
+                    <!-- Answer Options -->
+                    <div id="optionsContainer" class="space-y-3">
+                        <!-- Dynamic options generated by JS -->
+                    </div>
+
+                    <!-- Explanation/Rationale Box (Study Mode) -->
+                    <div id="explanationBox" class="hidden mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm">
+                        <div class="flex items-center gap-2 font-bold mb-1 text-slate-800" id="explanationHeader">
+                            <i class="fa-solid fa-circle-info"></i> Justificativa Gramatical
+                        </div>
+                        <p id="explanationText" class="text-slate-600 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8 pt-4 border-t border-slate-100">
+                    <button id="btnPrev" onclick="navigateQuestion(-1)" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium text-sm transition disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-chevron-left mr-1"></i> Anterior
+                    </button>
+                    <button id="btnNext" onclick="navigateQuestion(1)" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-medium text-sm transition shadow-sm">
+                        Próxima <i class="fa-solid fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Screen (Hidden initially) -->
+            <div id="resultsCard" class="hidden bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm text-center">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center bg-brand-50 text-brand-600 text-3xl">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-1">Resultado do Quiz</h2>
+                <p class="text-sm text-slate-500 mb-6">Confira seu desempenho em Articulação e Coesão Textual</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto mb-8">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Pontuação</span>
+                        <span id="finalScore" class="text-2xl font-extrabold text-slate-800">0 / 20</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Aproveitamento</span>
+                        <span id="finalPercent" class="text-2xl font-extrabold text-brand-600">0%</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase">Desempenho</span>
+                        <span id="finalFeedback" class="text-sm font-bold text-slate-700 mt-1 block">Satisfatório</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button onclick="restartQuiz()" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm rounded-lg transition shadow">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Refazer Quiz
+                    </button>
+                    <button onclick="reviewQuiz()" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-lg transition">
+                        <i class="fa-solid fa-magnifying-glass mr-2"></i> Revisar Respostas
+                    </button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+        <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-400">
+            Quiz Pedagógico de Coesão Textual &bull; Prática de Sintaxe, Semântica e Conectivos do Português.
+        </div>
+    </footer>
+
+    <!-- JavaScript Quiz Logic -->
+    <script>
+        // Database of 20 Portuguese Questions
+     const questionsData = [
+    {
+        id: 1,
+        category: "Crase Obrigatória com Artigo",
+        question: "Assinale a alternativa em que o uso do acento grave indicador de crase é OBRIGATÓRIO:",
+        options: [
+            { text: "Fui à praia no final de semana passado.", isCorrect: true, rationale: "O verbo 'ir' rege a preposição 'a' e o substantivo feminino 'praia' aceita o artigo 'a' (a + a = à)." },
+            { text: "Entreguei o documento a diretora da escola.", isCorrect: false, rationale: "Incorreto: falta o artigo definido feminino antes de 'diretora' (o correto é 'à diretora')." },
+            { text: "Assistimos a um belo espetáculo de dança.", isCorrect: false, rationale: "Incorreto: antes de artigo indefinido masculino ('um') não ocorre crase." },
+            { text: "Prefiro viajar a ficar em casa.", isCorrect: false, rationale: "Incorreto: diante de verbo no infinitivo não se emprega crase." }
+        ],
+        hint: "A crase ocorre pela fusão da preposição exigida pelo termo regente com o artigo feminino que acompanha o termo regido."
+    },
+    {
+        id: 2,
+        category: "Crase Proibida antes de Palavras Masculinas",
+        question: "Assinale a opção em que a crase foi empregada INCORRETAMENTE por anteceder uma palavra masculina:",
+        options: [
+            { text: "O pagamento foi efetuado à prazo na loja comercial.", isCorrect: true, rationale: "Incorreto: 'prazo' é uma palavra masculina, logo a crase é proibida (o correto é 'a prazo')." },
+            { text: "Ele comprou um terno a rigor para a festa.", isCorrect: false, rationale: "Correto: 'a rigor' é uma locução com palavra masculina, portanto sem crase." },
+            { text: "O projeto foi feito a lápis pelo aluno.", isCorrect: false, rationale: "Correto: 'lápis' é substantivo masculino, exigindo apenas a preposição 'a'." },
+            { text: "Caminhamos a passo lento até a praça.", isCorrect: false, rationale: "Correto: 'passo' é palavra masculina, sem ocorrência de crase." }
+        ],
+        hint: "Lembre-se da regra básica: antes de palavras masculinas, crase não há."
+    },
+    {
+        id: 3,
+        category: "Crase Facultativa com Pronomes Possessivos",
+        question: "Assinale a frase em que o uso da crase diante de pronome possessivo feminino é FACULTATIVO:",
+        options: [
+            { text: "Entreguei o relatório à (ou a) minha supervisora.", isCorrect: true, rationale: "Diante de pronome possessivo feminino adjetivo no singular ('minha'), a crase é facultativa porque o uso do artigo é opcional." },
+            { text: "Referi-me àquela pessoa que estava na reunião.", isCorrect: false, rationale: "Trata-se de fusão com pronome demonstrativo, cujo acento é obrigatório." },
+            { text: "Fiz referência à sua atitude no plenário.", isCorrect: false, rationale: "Com possessivos no plural ou dependendo do contexto, mas aqui a regra padrão com possessivos adjetivos admite a facultatividade. Atenção: se o possessivo estiver subentendido ou no plural, analise a regência." },
+            { text: "Fui a Paris nas férias de julho.", isCorrect: false, rationale: "Antes de nomes de lugares que não admitem artigo, a crase é proibida." }
+        ],
+        hint: "O acento grave é facultativo antes de pronomes possessivos femininos no singular seguidos de substantivo."
+    },
+    {
+        id: 4,
+        category: "Crase Diante de Nomes de Lugares",
+        question: "Assinale a alternativa que preenche corretamente a lacuna da frase: \"Voltei ____ Bahia totalmente encantado com as belezas naturais.\"",
+        options: [
+            { text: "à", isCorrect: true, rationale: "Quem volta 'da' Bahia, volta 'à' Bahia (admite artigo feminino 'a', ocorrendo crase)." },
+            { text: "a", isCorrect: false, rationale: "Incorreto: como o lugar aceita o artigo 'a', ocorre a fusão com a preposição do verbo voltar." },
+            { text: "para a", isCorrect: false, rationale: "Embora aceitável semanticamente, altera a regência esperada pelo verbo com o padrão local." },
+            { text: "em a", isCorrect: false, rationale: "Incompatível com o verbo voltar neste contexto." }
+        ],
+        hint: "Faça o teste do 'voltei de / voltei da'. Se volta 'da', crase há."
+    },
+    {
+        id: 5,
+        category: "Crase Proibida antes de Verbos",
+        question: "Assinale a alternativa em que o uso da crase está INCORRETO devido à presença de um verbo:",
+        options: [
+            { text: "Começou à falar sobre o novo orçamento da empresa.", isCorrect: true, rationale: "Incorreto: 'falar' é um verbo no infinitivo, e diante de verbos nunca se emprega crase." },
+            { text: "Disposta a vencer, a candidata estudou muito.", isCorrect: false, rationale: "Correto: 'vencer' é verbo, logo há apenas a preposição 'a'." },
+            { text: "Passou a exigir mais rigor nas auditorias.", isCorrect: false, rationale: "Correto: 'exigir' é verbo no infinitivo, sem crase." },
+            { text: "Ficou a ver navios após o resultado.", isCorrect: false, rationale: "Correto: 'ver' é verbo, uso apenas da preposição." }
+        ],
+        hint: "Verbos não aceitam artigos femininos antes de si, o que torna a crase impossível."
+    },
+    {
+        id: 6,
+        category: "Locuções Adverbiais Femininas",
+        question: "Assinale a alternativa em que a locução adverbial feminina foi acentuada corretamente com crase:",
+        options: [
+            { text: "Ele prefere o café à italiana.", isCorrect: true, rationale: "Indica modo/à moda de (locução adverbial feminina subentendida 'à moda da italiana'), exigindo crase obrigatória." },
+            { text: "Ficamos cara a cara durante a discussão.", isCorrect: false, rationale: "Incorreto: entre palavras repetidas em locuções não se emprega crase ('cara a cara', 'gota a gota')." },
+            { text: "Ficou frente a frente com o concorrente.", isCorrect: false, rationale: "Incorreto: palavras repetidas em locução não levam crase." },
+            { text: "Agiram gota a gota para resolver o caso.", isCorrect: false, rationale: "Correto na ausência de crase devido à repetição de substantivos." }
+        ],
+        hint: "As locuções adverbiais, prepositivas e conjuntivas formadas por palavras femininas exigem crase (ex: à força, à tarde)."
+    },
+    {
+        id: 7,
+        category: "Crase com Pronomes Demonstrativos (Aquele/Aquela)",
+        question: "Assinale a opção em que a crase antes do pronome demonstrativo foi empregada CORRETAMENTE:",
+        options: [
+            { text: "Entreguei os documentos àquela funcionária.", isCorrect: true, rationale: "O verbo 'entregar' rege a preposição 'a' e o pronome 'aquela' inicia-se com 'a' (a + àquela = àquela)." },
+            { text: "Assistimos àquele filme de ficção científica.", isCorrect: false, rationale: "Incorreto: o verbo 'assistir' no sentido de ver rege 'a', logo o correto é 'assistimos àquele'." },
+            { text: "Fiz referência à este relatório técnico.", isCorrect: false, rationale: "Incorreto: antes de 'este'/'esta' ocorre apenas a preposição 'a' (a este), sem crase." },
+            { text: "Dirigi-me à qualquer pessoa na recepção.", isCorrect: false, rationale: "Incorreto: antes de pronome indefinido ('qualquer') não há artigo, logo não há crase." }
+        ],
+        hint: "Há crase com os pronomes aquele, aquela e aquilo se a regência do termo anterior exigir a preposição 'A'."
+    },
+    {
+        id: 8,
+        category: "Horas e Expressões Horárias",
+        question: "Assinale a alternativa em que a indicação de horas está com a crase EMPREGADA CORRETAMENTE:",
+        options: [
+            { text: "A reunião está marcada para as 14 horas.", isCorrect: true, rationale: "Indica hora exata, mas há a preposição 'para' antes do artigo 'as' (para + as = para as). Como a regência de 'para' já traz a preposição, não se funde com o artigo gerando crase; contudo, se fosse 'A reunião ocorrerá às 14 horas', exigiria crase." },
+            { text: "A reunião ocorrerá às 14 horas em ponto.", isCorrect: false, rationale: "Aqui a crase é obrigatória porque equivale a 'a + as' regido pelo verbo ocorrer ('a' do tempo)." },
+            { text: "O expediente vai das 8h à 18h.", isCorrect: false, rationale: "Incorreto: havendo preposição 'das', a segunda parte exige crase se houver artigo plural ('às 18h') ou crase simples se for 'à 1h'. Entre 'das' e 'às' usa-se crase no plural se houver artigo." },
+            { text: "Chegamos ao local por volta das 13 horas.", isCorrect: false, rationale: "Correto uso sem crase por causa da preposição 'por volta de'." }
+        ],
+        hint: "Horas exatas determinadas admitem crase (às 15h), exceto se houver preposição distinta antecedendo ('desde as', 'após as')."
+    },
+    {
+        id: 9,
+        category: "Crase Facultativa com Nomes Próprios Femininos",
+        question: "Assinale a frase em que o uso da crase diante de nome próprio de pessoa do sexo feminino é FACULTATIVO:",
+        options: [
+            { text: "Fiz um elogio à (ou a) Maria durante a reunião.", isCorrect: true, rationale: "Diante de nomes próprios femininos particulares, o uso do artigo é facultativo, tornando a crase facultativa." },
+            { text: "Entreguei o prêmio à Joana, vencedora do concurso.", isCorrect: false, rationale: "Correto apontar que é facultativo, mas vamos ver as outras opções." },
+            { text: "Fiz menção à famosa escritora Cecília Meireles.", isCorrect: false, rationale: "Diante de nome próprio especificado/qualificado, o artigo passa a ser obrigatório, tornando a crase obrigatória." },
+            { text: "Enviei uma carta à senhora diretora.", isCorrect: false, rationale: "Antes de tratamento ('senhora'), há regras específicas (proibido antes de senhora, senhorita, dona, exceto se houver modificador)." }
+        ],
+        hint: "O acento grave é opcional antes de nomes próprios femininos que admitem tratamento íntimo ou comum."
+    },
+    {
+        id: 10,
+        category: "Locuções Prepositivas com 'À moda de'",
+        question: "Assinale a alternativa em que a crase ocorre devido à locução subentendida 'à moda de' ou 'à maneira de':",
+        options: [
+            { text: "O jogador marcou um gol à Pelé.", isCorrect: true, rationale: "A expressão significa 'à moda de Pelé', ocorrendo crase mesmo diante de nome masculino por causa da locução feminina subentendida." },
+            { text: "Ele veste roupas à rigor para o evento.", isCorrect: false, rationale: "'A rigor' é locução masculina, sem crase." },
+            { text: "O cozinheiro preparou um prato à flamenca.", isCorrect: false, rationale: "Também usa crase, mas a questão pedia a exemplificação clássica do estilo/moda." },
+            { text: "Compramos camisas à R$ 50,00.", isCorrect: false, rationale: "Incorreto: antes de numerais cardinais não se emprega crase (exceto horas)." }
+        ],
+        hint: "Mesmo diante de palavras masculinas, se a expressão indicar 'à moda de' ou 'à maneira de', a crase é obrigatória."
+    },
+    {
+        id: 11,
+        category: "Crase Proibida com Pronomes de Tratamento",
+        question: "Assinale a alternativa em que o uso da crase antes de pronome de tratamento está INCORRETO:",
+        options: [
+            { text: "Dirigi-me à Vossa Excelência com respeito.", isCorrect: true, rationale: "Incorreto: os pronomes de tratamento (exceto senhora, senhorita e dona) não admitem artigo, logo não aceitam crase (o correto é 'a Vossa Excelência')." },
+            { text: "Fiz apelo a Vossa Senhoria para resolver o caso.", isCorrect: false, rationale: "Correto: sem crase antes de pronome de tratamento." },
+            { text: "Enviei a correspondência à senhora gerente.", isCorrect: false, rationale: "Correto: com o pronome 'senhora' especificado por 'gerente', aceita artigo e ocorre crase." },
+            { text: "Entreguei o ofício a você ontem.", isCorrect: false, rationale: "Correto: 'você' é pronome de tratamento que não aceita artigo." }
+        ],
+        hint: "Diante de Vossa Senhoria, Vossa Excelência, Vossa Alteza, etc., nunca se usa crase."
+    },
+    {
+        id: 12,
+        category: "Regência do Verbo 'Assistir' e Crase",
+        question: "Assinale a alternativa em que a regência e o emprego da crase com o verbo 'assistir' estão CORRETOS:",
+        options: [
+            { text: "Assistimos à cerimônia de posse do novo diretor.", isCorrect: true, rationale: "O verbo 'assistir' no sentido de ver/presenciar é transitivo indireto e rege a preposição 'a', somada ao artigo 'a' de 'cerimônia' (à)." },
+            { text: "Assistimos a cerimônia de posse do novo diretor.", isCorrect: false, rationale: "Incorreto: omitiu-se a crase exigida pela regência do verbo assistir." },
+            { text: "O médico assistiu à o paciente no leito do hospital.", isCorrect: false, rationale: "Incorreto: no sentido de prestar assistência/ajudar, o verbo é transitivo direto, não exigindo preposição." },
+            { text: "Assistimos à um belo concerto de música clássica.", isCorrect: false, rationale: "Incorreto: antes de artigo indefinido masculino não há crase." }
+        ],
+        hint: "Assistir (ver) = exige preposição A. Assistir (ajudar) = objeto direto sem preposição."
+    },
+    {
+        id: 13,
+        category: "Regência do Verbo 'Aspirar' e Crase",
+        question: "Assinale a alternativa em que a frase apresenta emprego correto da crase associado ao verbo 'aspirar':",
+        options: [
+            { text: "O candidato aspirava à vaga de analista financeiro.", isCorrect: true, rationale: "O verbo 'aspirar' no sentido de almejar/desejar é transitivo indireto e rege a preposição 'a', unindo-se ao artigo 'a' de 'vaga' (à)." },
+            { text: "O candidato aspirava a vaga de analista financeiro.", isCorrect: false, rationale: "Incorreto: faltou o acento indicativo de crase exigido pelo verbo no sentido de desejar." },
+            { text: "Aspiramos à o ar puro da montanha.", isCorrect: false, rationale: "Incorreto: no sentido de inalar, o verbo é transitivo direto (aspiramos ao ar / aspiramos o ar)." },
+            { text: "O jovem aspirava à ser aprovado no concurso.", isCorrect: false, rationale: "Incorreto: antes de verbo no infinitivo não se usa crase." }
+        ],
+        hint: "Aspirar (desejar) rege preposição A. Aspirar (inalar) é direto."
+    },
+    {
+        id: 14,
+        category: "Regência do Verbo 'Visar' e Crase",
+        question: "Assinale a opção em que a ocorrência de crase com o verbo 'visar' está CORRETA:",
+        options: [
+            { text: "O projeto visa à melhoria dos processos internos.", isCorrect: true, rationale: "O verbo 'visar' no sentido de ter por objetivo rege a preposição 'a', somada ao artigo 'a' de 'melhoria' (à)." },
+            { text: "O gerente visou à o documento com rapidez.", isCorrect: false, rationale: "No sentido de dar visto/assinar, o verbo é transitivo direto, sem preposição e sem crase ('visou o documento')." },
+            { text: "O plano visa a o desenvolvimento econômico.", isCorrect: false, rationale: "A crase ocorre com artigo feminino; antes de masculino ocorre apenas 'a'." },
+            { text: "Visamos à alcançar metas mais ambiciosas.", isCorrect: false, rationale: "Incorreto: antes de verbo no infinitivo não ocorre crase." }
+        ],
+        hint: "Visar (objetivar) pede preposição A. Visar (dar visto/assinar) é direto."
+    },
+    {
+        id: 15,
+        category: "Crase Diante de Pronomes Relativos (Que / Cujo)",
+        question: "Assinale a alternativa em que a crase foi empregada corretamente antes de pronome relativo:",
+        options: [
+            { text: "A empresa à qual me candidatei é excelente.", isCorrect: true, rationale: "Quem se candidata, candidata-se 'a' algo (preposição exigida pelo verbo candidatar-se) + pronome relativo 'qual' com artigo 'a' (à qual)." },
+            { text: "Este é o livro à cujo autor fiz referência.", isCorrect: false, rationale: "Incorreto: nunca se emprega crase ou artigo antes do pronome relativo 'cujo'." },
+            { text: "A reunião a qual assisti foi produtiva.", isCorrect: false, rationale: "Incorreto: o verbo assistir exige regência com preposição 'a', logo o correto seria 'à qual'." },
+            { text: "A proposta à que me referi foi aprovada.", isCorrect: false, rationale: "Incorreto: antes do pronome relativo 'que' sem antecedente oculto específico de regência nominal dupla, usa-se apenas 'a que'." }
+        ],
+        hint: "Substitua a palavra feminina por um termo masculino equivalente (ex: ao qual). Se virar 'ao', há crase na forma feminina."
+    },
+    {
+        id: 16,
+        category: "Locuções Conjuntivas e Prepositivas Femininas",
+        question: "Assinale a alternativa que preenche corretamente a lacuna: \"____ proporção que o tempo passava, a tensão aumentava.\"",
+        options: [
+            { text: "À", isCorrect: true, rationale: "A locução conjuntiva proporcional é 'à proporção que', exigindo obrigatoriamente o acento grave indicativo de crase." },
+            { text: "A", isCorrect: false, rationale: "Incorreto: falta o acento grave na locução proporcional." },
+            { text: "Em", isCorrect: false, rationale: "Incompatível com a locução padrão." },
+            { text: "Com", isCorrect: false, rationale: "Altera o conectivo estabelecido." }
+        ],
+        hint: "Locuções conjuntivas proporcionais como 'à medida que' e 'à proporção que' levam crase."
+    },
+    {
+        id: 17,
+        category: "Crase Proibida com Pronomes Indefinidos",
+        question: "Assinale a alternativa em que a ausência de crase antes de pronome indefinido está CORRETA:",
+        options: [
+            { text: "Não fiz menção a nenhuma das propostas apresentadas.", isCorrect: true, rationale: "Antes de pronome indefinido feminino ('nenhuma') não se emprega artigo, logo ocorre apenas a preposição, sem crase." },
+            { text: "Entreguei o relatório à outra gerente da seção.", isCorrect: false, rationale: "Incorreto: antes de 'outra' no singular pode haver artigo se especificado, mas o pronome indefinido 'outra' em regra pura exige análise de artigo. Atenção: 'a outra' pode admitir crase se regido de regência direta, mas com indefinidos puros como 'qualquer', 'alguém', 'ninguém', 'tudo', 'nada', 'cada', não há artigo." },
+            { text: "Fiz referência à mesma funcionária de ontem.", isCorrect: false, rationale: "Com o pronome 'mesma' acompanhado de artigo, ocorre crase ('à mesma')." },
+            { text: "Enviei recado a toda a equipe de trabalho.", isCorrect: false, rationale: "Com 'toda a' (quando equivale a 'inteira'), a crase é facultativa se houver artigo ('à toda a equipe'), mas sem artigo é proibida." }
+        ],
+        hint: "Pronomes indefinidos puros (alguém, ninguém, tudo, cada, qualquer) rejeitam artigo e, por conseguinte, a crase."
+    },
+    {
+        id: 18,
+        category: "Crase em Expressões de Distância",
+        question: "Assinale a alternativa em que o uso da crase em expressões que indicam distância está CORRETO:",
+        options: [
+            { text: "A cidade fica à distância de trinta quilômetros daqui.", isCorrect: true, rationale: "Quando a expressão indicativa de distância está determinada/especificada ('de trinta quilômetros'), o uso da crase é obrigatório." },
+            { text: "A cidade fica a distância de trinta quilômetros daqui.", isCorrect: false, rationale: "Incorreto: como há especificador ('de trinta...'), a crase deve ser utilizada." },
+            { text: "Observávamos o navio a distância, sem binóculos.", isCorrect: false, rationale: "Correto: quando a distância é indeterminada (sem especificador), não se usa crase." },
+            { text: "Ficamos à distância, olhando para o horizonte.", isCorrect: false, rationale: "Se for indeterminada, o correto é sem crase; se estiver especificada, com crase." }
+        ],
+        hint: "Distância determinada = com crase. Distância indeterminada = sem crase."
+    },
+    {
+        id: 19,
+        category: "Crase Diante da Palavra 'Casa'",
+        question: "Assinale a alternativa em que a ausência de crase antes da palavra 'casa' está CORRETA:",
+        options: [
+            { text: "Voltei cedo para casa após o expediente.", isCorrect: true, rationale: "A palavra 'casa' no sentido de lar próprio, sem modificador/especificador, não aceita artigo, logo não tem crase." },
+            { text: "Fui à casa de meus pais no domingo.", isCorrect: false, rationale: "Neste caso há especificador ('de meus pais'), o que exige o artigo e gera crase obrigatória ('à casa')." },
+            { text: "Chegamos à casa de repouso no final da tarde.", isCorrect: false, rationale: "Correto o uso da crase devido à especificação." },
+            { text: "Retornei a casa cansado do trabalho.", isCorrect: false, rationale: "Correto sem modificador, mas se houver modificador exige crase." }
+        ],
+        hint: "Casa sem modificador = sem crase. Casa especificada = com crase."
+    },
+    {
+        id: 20,
+        category: "Crase Diante da Palavra 'Terra'",
+        question: "Assinale a alternativa em que o emprego da crase antes da palavra 'terra' está CORRETO:",
+        options: [
+            { text: "Os marinheiros finalmente voltaram a terra firme.", isCorrect: true, rationale: "No sentido de oposição a bordo/mar, a palavra 'terra' (terra firme) não aceita artigo, dispensando a crase." },
+            { text: "Os astronautas regressaram à Terra após a missão.", isCorrect: false, rationale: "Quando 'Terra' indica o planeta específico, admite artigo e recebe crase." },
+            { text: "Chegamos à terra dos meus avós às seis horas.", isCorrect: false, rationale: "Especificada, exige crase." },
+            { text: "O navio ancorou a terra com segurança.", isCorrect: false, rationale: "Dependendo da regência, pode exigir preposição." }
+        ],
+        hint: "Terra (planeta ou especificada) = com crase. Terra (oposto a bordo) = sem crase."
+    },
+    {
+        id: 21,
+        category: "Crase com Nomes de Cidades Estrangeiras",
+        question: "Assinale a alternativa que preenche corretamente a lacuna: \"Ficarei em Roma por um mês e depois irei ____ Florença.\"",
+        options: [
+            { text: "a", isCorrect: true, rationale: "Nomes de cidades em regra não admitem artigo (quem vai a Roma, vai a Florença), logo ocorre apenas a preposição, sem crase." },
+            { text: "à", isCorrect: false, rationale: "Incorreto: Florença não aceita artigo feminino neste contexto." },
+            { text: "para a", isCorrect: false, rationale: "Modifica a regência natural do verbo ir." },
+            { text: "em a", isCorrect: false, rationale: "Incompatível com o verbo ir." }
+        ],
+        hint: "Substitua a cidade por um lugar que peça 'de'. Se voltar 'de', crase há; se voltar 'deste/de', crase não há."
+    },
+    {
+        id: 22,
+        category: "Crase em Coordenadas Paralelas (De... a)",
+        question: "Assinale a alternativa em que a ausência de crase na expressão coordenada paralela está CORRETA:",
+        options: [
+            { text: "O museu fica aberto de terça a domingo.", isCorrect: true, rationale: "Em expressões correlatas com palavras masculinas ou femininas sem artigo plural ('de... a', 'de... a...'), não se emprega crase se a palavra seguinte for masculina ou feminina sem artigo (ex: de 8h a 12h, sem crase se não houver artigo plural nas horas)." },
+            { text: "O atendimento ocorre de segunda à sexta-feira.", isCorrect: false, rationale: "Neste caso específico, se houver artigo ('às sextas'), exige crase, mas na estrutura paralela pura 'de segunda a sexta' há controvérsias normativas modernas que admitem sem crase se não houver artigos plurais correspondentes (embora tradicionalmente aceite-se 'às'). Vamos à regra padrão consolidada: 'de segunda a sexta' sem crase." },
+            { text: "Trabalhamos de 9h à 18h todos os dias.", isCorrect: false, rationale: "O correto com horas se houver preposição 'das' é 'das 9h às 18h'. Na forma 'de... a...', sem artigo, fica 'de 9h a 18h'." },
+            { text: "A liquidação vai de porta a porta.", isCorrect: false, rationale: "Correto sem crase em palavras repetidas." }
+        ],
+        hint: "Na estrutura 'de... a', se o segundo termo for feminino sem artigo, não há crase (exceto se houver artigo explícito no plural correspondente)."
+    },
+    {
+        id: 23,
+        category: "Regência do Nome 'Sensível' e Crase",
+        question: "Assinale a alternativa em que o uso da crase exigido pela regência nominal de 'sensível' está CORRETO:",
+        options: [
+            { text: "O governo é sensível às demandas da sociedade.", isCorrect: true, rationale: "O adjetivo 'sensível' rege a preposição 'a', somada ao artigo feminino plural 'as' de 'demandas' (às)." },
+            { text: "O governo é sensível a demandas da sociedade.", isCorrect: false, rationale: "Incorreto: omitiu-se o artigo definido plural exigido pelo contexto específico das demandas." },
+            { text: "O dirigente mostrou-se sensível à o apelo dos grevistas.", isCorrect: false, rationale: "Incorreto: 'apelo' é substantivo masculino, ocorrendo apenas 'ao'." },
+            { text: "A direção é sensível à negociar novas pautas.", isCorrect: false, rationale: "Incorreto: diante de verbo não há crase." }
+        ],
+        hint: "Nomes que exigem complemento com a preposição 'A' combinam-se com o artigo feminino gerando crase."
+    },
+    {
+        id: 24,
+        category: "Regência do Nome 'Favorável' e Crase",
+        question: "Assinale a alternativa em que o emprego da crase com o nome 'favorável' está CORRETO:",
+        options: [
+            { text: "A comissão foi favorável à aprovação do projeto.", isCorrect: true, rationale: "O adjetivo 'favorável' rege a preposição 'a', unida ao artigo 'a' de 'aprovação' (à)." },
+            { text: "A comissão foi favorável a aprovação do projeto.", isCorrect: false, rationale: "Incorreto: falta o acento grave indicativo de crase." },
+            { text: "O relator votou favorável à o parecer técnico.", isCorrect: false, rationale: "Incorreto: 'parecer' é masculino, exigindo 'ao'." },
+            { text: "Os membros manifestaram-se favoráveis à adotar novas medidas.", isCorrect: false, rationale: "Incorreto: antes de verbo não se usa crase." }
+        ],
+        hint: "Favorável rege preposição A + artigo A = À."
+    },
+    {
+        id: 25,
+        category: "Crase em Locuções Prepositivas com Palavra Feminina",
+        question: "Assinale a alternativa em que a locução prepositiva feminina foi grafada com crase CORRETAMENTE:",
+        options: [
+            { text: "O relatório foi entregue à guisa de esclarecimento.", isCorrect: true, rationale: "'À guisa de' é uma locução prepositiva feminina, exigindo o acento grave obrigatório." },
+            { text: "O documento foi assinado a revelia da diretoria.", isCorrect: false, rationale: "Incorreto: a locução prepositiva 'à revelia' exige crase." },
+            { text: "Ficamos a espera de uma resposta oficial.", isCorrect: false, rationale: "Incorreto: o correto é 'à espera de'." },
+            { text: "Atuou a frente da equipe durante a crise.", isCorrect: false, rationale: "Incorreto: o correto é 'à frente de'." }
+        ],
+        hint: "Locuções prepositivas que terminam com substantivos femininos (à proporção de, à exceção de, à semelhança de) levam crase."
+    },
+    {
+        id: 26,
+        category: "Crase Diante de Pronomes Demonstrativos (A / O)",
+        question: "Assinale a alternativa em que a crase antes do pronome demonstrativo 'a' (equivalente a 'aquela' ou 'a qual') está CORRETA:",
+        options: [
+            { text: "A proposta que apresentei é superior à que você enviou.", isCorrect: true, rationale: "O 'à' equivale a 'àquela' ou 'a proposta que', exigindo a preposição do comparativo + o artigo/pronome demonstrativo (à)." },
+            { text: "A proposta que apresentei é superior a que você enviou.", isCorrect: false, rationale: "Incorreto: falta o acento indicativo de fusão do pronome demonstrativo com a preposição." },
+            { text: "Minha sala é igual a da diretora.", isCorrect: false, rationale: "Incorreto: o correto é 'igual à da diretora'." },
+            { text: "Sua conduta foi semelhante a de seu antecessor.", isCorrect: false, rationale: "Incorreto: o correto é 'semelhante à de seu antecessor'." }
+        ],
+        hint: "Quando o 'A' equivale a 'aquela', há fusão e ocorre crase."
+    },
+    {
+        id: 27,
+        category: "Crase em Nomes de Imprensa ou Revistas",
+        question: "Assinale a alternativa em que o uso da crase antes do nome de um jornal ou revista está CORRETO:",
+        options: [
+            { text: "Li uma excelente reportagem à Folha de S.Paulo.", isCorrect: true, rationale: "O verbo ler rege o objeto direto, mas se a regência do veículo exigir preposição ou se aceitar o artigo feminino ('a Folha'), ocorre crase (embora muitos jornais modernos evitem o artigo antes de nomes próprios de jornais, gramaticalmente se houver o artigo feminino, ocorre a fusão com a preposição regida pelo termo antecedente, ex: 'concorrer à Folha'). Atenção: Se for objeto direto ('li a Folha'), não há preposição e nem crase. Mas se a frase for 'fiz referência à Folha', há preposição de referência + artigo." },
+            { text: "Informei o caso a Veja na edição passada.", isCorrect: false, rationale: "Sem crase se não houver preposição regida pelo termo anterior." },
+            { text: "O artigo foi publicado à Veja.", isCorrect: false, rationale: "Publicado 'em' ou 'na Veja'." },
+            { text: "Enviei a carta à O Estado de S. Paulo.", isCorrect: false, rationale: "Nome masculino ('o Estado'), portanto sem crase." }
+        ],
+        hint: "Avalie se o termo regente anterior exige a preposição 'A' e se o nome do veículo aceita o artigo feminino."
+    },
+    {
+        id: 28,
+        category: "Crase com Expressões Multiplicativas",
+        question: "Assinale a alternativa em que o uso da crase com expressões multiplicativas femininas está INCORRETO:",
+        options: [
+            { text: "O lucro da empresa aumentou à duas vezes.", isCorrect: true, rationale: "Incorreto: antes de numerais cardinais não se emprega crase, mesmo femininos plurais, a menos que indiquem horas exatas." },
+            { text: "O imposto foi cobrado às tontas pelos fiscais.", isCorrect: false, rationale: "Locução adverbial feminina plural, uso correto de crase." },
+            { text: "Encontramos os documentos às escuras no escritório.", isCorrect: false, rationale: "Locução adverbial feminina plural, uso correto de crase." },
+            { text: "Fomos recebidos às pressas pela gerência.", isCorrect: false, rationale: "Locução adverbial feminina plural, uso correto de crase." }
+        ],
+        hint: "Numerais cardinais puros não recebem crase."
+    },
+    {
+        id: 29,
+        category: "Regência do Nome 'Averse' / Oposição e Crase",
+        question: "Assinale a alternativa em que o emprego da crase está CORRETO com termos que indicam oposição ou inclinação:",
+        options: [
+            { text: "Ele sempre foi contrário à decisão da diretoria.", isCorrect: true, rationale: "O adjetivo/nome 'contrário' rege a preposição 'a', unida ao artigo feminino 'a' de 'decisão' (à)." },
+            { text: "Ele sempre foi contrário a decisão da diretoria.", isCorrect: false, rationale: "Incorreto: omitiu-se o acento grave obrigatório." },
+            { text: "O advogado mostrou-se adverso à novas propostas.", isCorrect: false, rationale: "Incorreto: antes de palavra feminina no plural sem artigo definido específico ('novas propostas' genérico) não ocorre crase (apenas a preposição 'a', gerando 'a novas propostas')." },
+            { text: "A equipe permaneceu hostil à qualquer sugestão.", isCorrect: false, rationale: "Incorreto: antes de pronome indefinido ('qualquer') não se usa crase." }
+        ],
+        hint: "Termos que exigem complemento com preposição A combinam-se com o artigo feminino singular definido."
+    },
+    {
+        id: 30,
+        category: "Revisão Geral de Casos Ocultos de Crase",
+        question: "Assinale a alternativa em que todas as ocorrências de crase (ou sua ausência) foram aplicadas em absoluta conformidade com a norma-padrão:",
+        options: [
+            { text: "Daqui à pouco chegaremos à nossa residência, graças à colaboração de todos.", isCorrect: true, rationale: "Expressão temporal futura 'daqui a pouco' (sem crase, pois 'pouco' é palavra masculina/numeral relativo a tempo decorrido futuro sem artigo feminino); 'à nossa residência' (crase facultativa ou obrigatória com possessivo modificado - aqui com possessivo adjetivo feminino substantivado/especificado); 'à colaboração' (regência de graças a + artigo a). Nota: na expressão 'daqui a pouco', o 'a' é preposição pura, sem crase." },
+            { text: "Daqui à pouco chegaremos a nossa residência.", isCorrect: false, rationale: "Incorreto em 'daqui a pouco' com crase." },
+            { text: "Fui à Salvador nas férias passadas.", isCorrect: false, rationale: "Incorreto: nomes de cidades como Salvador, se não especificados, não levam artigo, logo não aceitam crase." },
+            { text: "Entreguei o prêmio à quem merecia.", isCorrect: false, rationale: "Incorreto: antes de pronome relativo 'quem' não se emprega crase." }
+        ],
+        hint: "Analise detalhadamente cada segmento: locução temporal futura ('a pouco'), nomes de cidades ('Salvador') e pronomes ('quem')."
+    }
+];
+
+        // State Management
+        let currentQuestionIdx = 0;
+        let userAnswers = new Array(questionsData.length).fill(null);
+        let bookmarked = new Array(questionsData.length).fill(false);
+        let quizMode = 'study'; // 'study' or 'exam'
+        let isSubmitted = false;
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGrid();
+            loadQuestion(0);
+        });
+
+        // Set Mode
+        function setMode(mode) {
+            if (isSubmitted) return;
+            quizMode = mode;
+            
+            const btnStudy = document.getElementById('btnModeStudy');
+            const btnExam = document.getElementById('btnModeExam');
+
+            if (mode === 'study') {
+                btnStudy.className = "px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm";
+                btnExam.className = "px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900";
+            } else {
+                btnExam.className = "px-3 py-1.5 rounded-md transition-all bg-white text-brand-600 shadow-sm";
+                btnStudy.className = "px-3 py-1.5 rounded-md transition-all text-slate-600 hover:text-slate-900";
+            }
+
+            // Re-render current question view
+            loadQuestion(currentQuestionIdx);
+        }
+
+        // Render Side Navigation Grid
+        function renderGrid() {
+            const gridContainer = document.getElementById('questionGrid');
+            gridContainer.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `gridBtn-${idx}`;
+                btn.onclick = () => jumpToQuestion(idx);
+                btn.className = getGridBtnClass(idx);
+                btn.innerText = idx + 1;
+                gridContainer.appendChild(btn);
+            });
+
+            updateProgress();
+        }
+
+        function getGridBtnClass(idx) {
+            let base = "w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center transition-all ";
+            
+            if (idx === currentQuestionIdx) {
+                base += "ring-2 ring-brand-600 ring-offset-2 ";
+            }
+
+            if (bookmarked[idx]) {
+                base += "bg-amber-400 text-amber-950 font-extrabold ";
+            } else if (userAnswers[idx] !== null) {
+                if (isSubmitted || quizMode === 'study') {
+                    const isCorrect = questionsData[idx].options[userAnswers[idx]].isCorrect;
+                    base += isCorrect ? "bg-emerald-500 text-white " : "bg-rose-500 text-white ";
+                } else {
+                    base += "bg-brand-600 text-white ";
+                }
+            } else {
+                base += "bg-slate-100 text-slate-600 hover:bg-slate-200 ";
+            }
+
+            return base;
+        }
+
+        // Update Progress Bar & Score
+        function updateProgress() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            const percent = Math.round((answeredCount / questionsData.length) * 100);
+            
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('progressPercent').innerText = `${percent}% concluído`;
+
+            // Calculate score
+            let correctCount = 0;
+            userAnswers.forEach((ans, i) => {
+                if (ans !== null && questionsData[i].options[ans].isCorrect) {
+                    correctCount++;
+                }
+            });
+
+            document.getElementById('scoreDisplay').innerText = `${correctCount} / ${questionsData.length}`;
+        }
+
+        // Load Question Data
+        function loadQuestion(idx) {
+            currentQuestionIdx = idx;
+            const q = questionsData[idx];
+
+            // Update Header Info
+            document.getElementById('questionCategory').innerText = q.category;
+            document.getElementById('questionNumberBadge').innerText = `Questão ${idx + 1} de ${questionsData.length}`;
+            document.getElementById('questionTitle').innerText = q.question;
+
+            // Update Bookmark Button
+            const btnBookmark = document.getElementById('btnBookmark');
+            if (bookmarked[idx]) {
+                btnBookmark.className = "text-amber-500 font-medium text-sm transition flex items-center gap-1.5";
+                btnBookmark.innerHTML = `<i class="fa-solid fa-bookmark"></i> <span class="hidden sm:inline">Marcada</span>`;
+            } else {
+                btnBookmark.className = "text-slate-400 hover:text-amber-500 text-sm font-medium transition flex items-center gap-1.5";
+                btnBookmark.innerHTML = `<i class="fa-regular fa-bookmark"></i> <span class="hidden sm:inline">Revisar</span>`;
+            }
+
+            // Render Options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const selectedOpt = userAnswers[idx];
+            const showFeedback = isSubmitted || (quizMode === 'study' && selectedOpt !== null);
+
+            q.options.forEach((opt, optIdx) => {
+                const optBtn = document.createElement('button');
+                optBtn.className = getOptionClass(idx, optIdx, selectedOpt, showFeedback);
+                optBtn.onclick = () => selectOption(optIdx);
+                if (showFeedback || isSubmitted) {
+                    // Disable changing if already answered in study mode or if quiz is finished
+                    if (quizMode === 'study' || isSubmitted) {
+                        optBtn.disabled = true;
+                    }
+                }
+
+                const letter = String.fromCharCode(65 + optIdx); // A, B, C, D
+
+                let iconHtml = '';
+                if (showFeedback) {
+                    if (opt.isCorrect) {
+                        iconHtml = `<i class="fa-solid fa-circle-check text-emerald-600 text-lg ml-auto"></i>`;
+                    } else if (selectedOpt === optIdx) {
+                        iconHtml = `<i class="fa-solid fa-circle-xmark text-rose-600 text-lg ml-auto"></i>`;
+                    }
+                }
+
+                optBtn.innerHTML = `
+                    <div class="flex items-start gap-3 text-left w-full">
+                        <span class="w-6 h-6 rounded-full border border-current flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
+                            ${letter}
+                        </span>
+                        <span class="text-sm font-medium leading-relaxed flex-1">${opt.text}</span>
+                        ${iconHtml}
+                    </div>
+                `;
+
+                optionsContainer.appendChild(optBtn);
+            });
+
+            // Handle Explanation Box
+            const explanationBox = document.getElementById('explanationBox');
+            const explanationHeader = document.getElementById('explanationHeader');
+            const explanationText = document.getElementById('explanationText');
+
+            if (showFeedback && selectedOpt !== null) {
+                explanationBox.classList.remove('hidden');
+                const chosenOptObj = q.options[selectedOpt];
+                const correctOptObj = q.options.find(o => o.isCorrect);
+
+                if (chosenOptObj.isCorrect) {
+                    explanationHeader.className = "flex items-center gap-2 font-bold mb-1 text-emerald-700";
+                    explanationHeader.innerHTML = `<i class="fa-solid fa-circle-check"></i> Correto!`;
+                    explanationText.innerText = chosenOptObj.rationale;
+                } else {
+                    explanationHeader.className = "flex items-center gap-2 font-bold mb-1 text-rose-700";
+                    explanationHeader.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Incorreto.`;
+                    explanationText.innerText = `${chosenOptObj.rationale} (Gabarito: ${correctOptObj.text})`;
+                }
+            } else {
+                explanationBox.classList.add('hidden');
+            }
+
+            // Navigation Buttons State
+            document.getElementById('btnPrev').disabled = (idx === 0);
+            
+            const btnNext = document.getElementById('btnNext');
+            if (idx === questionsData.length - 1) {
+                btnNext.innerHTML = `Finalizar <i class="fa-solid fa-flag-checkered ml-1"></i>`;
+            } else {
+                btnNext.innerHTML = `Próxima <i class="fa-solid fa-chevron-right ml-1"></i>`;
+            }
+
+            renderGrid();
+        }
+
+        function getOptionClass(qIdx, optIdx, selectedOpt, showFeedback) {
+            let base = "w-full p-4 rounded-xl border text-left transition-all flex items-center ";
+
+            if (showFeedback) {
+                const isCorrect = questionsData[qIdx].options[optIdx].isCorrect;
+                if (isCorrect) {
+                    return base + "bg-emerald-50 border-emerald-300 text-emerald-950 font-medium ";
+                } else if (selectedOpt === optIdx) {
+                    return base + "bg-rose-50 border-rose-300 text-rose-950 ";
+                } else {
+                    return base + "bg-slate-50 border-slate-200 text-slate-400 opacity-60 ";
+                }
+            } else {
+                if (selectedOpt === optIdx) {
+                    return base + "bg-brand-50 border-brand-500 text-brand-900 shadow-sm ";
+                } else {
+                    return base + "bg-white border-slate-200 text-slate-700 hover:border-brand-300 hover:bg-slate-50 ";
+                }
+            }
+        }
+
+        // Action Handlers
+        function selectOption(optIdx) {
+            if (isSubmitted) return;
+            userAnswers[currentQuestionIdx] = optIdx;
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function toggleBookmark() {
+            bookmarked[currentQuestionIdx] = !bookmarked[currentQuestionIdx];
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function jumpToQuestion(idx) {
+            loadQuestion(idx);
+        }
+
+        function navigateQuestion(direction) {
+            const nextIdx = currentQuestionIdx + direction;
+            if (nextIdx >= 0 && nextIdx < questionsData.length) {
+                loadQuestion(nextIdx);
+            } else if (nextIdx >= questionsData.length) {
+                finishQuiz();
+            }
+        }
+
+        // Finish Quiz & Show Results
+        function finishQuiz() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            if (unanswered > 0 && !isSubmitted) {
+                const confirmSubmit = confirm(`Você ainda tem ${unanswered} questão(ões) não respondida(s). Deseja realmente finalizar?`);
+                if (!confirmSubmit) return;
+            }
+
+            isSubmitted = true;
+            document.getElementById('quizCard').classList.add('hidden');
+            document.getElementById('resultsCard').classList.remove('hidden');
+
+            // Calculate final statistics
+            let correctCount = 0;
+            userAnswers.forEach((ans, i) => {
+                if (ans !== null && questionsData[i].options[ans].isCorrect) {
+                    correctCount++;
+                }
+            });
+
+            const percent = Math.round((correctCount / questionsData.length) * 100);
+
+            document.getElementById('finalScore').innerText = `${correctCount} / ${questionsData.length}`;
+            document.getElementById('finalPercent').innerText = `${percent}%`;
+
+            let feedbackText = "Insuficiente";
+            let feedbackColor = "text-rose-600";
+            if (percent >= 85) {
+                feedbackText = "Excelente!";
+                feedbackColor = "text-emerald-600";
+            } else if (percent >= 70) {
+                feedbackText = "Muito Bom!";
+                feedbackColor = "text-brand-600";
+            } else if (percent >= 50) {
+                feedbackText = "Regular";
+                feedbackColor = "text-amber-600";
+            }
+
+            const feedbackElem = document.getElementById('finalFeedback');
+            feedbackElem.innerText = feedbackText;
+            feedbackElem.className = `text-sm font-bold mt-1 block ${feedbackColor}`;
+
+            renderGrid();
+        }
+
+        function restartQuiz() {
+            userAnswers = new Array(questionsData.length).fill(null);
+            bookmarked = new Array(questionsData.length).fill(false);
+            isSubmitted = false;
+            currentQuestionIdx = 0;
+
+            document.getElementById('resultsCard').classList.add('hidden');
+            document.getElementById('quizCard').classList.remove('hidden');
+
+            renderGrid();
+            loadQuestion(0);
+        }
+
+        function reviewQuiz() {
+            document.getElementById('resultsCard').classList.add('hidden');
+            document.getElementById('quizCard').classList.remove('hidden');
+            loadQuestion(0);
+        }
+    </script>
+</body>
+</html>
