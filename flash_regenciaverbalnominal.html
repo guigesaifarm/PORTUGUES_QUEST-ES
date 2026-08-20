@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Regência Nominal e Verbal</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb;
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .card-content {
+            font-size: 1.7rem; 
+            line-height: 1.5;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.25rem; 
+            text-align: left;
+            color: #34495e;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.4rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.15rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Domínio Completo de Regência Nominal e Verbal para Concursos</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Regência</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            // --- REGÊNCIA VERBAL ---
+            {
+                category: "Verbo Assistir",
+                front: "Qual é a regência do verbo <b>assistir</b> no sentido de ver/presenciar e no sentido de dar assistência?",
+                back: "• Ver / presenciar: VTI, exige a preposição <b>'a'</b> (Ex: Assistimos <i>ao</i> filme).<br>• Dar assistência / morar: VTD ou VTI (Ex: O médico assistiu <i>o</i> paciente / O enfermeiro assistiu <i>ao</i> enfermo)."
+            },
+            {
+                category: "Verbo Aspirar",
+                front: "Como o verbo <b>aspirar</b> muda de sentido de acordo com a sua regência?",
+                back: "• Cheirar / inalar: VTD, sem preposição (Ex: Aspirou <i>o</i> perfume).<br>• Desejar / almejar: VTI, exige a preposição <b>'a'</b> (Ex: Aspira <i>ao</i> cargo público)."
+            },
+            {
+                category: "Verbo Visar",
+                front: "Qual é a diferença de regência e significado para o verbo <b>visar</b>?",
+                back: "• Apontar / mirar / objetivar: VTI, exige a preposição <b>'a'</b> (Ex: Visa <i>ao</i> sucesso).<br>• Assinar documentos: VTD, sem preposição (Ex: Visou <i>o</i> passaporte)."
+            },
+            {
+                category: "Verbo Agradecer / Perdoar",
+                front: "Qual é a armadilha de regência dos verbos <b>agradecer, perdoar e pagar</b>?",
+                back: "Eles são VTI em relação a <b>pessoas</b> (exigem preposição 'a') e VTD em relação a <b>coisas</b> (sem preposição). Ex: Agradeci <i>ao</i> chefe / Agradeci <i>o</i> presente."
+            },
+            {
+                category: "Verbo Implicar",
+                front: "Qual é a regência do verbo <b>implicar</b> no sentido de acarretar/gerar consequência?",
+                back: "É verbo <b>transitivo direto</b> (não exige preposição). Erro clássico: 'implicar <i>em</i> algo'. O correto é: A falta de foco implica <i>prejuízos</i> (VTD)."
+            },
+            {
+                category: "Verbo Preferir",
+                front: "Como deve ser estruturada a regência do verbo <b>preferir</b> segundo a gramática normativa?",
+                back: "Quem prefere, prefere algo <b>a</b> algo (e não 'mais do que' ou 'antes'). Ex: Prefiro café <i>a</i> leite (nunca 'prefiro mais café do que leite')."
+            },
+            {
+                category: "Verbo Chamar",
+                front: "O verbo <b>chamar</b> muda de sentido se for transitivo direto ou indireto?",
+                back: "• Denominar / apelidar: aceita predicativo com ou sem 'de' (Ex: Chamei-o <i>(de)</i> ladrão).<br>• Invocar / convocar: VTI com a preposição 'a' (Ex: Chamou <i>ao</i> telão)."
+            },
+            {
+                category: "Verbo Responder",
+                front: "Qual é a regência correta para o verbo <b>responder</b> ao significar 'dar resposta a alguém'?",
+                back: "É transitivo indireto com a preposição <b>'a'</b> (Ex: Respondeu <i>ao</i> questionário / Respondeu <i>à</i> professora)."
+            },
+            {
+                category: "Verbo Proceder",
+                front: "Como o verbo <b>proceder</b> varia de regência conforme o contexto?",
+                back: "• Ter fundamento: VI (Ex: Sua reclamação não procede).<br>• Originar-se: VTI com 'de' (Procede <i>de</i> família nobre).<br>• Executar / iniciar: VTI com <b>'a'</b> (Procedeu <i>à</i> leitura)."
+            },
+            {
+                category: "Verbo Custar",
+                front: "Qual é o erro mais cobrado em concursos envolvendo o verbo <b>custar</b> no sentido de ser difícil?",
+                back: "No sentido de custo emocional/dificuldade, ele é VTI e tem sujeito oracional, sendo precedido pela preposição <b>'a'</b> (Ex: <i>Custou-me</i> a entender / Errado: Eu custei a entender)."
+            },
+            {
+                category: "Verbo Informar / Avisar",
+                front: "Qual é a particularidade dos chamados verbos de comunicação (informar, avisar, certificar)?",
+                back: "São chamados de <b>bitransitivos</b>: quem informa, informa <i>algo a alguém</i> ou <i>alguém de algo</i> (Ex: Informamos <i>o</i> fato <i>aos</i> clientes / Informamos <i>os</i> clientes <i>do</i> fato)."
+            },
+            {
+                category: "Verbo Namorar",
+                front: "O verbo <b>namorar</b> exige preposição em sua regência padrão?",
+                back: "<b>Não!</b> Ele é um verbo transitivo direto. O correto é dizer 'Ele namora <i>a</i> colega' e não 'namora com a colega'."
+            },
+            {
+                category: "Verbo Obedecer / Desobedecer",
+                front: "Qual preposição os verbos <b>obedecer e desobedecer</b> exigem em seu complemento?",
+                back: "Exigem obrigatoriamente a preposição <b>'a'</b> (são transitivos indiretos). Ex: Obedeça <i>às</i> ordens / Desobedeceu <i>ao</i> regulamento."
+            },
+            {
+                category: "Verbo Esquecer / Lembrar",
+                front: "Como os verbos <b>esquecer e lembrar</b> mudam de estrutura sintática se usados com ou sem pronome?",
+                back: "• Sem pronome (VTD): Esqueci <i>o</i> livro.<br>• Com pronome reflexivo (VTI com 'de'): Esqueci-me <i>do</i> livro. (A mesma regra vale para lembrar)."
+            },
+            {
+                category: "Verbo Simpatizar / Antipatizar",
+                front: "Os verbos <b>simpatizar e antipatizar</b> exigem qual preposição?",
+                back: "Exigem obrigatoriamente a preposição <b>'com'</b> (são VTI). Erro comum de prova: 'simpatizei com o candidato' (Correto) x 'simpatizei o candidato' (Errado)."
+            },
+
+            // --- REGÊNCIA NOMINAL ---
+            {
+                category: "Acessível",
+                front: "Qual é a regência nominal do adjetivo <b>acessível</b>?",
+                back: "Quem é acessível, é acessível <b>a</b> algo ou alguém (Ex: O local é acessível <i>a</i> cadeirantes)."
+            },
+            {
+                category: "Acostumado",
+                front: "O adjetivo <b>acostumado</b> rege qual preposição?",
+                back: "Rege preferencialmente a preposição <b>'a'</b> ou 'com' (Ex: Estou acostumado <i>a</i> acordar cedo / acostumado <i>com</i> o barulho)."
+            },
+            {
+                category: "Agradável",
+                front: "Qual é a preposição exigida pelo adjetivo <b>agradável</b>?",
+                back: "Rege a preposição <b>'a'</b> (Ex: O clima tornou-se agradável <i>aos</i> moradores)."
+            },
+            {
+                category: "Apto",
+                front: "O adjetivo <b>apto</b> exige qual regência para indicar capacidade?",
+                back: "Exige a preposição <b>'para'</b> ou <b>'a'</b> (Ex: O candidato está apto <i>para</i> a vaga / apto <i>a</i> assumir o cargo)."
+            },
+            {
+                category: "Ávido",
+                front: "Qual preposição acompanha o adjetivo <b>ávido</b> (desejoso)?",
+                back: "Rege a preposição <b>'de'</b> (Ex: Estava ávido <i>de</i> novidades / ávido <i>por</i> notícias)."
+            },
+            {
+                category: "Compatível",
+                front: "O adjetivo <b>compatível</b> rege qual preposição?",
+                back: "Exige obrigatoriamente a preposição <b>'com'</b> (Ex: Salário compatível <i>com</i> a função)."
+            },
+            {
+                category: "Contrário",
+                front: "Qual é a regência nominal correta para a palavra <b>contrário</b>?",
+                back: "Rege a preposição <b>'a'</b> (Ex: Ele votou contrário <i>à</i> proposta)."
+            },
+            {
+                category: "Diferente",
+                front: "O adjetivo <b>diferente</b> deve ser seguido por qual preposição?",
+                back: "A regência padrão culta exige a preposição <b>'de'</b> (Ex: Este modelo é diferente <i>do</i> anterior. Evite usar 'diferente que')."
+            },
+            {
+                category: "Digno",
+                front: "Qual preposição acompanha o adjetivo <b>digno</b>?",
+                back: "Rege a preposição <b>'de'</b> (Ex: Um profissional digno <i>de</i> respeito)."
+            },
+            {
+                category: "Favorável",
+                front: "O adjetivo <b>favorável</b> exige qual preposição?",
+                back: "Exige a preposição <b>'a'</b> (Ex: A diretoria foi favorável <i>às</i> mudanças)."
+            },
+            {
+                category: "Grato",
+                front: "Qual é a regência nominal do adjetivo <b>grato</b>?",
+                back: "Aceita as preposições <b>'a'</b> ou <b>'por'</b> (Ex: Estou grato <i>a</i> você / grato <i>pela</i> ajuda)."
+            },
+            {
+                category: "Nocivo",
+                front: "O adjetivo <b>nocivo</b> rege qual preposição?",
+                back: "Exige a preposição <b>'a'</b> (Ex: O cigarro é nocivo <i>à</i> saúde)."
+            },
+            {
+                category: "Paralelo",
+                front: "Qual preposição é utilizada com o adjetivo <b>paralelo</b>?",
+                back: "Rege a preposição <b>'a'</b> (Ex: Uma via paralela <i>à</i> rodovia)."
+            },
+            {
+                category: "Prejudicial",
+                front: "O adjetivo <b>prejudicial</b> rege qual preposição?",
+                back: "Exige a preposição <b>'a'</b> (Ex: Atitudes impulsivas são prejudiciais <i>ao</i> projeto)."
+            },
+            {
+                category: "Respeito",
+                front: "O substativo <b>respeito</b> pode vir seguido de quais preposições?",
+                back: "Pode reger <b>'a'</b>, <b>'com'</b> ou <b>'para com'</b> (Ex: Tenho muito respeito <i>para com</i> os mais velhos / respeito <i>às</i> leis)."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
