@@ -219,7 +219,368 @@
     <!-- JavaScript Quiz Logic -->
     <script>
         // Database of 20 Portuguese Questions
-       
+       const questionsData = [
+    {
+        id: 1,
+        category: "Uso de Porquês",
+        question: "Assinale a alternativa em que o uso do porquê está gramaticalmente CORRETO:",
+        options: [
+            { text: "Não fui à aula porque estava chovendo muito.", isCorrect: true, rationale: "'Porque' é uma conjunção explicativa/causal, usada em respostas ou justificativas." },
+            { text: "Você não compareceu à reunião por que?", isCorrect: false, rationale: "Em fim de frase ou antes de pontuação, deve-se usar 'por quê' com acento." },
+            { text: "Gostaria de saber o por que de tanta confusão.", isCorrect: false, rationale: "Precedido de artigo 'o', funciona como substantivo e deve ser grafado junto e com acento: 'porquê'." },
+            { text: "Não entendi porquê você se atrasou tanto.", isCorrect: false, rationale: "Em perguntas indiretas (equivalente a 'por qual razão'), deve-se usar 'por que' separado e sem acento." }
+        ],
+        hint: "Analise a função gramatical: explicação, pergunta direta/indireta, fim de frase ou substantivo."
+    },
+    {
+        id: 2,
+        category: "Acentuação Gráfica - Acordo Ortográfico",
+        question: "De acordo com o Novo Acordo Ortográfico, assinale a alternativa cuja palavra NÃO deve receber acento gráfico:",
+        options: [
+            { text: "Ideia", isCorrect: true, rationale: "Os ditongos abertos 'ei' e 'oi' nas palavras paroxítonas perderam o acento gráfico (ex: ideia, assembleia, heroiico)." },
+            { text: "Herói", isCorrect: false, rationale: "Palavras oxítonas terminadas nos ditongos abertos 'éi', 'éu' e 'ói' mantêm o acento." },
+            { text: "Café", isCorrect: false, rationale: "Oxítonas terminadas em 'e' mantêm o acento." },
+            { text: "Pau-d'água", isCorrect: false, rationale: "Palavra composta que mantém a grafia correta." }
+        ],
+        hint: "Lembre-se da regra dos ditongos abertos 'ei' e 'oi' em palavras paroxítonas."
+    },
+    {
+        id: 3,
+        category: "Uso do Hífen",
+        question: "Assinale a alternativa em que o hífen foi empregado de forma CORRETA segundo as regras atuais:",
+        options: [
+            { text: "Anti-inflamatório", isCorrect: true, rationale: "Usa-se hífen quando o prefixo termina com a mesma vogal que inicia a segunda palavra (i + i)." },
+            { text: "Auto-escola", isCorrect: false, rationale: "Vogais diferentes se unem sem hífen: 'autoescola'." },
+            { text: "Micro-onda", isCorrect: false, rationale: "Vogais iguais se separam por hífen: 'micro-ondas'." },
+            { text: "Super-interessante", isCorrect: false, rationale: "A consoante 'r' com vogal junta-se sem hífen: 'superinteressante'." }
+        ],
+        hint: "Vogais iguais se separam (hífen); vogais diferentes se unem."
+    },
+    {
+        id: 4,
+        category: "Uso de X ou CH",
+        question: "Assinale a opção em que a palavra está grafada CORRETAMENTE:",
+        options: [
+            { text: "Enxame", isCorrect: true, rationale: "Após a sílaba inicial 'en-', usa-se 'x' (ex: enxame, enxada, enxaguar)." },
+            { text: "Chícara", isCorrect: false, rationale: "A grafia correta é 'Xícara' com X." },
+            { text: "Encher", isCorrect: false, rationale: "Exceção à regra do 'en-': deriva de 'cheio', portanto mantém 'ch'." },
+            { text: "Mexerico", isCorrect: false, rationale: "A palavra 'mexerico' escreve-se com X, mas 'mexer' e derivados são com X." }
+        ],
+        hint: "Regra geral: após a sílaba 'en-', emprega-se 'x', salvo exceções derivadas de palavras com 'ch'."
+    },
+    {
+        id: 5,
+        category: "Uso de G ou J",
+        question: "Assinale a alternativa que apresenta erro de ortografia no uso de G ou J:",
+        options: [
+            { text: "Lage", isCorrect: true, rationale: "Incorreto. A grafia correta é 'Laje', com J." },
+            { text: "Viagem (substantivo) / Viajem (verbo)", isCorrect: false, rationale: "Ambas as formas existem e estão corretas conforme a classe gramatical." },
+            { text: "Pajem", isCorrect: false, rationale: "Grafada corretamente com J." },
+            { text: "Giboia", isCorrect: false, rationale: "Palavra de origem indígena, grafada corretamente com J." }
+        ],
+        hint: "Substantivos de origem indígena ou africana e palavras com terminação em -aje usam J."
+    },
+    {
+        id: 6,
+        category: "Uso de S ou Z",
+        question: "Assinale a palavra grafada INCORRETAMENTE com S ou Z:",
+        options: [
+            { text: "Analizar", isCorrect: true, rationale: "Incorreto: deriva do substantivo 'análise' (que tem 's' no radical), logo o verbo é 'analisar'." },
+            { text: "Pesquisar", isCorrect: false, rationale: "Correto: deriva de 'pesquisa'." },
+            { text: "Realizar", isCorrect: false, rationale: "Correto: sufixo '-izar' formador de verbo a partir do adjetivo 'real'." },
+            { text: "Paralisar", isCorrect: false, rationale: "Correto: deriva de 'paralisia'." }
+        ],
+        hint: "Se a palavra primitiva tem 's' no radical, mantém-se o 's'. Se não tem, usa-se o sufixo '-izar'."
+    },
+    {
+        id: 7,
+        category: "Grafia de Há / A",
+        question: "Assinale a frase que preenche corretamente as lacunas: '_____ muitos anos não o vejo, mas pretendo encontrá-lo daqui _____ dois meses.'",
+        options: [
+            { text: "Há – a", isCorrect: true, rationale: "'Há' indica tempo decorrido (passado) e 'a' indica tempo futuro ou distância." },
+            { text: "A – há", isCorrect: false, rationale: "Inverte as regras de tempo passado e futuro." },
+            { text: "Há – há", isCorrect: false, rationale: "'Há' não deve ser usado para indicar tempo futuro." },
+            { text: "A – a", isCorrect: false, rationale: "'A' simples não indica tempo decorrido no sentido de existir/haver." }
+        ],
+        hint: "Tempo passado = verbo Haver ('há'). Tempo futuro/distância = preposição 'a'."
+    },
+    {
+        id: 8,
+        category: "Acentuação de Hiatos",
+        question: "Assinale a alternativa em que todas as palavras são acentuadas pela mesma regra do hiato (I e U tônicos):",
+        options: [
+            { text: "Saúde, baú, saída.", isCorrect: true, rationale: "I e U tônicos formando hiato com a vogal anterior, sozinhos na sílaba ou seguidos de S, recebem acento." },
+            { text: "Pai, mãe, mão.", isCorrect: false, rationale: "São ditongos/monossílabos, não hiatos." },
+            { text: "Baú, feiura, rainha.", isCorrect: false, rationale: "'Feiura' e 'rainha' não levam acento (feiura após ditongo; rainha seguida de nh)." },
+            { text: "Taxis, júri, lápis.", isCorrect: false, rationale: "São paroxítonas terminadas em -is." }
+        ],
+        hint: "A regra do hiato acentua 'I' e 'U' tônicos isolados na sílaba, sem acompanhamento de 'nh'."
+    },
+    {
+        id: 9,
+        category: "Sufixos -ês / -eza",
+        question: "Assinale a opção que apresenta incorreção na grafia do substantivo ou adjetivo:",
+        options: [
+            { text: "Calabrez", isCorrect: true, rationale: "Incorreto: adjetivo pátrio/originário escreve-se com -ês ('calabrês')." },
+            { text: "Riqueza", isCorrect: false, rationale: "Substantivo abstrato derivado do adjetivo 'rico' escreve-se com -eza." },
+            { text: "Brazileiro", isCorrect: false, rationale: "Grafia arcaica. Atualmente escreve-se 'brasileiro'." },
+            { text: "Pobreza", isCorrect: false, rationale: "Substantivo abstrato derivado do adjetivo 'pobre'." }
+        ],
+        hint: "Títulos, origem e nacionalidade usam -ês/-esa. Substantivos abstratos derivados de adjetivos usam -ez/-eza."
+    },
+    {
+        id: 10,
+        category: "Uso do Hífen com Prefixo 'RE'",
+        question: "Assinale a alternativa grafada CORRETAMENTE com o prefixo 're-':",
+        options: [
+            { text: "Reescrever", isCorrect: true, rationale: "O prefixo 're-' aglutina-se com a palavra seguinte mesmo que iniciada pela vogal 'e'." },
+            { text: "Re-escrever", isCorrect: false, rationale: "O prefixo 're-' não exige hífen antes de 'e'." },
+            { text: "Re-organizar", isCorrect: false, rationale: "O prefixo 're-' junta-se diretamente à palavra sem hífen." },
+            { text: "Re-analisar", isCorrect: false, rationale: "Junta-se diretamente ao verbo: 'reanalisar'." }
+        ],
+        hint: "O prefixo 're-' em regra geral une-se diretamente à palavra base sem uso do hífen."
+    },
+    {
+        id: 11,
+        category: "Parônimos e Homônimos",
+        question: "Assinale a alternativa que preenche corretamente a frase: 'O juiz vai _____ a pena do réu' (diminuir):",
+        options: [
+            { text: "Atenuar", isCorrect: true, rationale: "'Atenuar' significa suavizar/diminuir." },
+            { text: "Apreçar", isCorrect: false, rationale: "'Apreçar' significa cotar ou avaliar o preço de algo." },
+            { text: "Cassar", isCorrect: false, rationale: "'Cassar' significa anular ou tornar sem efeito direitos." },
+            { text: "Caçar", isCorrect: false, rationale: "'Caçar' significa perseguir animais." }
+        ],
+        hint: "Busque o verbo que significa 'suavizar', 'tornar menos severo'."
+    },
+    {
+        id: 12,
+        category: "Grafia de Mal / Mau",
+        question: "Assinale a alternativa em que o uso de 'mal' ou 'mau' está INCORRETO:",
+        options: [
+            { text: "Ele é um mal elemento para a empresa.", isCorrect: true, rationale: "Incorreto: oposto de 'bom' é 'mau' ('mau elemento'). 'Mal' é oposto de 'bem'." },
+            { text: "Ele se comportou mal durante o evento.", isCorrect: false, rationale: "Correto: oposto de 'bem'." },
+            { text: "O mau humor dele contagiou a sala.", isCorrect: false, rationale: "Correto: oposto de 'bom humor'." },
+            { text: "Mal chegou, a aula começou.", isCorrect: false, rationale: "Correto: conjunção temporal equivalente a 'assim que'." }
+        ],
+        hint: "Regra prática: MAU é o oposto de BOM; MAL é o oposto de BEM."
+    },
+    {
+        id: 13,
+        category: "Acentuação - Paroxítonas",
+        question: "Assinale a palavra que NÃO deve ser acentuada gráfico-ortograficamente:",
+        options: [
+            { text: "Item", isCorrect: true, rationale: "Paroxítonas terminadas em -em ou -ens não levam acento (ex: item, hifen, jovem)." },
+            { text: "Taxis", isCorrect: false, rationale: "Paroxítona terminada em -is leva acento." },
+            { text: "Álbum", isCorrect: false, rationale: "Paroxítona terminada em -um leva acento." },
+            { text: "Caráter", isCorrect: false, rationale: "Paroxítona terminada em -r leva acento." }
+        ],
+        hint: "Acentos em paroxítonas: não se acentuam as terminadas em A, E, O, EM, ENS."
+    },
+    {
+        id: 14,
+        category: "Acentuação Diferencial",
+        question: "Após a Reforma Ortográfica, o acento diferencial foi MANTIDO em qual dos seguintes casos?",
+        options: [
+            { text: "Pôde (pretérito) / Pode (presente)", isCorrect: true, rationale: "O acento diferencial permanece no verbo poder para diferenciar o passado 'pôde' do presente 'pode'." },
+            { text: "Pára (verbo) / Para (preposição)", isCorrect: false, rationale: "O acento diferencial do verbo parar foi abolido pelo Novo Acordo." },
+            { text: "Pêlo (substantivo) / Pelo (preposição)", isCorrect: false, rationale: "Foi abolido pelo Novo Acordo." },
+            { text: "Pólo (substantivo) / Polo (combinação)", isCorrect: false, rationale: "Foi abolido pelo Novo Acordo." }
+        ],
+        hint: "Lembre-se de que a maioria dos acentos diferenciais caiu, mantendo-se apenas casos específicos como pôde/pode e pôr/por."
+    },
+    {
+        id: 15,
+        category: "Sessão / Seção / Cessão",
+        question: "Assinale a opção que preenche corretamente: 'A _____ de cinema foi transferida para outra _____ do shopping.'",
+        options: [
+            { text: "Sessão – seção", isCorrect: true, rationale: "'Sessão' = intervalo de tempo/reunião/espetáculo; 'Seção' (ou secção) = divisão/departamento." },
+            { text: "Seção – sessão", isCorrect: false, rationale: "Inverte as definições." },
+            { text: "Cessão – sessão", isCorrect: false, rationale: "'Cessão' significa o ato de ceder direitos ou bens." },
+            { text: "Sessão – cessão", isCorrect: false, rationale: "Uso incorreto no segundo elemento." }
+        ],
+        hint: "Sessão = tempo/filme; Seção = setor/parte; Cessão = ato de ceder."
+    },
+    {
+        id: 16,
+        category: "Grafia com SC / S / C",
+        question: "Assinale a palavra cuja grafia apresente o encontro 'SC' de forma correta:",
+        options: [
+            { text: "Fascinante", isCorrect: true, rationale: "Grafada corretamente com SC." },
+            { text: "Nasser", isCorrect: false, rationale: "Inexistente na norma culta para o verbo nascer." },
+            { text: "Piscina", isCorrect: false, rationale: "É grafada com SC." },
+            { text: "Crescer", isCorrect: false, rationale: "A grafia correta é 'Crescer' com SC." }
+        ],
+        hint: "Observe os vocábulos derivados do latim com o dígrafo SC."
+    },
+    {
+        id: 17,
+        category: "Uso do Hífen com 'AERO', 'AUTO', 'SEMI'",
+        question: "Assinale a alternativa em que a palavra está grafada INCORRETAMENTE:",
+        options: [
+            { text: "Semi-árido", isCorrect: true, rationale: "Incorreto: segundo a regra, vogais diferentes unem-se sem hífen ('semiárido')." },
+            { text: "Semi-aberto", isCorrect: false, rationale: "Grafia antiga. Atualmente escreve-se 'semiaberto'." },
+            { text: "Automedicação", isCorrect: false, rationale: "Correto: união sem hífen antes de consoante que não seja R ou S." },
+            { text: "Aeroporto", isCorrect: false, rationale: "Correto: prefixo 'aero-' aglutinado." }
+        ],
+        hint: "Prefixo terminado em vogal junta-se com palavra iniciada por vogal diferente sem hífen."
+    },
+    {
+        id: 18,
+        category: "Palavras Homófonas: Mas / Mais",
+        question: "Assinale a frase gramaticalmente correta em relação ao uso de 'mas' e 'mais':",
+        options: [
+            { text: "Estudou muito, mas não conseguiu a aprovação.", isCorrect: true, rationale: "'Mas' é conjunção adversativa (oposição, porém). 'Mais' indica quantidade/intensidade." },
+            { text: "Quero mas café, por favor.", isCorrect: false, rationale: "Deveria ser 'mais' (quantidade)." },
+            { text: "Ele é o mas inteligente da turma.", isCorrect: false, rationale: "Deveria ser 'mais' (intensidade)." },
+            { text: "Tentei ligar, mais ninguém atendeu.", isCorrect: false, rationale: "Deveria ser 'mas' (oposição)." }
+        ],
+        hint: "MAS indica oposição (porém); MAIS indica soma ou intensidade."
+    },
+    {
+        id: 19,
+        category: "Em cima / Encima",
+        question: "Assinale a alternativa que preenche a lacuna corretamente: 'O livro está _____ da mesa.'",
+        options: [
+            { text: "em cima", isCorrect: true, rationale: "A locução prepositiva de lugar é separada: 'em cima'. 'Encima' é forma do verbo encimar (coroar, estar no alto)." },
+            { text: "encima", isCorrect: false, rationale: "'Encima' é verbo e não forma locução de lugar." },
+            { text: "em-cima", isCorrect: false, rationale: "Não se usa hífen na expressão." },
+            { text: "hencima", isCorrect: false, rationale: "Grafia inexistente na língua portuguesa." }
+        ],
+        hint: "O oposto de 'embaixo' (junto) é 'em cima' (separado)."
+    },
+    {
+        id: 20,
+        category: "Acentuação de Proparoxítonas",
+        question: "A respeito das palavras proparoxítonas, assinale a afirmativa CORRETA:",
+        options: [
+            { text: "Todas as palavras proparoxítonas devem ser acentuadas graficamente.", isCorrect: true, rationale: "É a regra mais geral e sem exceções da acentuação na língua portuguesa." },
+            { text: "Apenas as palavras proparoxítonas terminadas em vogal levam acento.", isCorrect: false, rationale: "Incorreto: todas levam acento, independentemente da terminação." },
+            { text: "Proparoxítonas perderam o acento com o Novo Acordo Ortográfico.", isCorrect: false, rationale: "A regra permanece intacta." },
+            { text: "Somente proparoxítonas terminadas em R, L e N levam acento.", isCorrect: false, rationale: "Incorreto: esta regra aplica-se a paroxítonas." }
+        ],
+        hint: "Lembre-se da regra de ouro: 'Todas as proparoxítonas são acentuadas'."
+    },
+    {
+        id: 21,
+        category: "Grafia de 'A fim' / 'Afim'",
+        question: "Assinale a opção correta para a frase: 'Eles têm ideias _____ e trabalharam juntos _____ de alcançar o mesmo objetivo.'",
+        options: [
+            { text: "afins – a fim", isCorrect: true, rationale: "'Afim' (junto) indica semelhança/afinitade. 'A fim' (separado) indica intenção/finalidade na locução 'a fim de'." },
+            { text: "a fim – afins", isCorrect: false, rationale: "Inverte as aplicações lógicas." },
+            { text: "afins – afim", isCorrect: false, rationale: "'Afim de' para finalidade está incorreto." },
+            { text: "a fins – a fim", isCorrect: false, rationale: "Grafia incorreta para o primeiro termo." }
+        ],
+        hint: "Semelhança = afim. Finalidade/intenção = a fim (de)."
+    },
+    {
+        id: 22,
+        category: "Grafia de Senão / Se não",
+        question: "Assinale a alternativa em que o termo 'se não' (separado) está aplicado de forma CORRETA:",
+        options: [
+            { text: "Se não chover amanhã, iremos à praia.", isCorrect: true, rationale: "'Se não' separado equivale a 'caso não' (condição)." },
+            { text: "Não fazia outra coisa se não reclamar.", isCorrect: false, rationale: "Deveria ser 'senão' (com o sentido de 'a não ser', 'exceto')." },
+            { text: "Estude bastante, se não vai reprovar.", isCorrect: false, rationale: "Deveria ser 'senão' (com sentido de 'caso contrário')." },
+            { text: "Não havia um se não na sua redação.", isCorrect: false, rationale: "Deveria ser 'senão' (substantivo que significa defeito ou mácula)." }
+        ],
+        hint: "Use 'se não' separado quando puder substituir por 'caso não'."
+    },
+    {
+        id: 23,
+        category: "Uso do Hífen com Consoantes Iguais",
+        question: "Assinale a palavra grafada CORRECTAMENTE segundo as regras do hífen para prefixos terminados em consoante:",
+        options: [
+            { text: "Sub-base", isCorrect: true, rationale: "Quando o prefixo termina na mesma consoante que inicia o segundo elemento, usa-se hífen (b + b)." },
+            { text: "Subbase", isCorrect: false, rationale: "Falta o hífen obrigatório entre consoantes iguais." },
+            { text: "Inter-relação", isCorrect: false, rationale: "Exige hífen (r + r), mas a opção avalia a regra geral." },
+            { text: "Super-mercado", isCorrect: false, rationale: "Incorreto: r + m não são consoantes iguais, junta-se sem hífen ('supermercado')." }
+        ],
+        hint: "Consoantes iguais se separam por hífen; consoantes diferentes juntam-se sem hífen."
+    },
+    {
+        id: 24,
+        category: "Uso do 'H' Inicial",
+        question: "Assinale a opção em que a palavra perdeu o 'H' inicial incorretamente ou apresenta erro de grafia:",
+        options: [
+            { text: "Herva", isCorrect: true, rationale: "Incorreto: a grafia correta em português é 'Erva' sem H." },
+            { text: "Umidade", isCorrect: false, rationale: "Escreve-se sem H (derivado de úmido)." },
+            { text: "Homem", isCorrect: false, rationale: "Mantém o H etimológico inicial." },
+            { text: "Ontem", isCorrect: false, rationale: "Escreve-se sem H." }
+        ],
+        hint: "Atente para as palavras que não possuem H etimológico na norma moderna do português."
+    },
+    {
+        id: 25,
+        category: "Grafia de 'Onde' / 'Aonde'",
+        question: "Assinale a alternativa que preenche adequadamente a frase: '_____ você vai com tanta pressa?'",
+        options: [
+            { text: "Aonde", isCorrect: true, rationale: "Verbos que indicam movimento e exigem a preposição 'a' (ir a) pedem o uso de 'Aonde'." },
+            { text: "Onde", isCorrect: false, rationale: "'Onde' é usado para verbos estáticos ou de permanência." },
+            { text: "Daonde", isCorrect: false, rationale: "Forma coloquial/incorreta; o correto seria 'De onde'." },
+            { text: "Donde", isCorrect: false, rationale: "Indica origem/procedência ('de onde'), inadequado para o verbo 'ir'." }
+        ],
+        hint: "Quem vai, vai A algum lugar -> A + onde = Aonde."
+    },
+    {
+        id: 26,
+        category: "Palavras com Ç ou S",
+        question: "Assinale a palavra grafada INCORRETAMENTE quanto ao uso de Ç ou S:",
+        options: [
+            { text: "Pretenção", isCorrect: true, rationale: "Incorreto: deriva do verbo 'pretender' (verbos com -nd- formam substantivos com -ns-), logo o correto é 'Pretensão'." },
+            { text: "Cansaço", isCorrect: false, rationale: "Grafada corretamente com Ç." },
+            { text: "Exceção", isCorrect: false, rationale: "Grafada corretamente com Ç." },
+            { text: "Discussão", isCorrect: false, rationale: "Grafada corretamente com SS." }
+        ],
+        hint: "Verbos terminados em -ender (pretender, defender) originam substantivos grafados com -ns-."
+    },
+    {
+        id: 27,
+        category: "Acentuação de Monossílabos Tônicos",
+        question: "Assinale a alternativa que apresenta um monossílabo tônico INCORRETAMENTE acentuado:",
+        options: [
+            { text: "Nu", isCorrect: true, rationale: "Incorreto: monossílabos tônicos terminados em -u ou -i não recebem acento gráfico (ex: nu, tu, vi, fiz)." },
+            { text: "Dor", isCorrect: false, rationale: "Monossílabo terminado em R não é acentuado." },
+            { text: "Pés", isCorrect: false, rationale: "Monossílabo tônico terminado em -es é acentuado corretamente." },
+            { text: "Nós", isCorrect: false, rationale: "Monossílabo tônico terminado em -os é acentuado corretamente." }
+        ],
+        hint: "Acentuam-se os monossílabos tônicos terminados em A, E, O (seguidos ou não de S)."
+    },
+    {
+        id: 28,
+        category: "Prefixo 'EXTRA' / 'INTRA'",
+        question: "Assinale a alternativa que apresenta a grafia CORRETA com o prefixo 'extra-':",
+        options: [
+            { text: "Extraterritorial", isCorrect: true, rationale: "Junta-se diretamente quando a segunda palavra começa com consoante diferente de R ou S." },
+            { text: "Extra-oficial", isCorrect: false, rationale: "Vogais diferentes unem-se sem hífen: 'extraoficial'." },
+            { text: "Extra-ordinário", isCorrect: false, rationale: "Vogais diferentes unem-se sem hífen: 'extraordinário'." },
+            { text: "Extra-escolar", isCorrect: false, rationale: "Vogais diferentes unem-se sem hífen: 'extraescolar'." }
+        ],
+        hint: "Diante de vogal diferente, o prefixo junta-se sem hífen."
+    },
+    {
+        id: 29,
+        category: "Grafia de 'Tão pouco' / 'Tampouco'",
+        question: "Assinale a opção em que a lacuna é preenchida corretamente por 'Tampouco':",
+        options: [
+            { text: "Não compareceu à aula, _____ justificou a ausência.", isCorrect: true, rationale: "'Tampouco' é advérbio com sentido de 'também não' ou 'nem'." },
+            { text: "Ele ganha _____ dinheiro que mal consegue pagar as contas.", isCorrect: false, rationale: "Deveria ser 'tão pouco' (intensificador + pronome/advérbio de quantidade = muito pouco)." },
+            { text: "Trabalhou _____ durante a semana que se cansou rápido.", isCorrect: false, rationale: "Deveria ser 'tão pouco' (muito pouco)." },
+            { text: "Eles conversam _____, parecem estranhos.", isCorrect: false, rationale: "Deveria ser 'tão pouco'." }
+        ],
+        hint: "Tampouco = Também não / Nem. Tão pouco = Muito pouco."
+    },
+    {
+        id: 30,
+        category: "Uso da Crase e Ortografia",
+        question: "Assinale a alternativa em que a grafia da locução com crase está INCORRETA:",
+        options: [
+            { text: "À prazo", isCorrect: true, rationale: "Incorreto: não se usa crase antes de palavras masculinas ('prazo')." },
+            { text: "À medida que", isCorrect: false, rationale: "Locução conjuntiva proporcional feminina, leva crase obrigatoriamente." },
+            { text: "Às vezes", isCorrect: false, rationale: "Locução adverbial de tempo feminina, leva crase." },
+            { text: "À noite", isCorrect: false, rationale: "Locução adverbial de tempo feminina, leva crase." }
+        ],
+        hint: "Nunca se usa acento indicativo de crase antes de substantivos masculinos."
+    }
+];
         // State Management
         let currentQuestionIdx = 0;
         let userAnswers = new Array(questionsData.length).fill(null);
