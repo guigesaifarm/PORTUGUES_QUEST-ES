@@ -16,6 +16,7 @@
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
             --accent: #10b981;
+            --accent-hover: #059669;
             --text-dark: #1e293b;
             --text-muted: #64748b;
             --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
@@ -40,7 +41,7 @@
 
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 900px; /* Aumentado para acomodar os dois menus lado a lado */
             background: var(--card-bg);
             padding: 40px;
             border-radius: 20px;
@@ -61,9 +62,36 @@
         }
 
         p.subtitle {
-            font-size: 20px;
+            font-size: 18px;
             color: var(--text-muted);
             margin-bottom: 30px;
+        }
+
+        /* Layout para colocar os menus lado a lado */
+        .menus-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            text-align: left;
+        }
+
+        @media (max-width: 768px) {
+            .menus-wrapper {
+                grid-template-columns: 1fr; /* Empilha em telas menores */
+            }
+        }
+
+        .menu-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-column h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            text-align: center;
         }
 
         /* Menu Dropdown Estilizado */
@@ -74,9 +102,9 @@
 
         .btn-main {
             width: 100%;
-            font-size: 26px;
+            font-size: 18px;
             font-weight: 600;
-            padding: 16px 24px;
+            padding: 14px 18px;
             background-color: var(--primary);
             color: #ffffff;
             border: none;
@@ -89,14 +117,22 @@
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
 
+        .btn-main.btn-flashcard {
+            background-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
         .btn-main:hover {
-            background-color: var(--primary-hover);
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+            opacity: 0.95;
+        }
+
+        .btn-main.btn-flashcard:hover {
+            background-color: var(--accent-hover);
         }
 
         .arrow {
-            font-size: 22px;
+            font-size: 16px;
             transition: transform 0.3s ease;
         }
 
@@ -106,7 +142,7 @@
             visibility: hidden;
             transform: translateY(-10px);
             position: absolute;
-            top: calc(100% + 12px);
+            top: calc(100% + 10px);
             left: 0;
             width: 100%;
             background-color: #ffffff;
@@ -133,17 +169,17 @@
 
         /* Campo de Busca Dentro do Menu */
         .search-box {
-            padding: 12px;
+            padding: 10px;
             border-bottom: 1px solid #e2e8f0;
             background: #f8fafc;
         }
 
         .search-box input {
             width: 100%;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
-            font-size: 22px;
+            font-size: 16px;
             outline: none;
             transition: border-color 0.2s;
         }
@@ -160,12 +196,12 @@
 
         .dropdown-content a {
             color: var(--text-dark);
-            padding: 14px 20px;
+            padding: 12px 16px;
             text-decoration: none;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 22px;
+            font-size: 16px;
             font-weight: 500;
             border-bottom: 1px solid #f1f5f9;
             transition: background 0.2s, color 0.2s;
@@ -179,11 +215,11 @@
         .dropdown-content a:hover {
             background-color: #f0f9ff;
             color: var(--primary);
-            padding-left: 24px;
+            padding-left: 20px;
         }
 
         .tag {
-            font-size: 17px;
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             padding: 4px 8px;
@@ -192,6 +228,11 @@
             background: #e0f2fe;
             color: #0369a1;
         }
+
+        .tag-flashcard {
+            background: #d1fae5;
+            color: #065f46;
+        }
     </style>
 </head>
 <body>
@@ -199,121 +240,114 @@
     <div class="container">
         <div class="header-icon">📚</div>
         <h1>Português & Questões</h1>
-        <p class="subtitle">Selecione um tópico abaixo para iniciar seus estudos</p>
+        <p class="subtitle">Selecione um módulo ou flashcard para iniciar seus estudos</p>
 
-        <div class="dropdown" id="customDropdown">
-            <button class="btn-main" onclick="toggleDropdown()">
-                <span>Selecione o Módulo</span>
-                <span class="arrow">▼</span>
-            </button>
-            
-            <div class="dropdown-content">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Filtrar tópicos..." onkeyup="filterMenu()">
+        <div class="menus-wrapper">
+            <!-- Menu 1: Módulos de Questões/Conteúdo -->
+            <div class="menu-column">
+                <h3>Módulos de Estudo</h3>
+                <div class="dropdown" id="dropdownModulos">
+                    <button class="btn-main" onclick="toggleDropdown('dropdownModulos')">
+                        <span>Selecione o Módulo</span>
+                        <span class="arrow">▼</span>
+                    </button>
+                    
+                    <div class="dropdown-content">
+                        <div class="search-box">
+                            <input type="text" id="searchModulos" placeholder="Filtrar módulos..." onkeyup="filterMenu('searchModulos', 'listModulos')">
+                        </div>
+                        <div class="menu-list" id="listModulos">
+                            <a href="Crase.html"><span>Crase</span><span class="tag">Português</span></a>
+                            <a href="pronomesexpressoes.html"><span>Pronomes e Expressões Referenciais</span><span class="tag">Português</span></a>
+                            <a href="palavras_expressões.html"><span>Significação Contextual Palavras e Expressões</span><span class="tag">Português</span></a>
+                            <a href="equivalência_transformação.html"><span>Equivalência e Transformação de Estruturas</span><span class="tag">Português</span></a>
+                            <a href="sintaxe_construção.html"><span>Sintaxe e Construção Frasal</span><span class="tag">Português</span></a>
+                            <a href="coordenação_subordinação.html"><span>Sintaxe Processos de Coordenação e Subordinação</span><span class="tag">Português</span></a>
+                            <a href="modosverbais.html"><span>Emprego de Tempos e Modos Verbais</span><span class="tag">Português</span></a>
+                            <a href="pontuacao.html"><span>Pontuação</span><span class="tag">Português</span></a>
+                            <a href="concordancianominalverbal.html"><span>Concordância Nominal e Verbal</span><span class="tag">Português</span></a>
+                            <a href="regenciaverbalnominal.html"><span>Regência Verbal e Nominal</span><span class="tag">Português</span></a>
+                            <a href="formastratamentocolocacao.html"><span>Pronomes: emprego, formas de tratamento e colocação</span><span class="tag">Português</span></a>
+                            <a href="morfologiapalavras.html"><span>Morfologia Estrutura das Palavras</span><span class="tag">Português</span></a>
+                            <a href="formacaopalavras.html"><span>Estrutura e Formação de Palavras</span><span class="tag">Português</span></a>
+                            <a href="classepalavras.html"><span>Funções das Classes de Palavras</span><span class="tag">Português</span></a>
+                            <a href="flexaonominalverbal.html"><span>Flexão Nominal e Verbal</span><span class="tag">Português</span></a>
+                            <a href="normapadrao.html"><span>Norma Padrão Língua Portuguesa</span><span class="tag">Português</span></a>
+                            <a href="ortografia.html"><span>Ortografia oficial</span><span class="tag">Português</span></a>
+                            <a href="acentuacao.html"><span>Acentuação Gráfica</span><span class="tag">Português</span></a>
+                            <a href="crase1.html"><span>Crase 30 Quiz</span><span class="tag">Português</span></a>
+                        </div>
+                    </div>
                 </div>
-                <div class="menu-list" id="menuList">
-                    <a href="Crase.html">
-                        <span>Crase</span>
-                        <span class="tag">Português</span>
-                    </a>
-                    <a href="pronomesexpressoes.html">
-                        <span>Pronomes e Expressões Referenciais</span>
-                        <span class="tag">Português</span>
-                    </a>
-                    <a href="palavras_expressões.html">
-                        <span>Significação Contextual Palavras e Expressões </span>
-                        <span class="tag">Português</span>
-                    </a>
-                    <a href="equivalência_transformação.html">
-                        <span>Equivalência e Transformação de Estruturas</span>
-                        <span class="tag">Português</span>
-                    </a>
-                    <a href="sintaxe_construção.html">
-                        <span>Sintaxe e Construção Frasal</span>
-                        <span class="tag">Português</span>
-                    </a>
-                    <a href="coordenação_subordinação.html">
-                        <span>Sintaxe Processos de Coordenação e Subordinação</span>
-                        <span class="tag">Português</span>
-                    </a>
-                    <a href="modosverbais.html">
-                        <span>Emprego de Tempos e Modos Verbais</span>
-                        <span class="tag">Português</span>
-                    </a>
-                    <a href="pontuacao.html">
-                        <span>Pontuação </span>
-                        <span class="tag">Português</span>
-                    </a>
-                    <a href="concordancianominalverbal.html">
-                        <span>Concordância Nominal e Verbal</span>
-                        <span class="tag">Português</span>
-                    </a>
-                    <a href="regenciaverbalnominal.html">
-                        <span>Regência Verbal e Nominal</span>
-                        <span class="tag">Português</span>
-                    </a>
-                     <a href="formastratamentocolocacao.html">
-                        <span>Pronomes: emprego, formas de tratamento e colocação</span>
-                        <span class="tag">Português</span>
-                    </a>
-                     <a href="morfologiapalavras.html">
-                        <span>Morfologia Estrutura das Palavras</span>
-                        <span class="tag">Português</span>
-                    </a>
-                     <a href="formacaopalavras.html">
-                        <span>Estrutura e Formação de Palavras </span>
-                        <span class="tag">Português</span>
-                    </a>
-                     <a href="classepalavras.html">
-                        <span>Funções das Classes de Palavras</span>
-                        <span class="tag">Português</span>
-                    </a>
-                     <a href="flexaonominalverbal.html">
-                        <span>Flexão Nominal e Verbal</span>
-                        <span class="tag">Português</span>
-                     </a>
-                     <a href="normapadrao.html">
-                        <span>Norma Padrão Língua Portuguesa</span>
-                        <span class="tag">Português</span>
-                    </a>
-                    <a href="ortografia.html">
-                        <span>Ortografia oficial</span>
-                        <span class="tag">Português</span>
-                    </a>
-                    <a href="acentuacao.html">
-                        <span>Acentuação Gráfica</span>
-                        <span class="tag">Português</span>
-                    </a>
-                    <a href="crase1.html">
-                        <span>Crase 30 Quiz</span>
-                        <span class="tag">Português</span>
-                    </a>
+            </div>
 
-                   
+            <!-- Menu 2: Flashcards -->
+            <div class="menu-column">
+                <h3>Flashcards de Revisão</h3>
+                <div class="dropdown" id="dropdownFlashcards">
+                    <button class="btn-main btn-flashcard" onclick="toggleDropdown('dropdownFlashcards')">
+                        <span>Selecione o Flashcard</span>
+                        <span class="arrow">▼</span>
+                    </button>
+                    
+                    <div class="dropdown-content">
+                        <div class="search-box">
+                            <input type="text" id="searchFlashcards" placeholder="Filtrar flashcards..." onkeyup="filterMenu('searchFlashcards', 'listFlashcards')">
+                        </div>
+                        <div class="menu-list" id="listFlashcards">
+                            <!-- Altere os links "href" abaixo para as páginas de flashcards que você criar -->
+                            <a href="flash_Crase.html"><span>Crase</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_pronomesexpressoes.html"><span>Pronomes e Expressões Referenciais</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_palavras_expressões.html"><span>Significação Contextual Palavras e Expressões</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_equivalência_transformação.html"><span>Equivalência e Transformação de Estruturas</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_sintaxe_construção.html"><span>Sintaxe e Construção Frasal</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_coordenação_subordinação.html"><span>Sintaxe Processos de Coordenação e Subordinação</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_modosverbais.html"><span>Emprego de Tempos e Modos Verbais</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_pontuacao.html"><span>Pontuação</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_concordancianominalverbal.html"><span>Concordância Nominal e Verbal</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_regenciaverbalnominal.html"><span>Regência Verbal e Nominal</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_formastratamentocolocacao.html"><span>Pronomes: emprego, formas de tratamento e colocação</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_morfologiapalavras.html"><span>Morfologia Estrutura das Palavras</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_formacaopalavras.html"><span>Estrutura e Formação de Palavras</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_classepalavras.html"><span>Funções das Classes de Palavras</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_flexaonominalverbal.html"><span>Flexão Nominal e Verbal</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_normapadrao.html"><span>Norma Padrão Língua Portuguesa</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_ortografia.html"><span>Ortografia oficial</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_acentuacao.html"><span>Acentuação Gráfica</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_crase1.html"><span>Crase 30 Quiz</span><span class="tag tag-flashcard">Flash</span></a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Alternar abertura/fechamento do dropdown ao clicar
-        function toggleDropdown() {
-            const dropdown = document.getElementById('customDropdown');
-            dropdown.classList.toggle('active');
+        // Função para alternar o dropdown alvo e fechar os outros
+        function toggleDropdown(dropdownId) {
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(item => {
+                if (item.id === dropdownId) {
+                    item.classList.toggle('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
         }
 
-        // Fechar o menu caso o usuário clique fora da caixa
+        // Fechar os menus caso clique fora da área de qualquer dropdown
         window.addEventListener('click', function(e) {
-            const dropdown = document.getElementById('customDropdown');
-            if (!dropdown.contains(e.target)) {
-                dropdown.classList.remove('active');
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown').forEach(item => {
+                    item.classList.remove('active');
+                });
             }
         });
 
-        // Filtrar opções em tempo real
-        function filterMenu() {
-            const input = document.getElementById('searchInput').value.toLowerCase();
-            const links = document.getElementById('menuList').getElementsByTagName('a');
+        // Função de filtro dinâmica reutilizável para cada menu
+        function filterMenu(inputId, listId) {
+            const input = document.getElementById(inputId).value.toLowerCase();
+            const links = document.getElementById(listId).getElementsByTagName('a');
 
             for (let i = 0; i < links.length; i++) {
                 const text = links[i].textContent || links[i].innerText;
