@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Norma-Padrão da Língua Portuguesa</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb; /* Azul padrão */
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .card-content {
+            font-size: 1.6rem; 
+            line-height: 1.4;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.15rem; 
+            text-align: left;
+            color: #34495e;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.3rem;
+            }
+            .card-face-back .card-content {
+                Pegar fonte menor: 1.05rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Domínio da Norma-Padrão para Concursos</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Norma-Padrão</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            {
+                category: "Concordância Verbal",
+                front: "Como o verbo <b>Haver</b> no sentido de existir se comporta na norma-padrão?",
+                back: "Ele é impessoal e fica <b>sempre na 3ª pessoa do singular</b> (Ex: <i>Havia muitos problemas</i>, e não 'haviam'). O mesmo vale para indicar tempo decorrido."
+            },
+            {
+                category: "Concordância Verbal",
+                front: "O verbo <b>Fazer</b> indicando tempo decorrido ou clima flexiona-se no plural?",
+                back: "<b>Não!</b> Sendo impessoal, permanece fixo no singular (Ex: <i>Faz três anos que nos vimos</i>, <i>Faz dias quentes</i>)."
+            },
+            {
+                category: "Concordância Verbal",
+                front: "Qual é a regra para a concordância do verbo <b>Ser</b> indicando horas, datas e distâncias?",
+                back: "O verbo 'ser' concorda de preferência com o predicativo numérico (Ex: <i>São duas horas</i>, <i>Hoje são 15 de maio</i>, <i>Aqui são três quilômetros</i>)."
+            },
+            {
+                category: "Concordância Verbal",
+                front: "Como funciona a concordância com expressões partitivas (ex: 'a maioria de', 'grande parte de') seguidas de plural?",
+                back: "É <b>facultativa</b>. Pode ficar no singular concordando com o núcleo do coletivo ou ir para o plural concordando com o especificador (Ex: <i>A maioria dos alunos faltou / faltaram</i>)."
+            },
+            {
+                category: "Concordância Nominal",
+                front: "Qual é a regra de concordância para as palavras <b>'anexo'</b>, <b>'incluso'</b> e <b>'obrigado'</b>?",
+                back: "Concordam em gênero e número com o substantivo a que se referem (Ex: <i>Segue inclusa a fatura</i>, <i>As cartas seguem anexas</i>, <i>Muito obrigada</i>, disse ela)."
+            },
+            {
+                category: "Concordância Nominal",
+                front: "As expressões <b>'é proibido'</b>, <b>'é necessário'</b> e <b>'é bom'</b> mudam para o feminino se o sujeito não vier determinado?",
+                back: "<b>Não!</b> Se não houver artigo ou pronome determinante antes do substantivo, ficam invariáveis no masculino singular (Ex: <i>É proibido entrada de menores</i>). Com determinante, mudam (Ex: <i>É proibida a entrada</i>)."
+            },
+            {
+                category: "Regência Verbal",
+                front: "O verbo <b>Assistir</b> possui quais regências e significados distintos na norma-padrão?",
+                back: "• Ver / presenciar: VTI, exige a preposição 'a' (<i>assistir ao filme</i>).<br>• Dar assistência / caber: VI ou VTI (<i>assistir aos necessitados</i>).<br>• Morar: VI, rege 'em' (<i>assiste em Brasília</i>)."
+            },
+            {
+                category: "Regência Verbal",
+                front: "Como se classifica e se rege o verbo <b>Aspirar</b> na norma-padrão?",
+                back: "• No sentido de inalar / respirar: VTD (sem preposição: <i>aspirar o perfume</i>).<br>• No sentido de almejar / desejar: VTI, exige a preposição 'a' (<i>aspirar ao cargo</i>)."
+            },
+            {
+                category: "Regência Verbal",
+                front: "Qual é a regência correta do verbo <b>Preferir</b>?",
+                back: "É VTD e indireto (VTI), exigindo a preposição 'a' para ligar as opções, sendo <b>proibido</b> usar intensificadores como 'antes' ou 'mais' (Ex: <i>Prefiro café a chá</i>)."
+            },
+            {
+                category: "Regência Verbal",
+                front: "O verbo <b>Implicar</b> (no sentido de acarretar / resultar) exige preposição?",
+                back: "<b>Não!</b> Ele é Transitivo Direto (Ex: <i>O erro implicará punição</i>, e não 'implicará em punição'). No sentido de embirrar, rege 'com'."
+            },
+            {
+                category: "Colocação Pronominal",
+                front: "É permitido iniciar orações cultas com pronomes oblíquos átonos (ex: 'Me dê o livro')?",
+                back: "<b>Nunca!</b> A norma-padrão proíbe a <b>ênclise</b> no início absoluto de frase ou oração. O correto é usar a próclise mediante fator atrativo ou ênclise se houver pausa adequada (Ex: <i>Dê-me o livro</i> ou <i>O pai me deu o livro</i>)."
+            },
+            {
+                category: "Colocação Pronominal",
+                front: "Quais são os principais fatores que obrigam o uso da <b>próclise</b> (pronome antes do verbo)?",
+                back: "1. Palavras negativas (não, nunca).<br>2. Conjunções subordinativas (que, se, porque).<br>3. Pronomes relativos, indefinidos ou demonstrativos.<br>4. Advérbios."
+            },
+            {
+                category: "Colocação Pronominal",
+                front: "Como deve ser feita a colocação pronominal com o verbo no particípio?",
+                back: "Na norma-padrão, <b>nunca</b> se usa o pronome logo antes ou colado ao particípio (proibido: *Tinha-se casado ou *Se tinha casado). O pronome deve ficar junto ao auxiliar (Ex: <i>Tinha-se casado</i> em próclise/ênclise com o auxiliar, ou após o particípio dependendo da estrutura)."
+            },
+            {
+                category: "Pontuação",
+                front: "É permitido separar o <b>sujeito</b> do seu <b>verbo</b> por meio de vírgula?",
+                back: "<b>Jamais!</b> A norma culta veda o uso de vírgula entre o sujeito e o predicado, mesmo que o sujeito seja longo e complexo."
+            },
+            {
+                category: "Pontuação",
+                front: "O uso da vírgula antes da conjunção aditiva <b>'e'</b> é obrigatório ou proibido?",
+                back: "Em regra não se usa, exceto em três casos: quando os sujeitos das orações forem diferentes, quando houver repetição enfática (polissíndeto), ou quando a conjunção tiver valor adversativo (equivalente a 'mas')."
+            },
+            {
+                category: "Pontuação",
+                front: "A oração subordinada adjetiva <b>explicativa</b> exige pontuação? E a restritiva?",
+                back: "• <b>Explicativa:</b> vem obrigatoriamente isolada por vírgulas.<br>• <b>Restritiva:</b> nunca é isolada por vírgulas."
+            },
+            {
+                category: "Crases e Fusões",
+                front: "Ocorre crase antes de pronomes demonstrativos como <b>'aquilo'</b> se o termo regente pedir preposição 'a'?",
+                back: "<b>Sim!</b> Funde-se a preposição com o 'a' inicial do pronome demonstrativo (Ex: <i>Visando àquilo que prometeu</i>)."
+            },
+            {
+                category: "Ortografia e Acentuação",
+                front: "Os ditongos abertos <b>-éi</b>, <b>-éu</b> e <b>-ói</b> continuam sendo acentuados em palavras oxítonas?",
+                back: "<b>Sim!</b> O Novo Acordo Ortográfico manteve o acento nesses ditongos abertos em palavras oxítonas (Ex: <i>herói</i>, <i>chapéu</i>, <i>anéis</i>). Eles perderam o acento apenas nas paroxítonas (ex: ideia, assembleia)."
+            },
+            {
+                category: "Ortografia",
+                front: "Como funciona o acento diferencial nos homógrafos após a Reforma Ortográfica?",
+                back: "A regra geral aboliu o acento diferencial, restando poucos casos obrigatórios, como <b>pôde</b> (pretérito) para diferenciar de <b>pode</b> (presente), e <b>pôr</b> (verbo) para diferenciar de <b>por</b> (preposição)."
+            },
+            {
+                category: "Hífen",
+                front: "Em palavras compostas por justaposição, quando se emprega o hífen segundo o Novo Acordo?",
+                back: "Emprega-se quando os elementos perdem a noção de composição e formam uma unidade semântica (Ex: <i>arco-íris</i>, <i>couve-flor</i>). Não se usa se houver elemento de ligação (ex: pé de moleque)."
+            },
+            {
+                category: "Hífen com Prefixos",
+                front: "Qual é a regra geral do hífen quando um prefixo termina com a mesma vogal com que se inicia a palavra seguinte?",
+                back: "Usa-se hífen se o prefixo terminar e a palavra começar com a <b>mesma vogal</b> (Ex: <i>micro-ondas</i>, <i>anti-ibérico</i>). Se forem vogais diferentes, juntam-se (ex: <i>coeducação</i>, <i>antiaéreo</i>)."
+            },
+            {
+                category: "Hífen com Prefixos R e S",
+                front: "O que acontece com o hífen e as consoantes quando um prefixo junta-se a palavras iniciadas por <b>R</b> ou <b>S</b>?",
+                back: "Retira-se o hífen e dobram-se as letras <b>R</b> ou <b>S</b> (Ex: <i>contra-regra</i> vira <b>contrarregra</b>; <i>mini-saia</i> vira <b>minissaia</b>)."
+            },
+            {
+                category: "Funções do 'Se'",
+                front: "Qual é a diferença sintática entre a <b>Partícula Apassivadora</b> e o <b>Índice de Indeterminação do Sujeito</b>?",
+                back: "• Partícula Apassivadora: acompanha VTD ou VTDI, e o termo seguinte vira sujeito passivo (<i>Vendem-se casas</i>).<br>• Índice de Indeterminação: acompanha VI, VTI ou VL, fixando o verbo na 3ª pessoa do singular (<i>Precisa-se de funcionários</i>)."
+            },
+            {
+                category: "Voz Passiva",
+                front: "Como se forma a <b>voz passiva sintética</b> (ou pronominal) na norma-padrão?",
+                back: "Forma-se com um verbo transitivo direto (ou direto e indireto) na 3ª pessoa, seguido do pronome apassivador <b>'se'</b> e de um sujeito paciente (Ex: <i>Alugaram-se apartamentos</i>)."
+            },
+            {
+                category: "Pronomes Relativos",
+                front: "O pronome relativo <b>'cujo'</b> indica qual relação sintática e semântica?",
+                back: "Indica ideia de <b>posse</b> e equivale a 'do qual', 'da qual', concordando obrigatoriamente em gênero e número com a coisa possuída, sem aceitar artigo logo após si."
+            },
+            {
+                category: "Pronomes Relativos",
+                front: "O pronome relativo <b>'onde'</b> pode ser usado para indicar qualquer lugar ou circunstância abstrata?",
+                back: "<b>Não!</b> Na norma-padrão, 'onde' restringe-se estritamente a indicar <b>lugar físico fixo</b>. Para verbos que indicam movimento, deve-se usar <b>'dokonde'</b>, e para situações abstratas, usa-se 'em que'."
+            },
+            {
+                category: "Concordância com Coletivos",
+                front: "Se o sujeito for um substantivo coletivo no singular (ex: 'a multidão'), o verbo deve ficar obrigatoriamente no singular?",
+                back: "Na regra gramatical estrita, sim (Ex: <i>A multidão aplaudiu</i>). Contudo, a norma culta admite o plural se o coletivo estiver especificado por um termo plural adjunto (Ex: <i>A multidão de fãs aplaudiram</i>)."
+            },
+            {
+                category: "Uso de 'Mal' e 'Mau'",
+                front: "Como diferenciar o uso de <b>mal</b> (com 'L') e <b>mau</b> (com 'U')?",
+                back: "• <b>Mau</b> é adjetivo e seu oposto é <i>bom</i> (Ex: Ele é um mau aluno).<br>• <b>Mal</b> pode ser advérbio (oposto de <i>bem</i>), conjunção temporal ou substantivo (Ex: Ele passou mal / Mal chegou, saiu)."
+            },
+            {
+                category: "Uso de 'A fim de' e 'Afim'",
+                front: "Qual é a distinção de uso entre <b>'a fim de'</b> (separado) e <b>'afim'</b> (junto)?",
+                back: "• <b>A fim de:</b> locução prepositiva com sentido de finalidade (equivalente a para).<br>• <b>Afim:</b> adjetivo que indica parentesco, afinidade ou semelhança de ideias."
+            },
+            {
+                category: "Parônimos Frequentes",
+                front: "Qual é a diferença de significado entre <b>iminente</b> e <b>eminente</b>?",
+                back: "• <b>Eminente:</b> que se destaca, ilustre, elevado (Ex: Um eminente cientista).<br>• <b>Iminente:</b> que está prestes a acontecer, imediato (Ex: Perigo iminente)."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
