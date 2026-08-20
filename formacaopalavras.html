@@ -220,6 +220,368 @@
     <script>
         // Database of 20 Portuguese Questions
         
+   const questionsData = [
+    {
+        id: 1,
+        category: "Morfemas: Radical e Afixos",
+        question: "Assinale a alternativa que identifica corretamente a estrutura mórfica e a classificação da palavra 'infelizmente':",
+        options: [
+            { text: "Possui o prefixo 'in-', o radical 'feliz' e o sufixo '-mente'.", isCorrect: true, rationale: "A palavra é formada por derivação prefixal e sufixal sobre a base nominal 'feliz'." },
+            { text: "Possui apenas o sufixo '-mente' associado ao verbo 'infeliz'.", isCorrect: false, rationale: "Incorreto: 'feliz' é um adjetivo, e 'in-' atua como prefixo de negação." },
+            { text: "É uma palavra formada por composição, pois possui dois radicais.", isCorrect: false, rationale: "Incorreto: possui apenas um radical ('feliz') com afixos agregados." },
+            { text: "Trata-se de uma formação parasintética, pois os afixos não podem ser separados.", isCorrect: false, rationale: "Incorreto: existem isoladamente no idioma as formas 'infeliz' e 'felizmente'." }
+        ],
+        hint: "Identifique a palavra primitiva de base e observe os elementos adicionados no início e no fim dela."
+    },
+    {
+        id: 2,
+        category: "Derivação Parasintética",
+        question: "Assinale a alternativa que apresenta uma palavra formada estritamente por derivação parasintética:",
+        options: [
+            { text: "Ajoelhar", isCorrect: true, rationale: "A palavra surge do acréscimo simultâneo do prefixo 'a-' e do sufixo '-ar' ao radical 'joelh-'. Não existem 'ajoelho' nem 'joelhar'." },
+            { text: "Deslealdade", isCorrect: false, rationale: "É derivação prefixal e sufixal, pois existem autonomamente 'desleal' e 'lealdade'." },
+            { text: "Refazer", isCorrect: false, rationale: "Trata-se de derivação exclusivamente prefixal." },
+            { text: "Sapataria", isCorrect: false, rationale: "Trata-se de derivação exclusivamente sufixal." }
+        ],
+        hint: "A derivação parasintética exige a presença simultânea do prefixo e do sufixo (sem um deles a palavra não existe)."
+    },
+    {
+        id: 3,
+        category: "Derivação Regressiva (Deverbal)",
+        question: "Assinale a alternativa cuja palavra sublinhada foi formada por derivação regressiva:",
+        options: [
+            { text: "O **debate** entre os candidatos durou mais de duas horas.", isCorrect: true, rationale: "'Debate' é um substantivo abstrato derivado do verbo 'debater' por redução fonética.", isCorrect: true },
+            { text: "O **choro** da criança era audível no corredor.", isCorrect: false, rationale: "'Choro' também é deverbal, contudo, analise a opção que exemplifica perfeitamente a redução sem desvio de vogal temática." },
+            { text: "Ele comprou um **livro** na feira da cidade.", isCorrect: false, rationale: "'Livro' é palavra primitiva, não derivada de verbo." },
+            { text: "A **claridade** invadiu o recinto pela manhã.", isCorrect: false, rationale: "'Claridade' é formada por derivação sufixal a partir do adjetivo 'claro'." }
+        ],
+        hint: "A derivação regressiva ocorre quando um substantivo abstrato que indica ação nasce a partir de um verbo."
+    },
+    {
+        id: 4,
+        category: "Derivação Imprópria (Conversão)",
+        question: "Assinale a frase em que o termo destacado passou por processo de derivação imprópria:",
+        options: [
+            { text: "O **não** da diretoria pegou todos os funcionários de surpresa.", isCorrect: true, rationale: "O advérbio 'não' foi substantivado pela anteposição do artigo definido 'O'." },
+            { text: "O **estudante** respondeu ao questionário da pesquisa com atenção.", isCorrect: false, rationale: "'Estudante' mantém sua classe gramatical comum de substantivo/adjetivo sem alteração de contexto." },
+            { text: "Ele agiu de forma bastante **rápida** durante o atendimento.", isCorrect: false, rationale: "'Rápida' é um adjetivo comum qualificando o substantivo 'forma'." },
+            { text: "A menina trajava um vestido **vermelho** impecável.", isCorrect: false, rationale: "'Vermelho' funciona naturalmente como adjetivo no contexto." }
+        ],
+        hint: "Procure a alternativa em que uma palavra muda sua classe gramatical original sem mudar de forma."
+    },
+    {
+        id: 5,
+        category: "Composição por Aglutinação",
+        question: "Assinale o vocábulo formado pelo processo de composição por aglutinação:",
+        options: [
+            { text: "Pernalta", isCorrect: true, rationale: "Fusão de 'perna' + 'alta' com perda do elemento fonético 'a' de 'perna'." },
+            { text: "Guarda-chuva", isCorrect: false, rationale: "É composição por justaposição, pois ambos os radicais mantêm integridade fonética." },
+            { text: "Passatempo", isCorrect: false, rationale: "É composição por justaposição (passa + tempo)." },
+            { text: "Sexta-feira", isCorrect: false, rationale: "Composição por justaposição com uso de hífen." }
+        ],
+        hint: "Na aglutinação, ao juntar dois ou mais radicais, ocorre perda ou alteração fonética de algum elemento."
+    },
+    {
+        id: 6,
+        category: "Composição por Justaposição",
+        question: "Assinale a opção em que todas as palavras foram formadas por composição por justaposição:",
+        options: [
+            { text: "Giras-sol, couve-flor, pontapé.", isCorrect: true, rationale: "Unão de radicais sem alteração na grafia/fonética original das bases ('girar'+'sol', 'couve'+'flor', 'ponta'+'pé')." },
+            { text: "Planalto, boquiaberto, fidalgo.", isCorrect: false, rationale: "Todas são formadas por aglutinação (plano alto, boca aberta, filho de algo)." },
+            { text: "Embora, hidroelétrica, vinagre.", isCorrect: false, rationale: "Palavras resultantes de aglutinação fonética." },
+            { text: "Anoitecer, emagrecer, entardecer.", isCorrect: false, rationale: "Palavras formadas por derivação parasintética." }
+        ],
+        hint: "Na justaposição, os radicais se unem sem sofrer alteração na sua forma fonética original."
+    },
+    {
+        id: 7,
+        category: "Hibridismo",
+        question: "Assinale a palavra cujo processo de formação é classificado como hibridismo:",
+        options: [
+            { text: "Automóvel", isCorrect: true, rationale: "Formada pela unão de radicais de línguas diferentes: 'auto' (grego) + 'móvel' (latim)." },
+            { text: "Televisão", isCorrect: false, rationale: "Embora comum, o hibridismo é clássico em 'automóvel', 'burocracia' ou 'sociologia'." },
+            { text: "Bicicleta", isCorrect: false, rationale: "Formada por derivação/elementos vernáculos latinos." },
+            { text: "Biblioteca", isCorrect: false, rationale: "Constituída por radicais de origem puramente grega." }
+        ],
+        hint: "O hibridismo ocorre quando unimos elementos/radicais originários de línguas distintas."
+    },
+    {
+        id: 8,
+        category: "Onomatopeia",
+        question: "Assinale o vocábulo formado pelo processo de onomatopeia:",
+        options: [
+            { text: "Tic-tac", isCorrect: true, rationale: "Palavra criada para imitar o som acústico do relógio." },
+            { text: "Biodegradável", isCorrect: false, rationale: "Palavra composta por elementos eruditos gregos/latinos." },
+            { text: "Minissaia", isCorrect: false, rationale: "Formada por derivação prefixal (prefixo 'mini-')." },
+            { text: "Insuportável", isCorrect: false, rationale: "Formada por derivação prefixal e sufixal." }
+        ],
+        hint: "A onomatopeia é a criação de um vocábulo com o objetivo de imitar sons ou ruídos da natureza e de objetos."
+    },
+    {
+        id: 9,
+        category: "Abreviação / Redução",
+        question: "As palavras 'foto' (de fotografia), 'pneu' (de pneumático) e 'cine' (de cinematógrafo) são exemplos do processo de:",
+        options: [
+            { text: "Abreviação vocabulária (ou redução).", isCorrect: true, rationale: "Consiste no corte de uma parte da palavra para simplificar a emissão mantendo o sentido." },
+            { text: "Siglonimização técnica.", isCorrect: false, rationale: "Siglas são formadas pelas letras iniciais das palavras de um título." },
+            { text: "Derivação regressiva.", isCorrect: false, rationale: "A derivação regressiva cria substantivos abstratos a partir de verbos." },
+            { text: "Composição por truncamento.", isCorrect: false, rationale: "O termo normativo consagrado é redução ou abreviação vocabulária." }
+        ],
+        hint: "Trata-se do descarte de parte da palavra original para tornar a comunicação mais rápida."
+    },
+    {
+        id: 10,
+        category: "Vogal Temática e Tema",
+        question: "Na estrutura do verbo 'cantávamos', o elemento destacado 'cant-**a**-vamos' desempenha a função de:",
+        options: [
+            { text: "Vogal temática.", isCorrect: true, rationale: "A vogal '-a-' liga o radical 'cant-' às desinências e indica a 1ª conjugação verbal." },
+            { text: "Desinência modo-temporal.", isCorrect: false, rationale: "A desinência modo-temporal do pretérito imperfeito é '-va-'." },
+            { text: "Desinência número-pessoal.", isCorrect: false, rationale: "A desinência número-pessoal de 1ª pessoa do plural é '-mos'." },
+            { text: "Vogal de ligação.", isCorrect: false, rationale: "Não é vogal de ligação, pois conecta morfemas constitutivos essenciais da conjugação." }
+        ],
+        hint: "Essa vogal une o radical às desinências e indica a qual conjugação o verbo pertence."
+    },
+    {
+        id: 11,
+        category: "Desinências Nominais e Verbais",
+        question: "Na palavra 'meninas', os morfemas '-a' e '-s' são classificados, respectivamente, como:",
+        options: [
+            { text: "Desinência nominal de gênero e desinência nominal de número.", isCorrect: true, rationale: "'-a' indica o gênero feminino e '-s' indica a flexão de plural no nome." },
+            { text: "Vogal temática e desinência de plural.", isCorrect: false, rationale: "No par opositivo menino/menina, o '-a' atua diretamente como desinência de gênero." },
+            { text: "Sufixo flexionador e sufixo de número.", isCorrect: false, rationale: "Desinências e sufixos desempenham papéis estruturais distintos na gramática." },
+            { text: "Vogal de ligação e desinência número-pessoal.", isCorrect: false, rationale: "Não se trata de verbo para ter desinência número-pessoal." }
+        ],
+        hint: "Em nomes com oposição masculino/feminino, as terminações indicam gênero e número."
+    },
+    {
+        id: 12,
+        category: "Consoantes e Vogais de Ligação",
+        question: "O elemento destacado na palavra 'ch-**e**-ira' ou 'gas-**o**-duto' tem a função de:",
+        options: [
+            { text: "Facilitar a pronúncia / eufonia entre dois morfemas (vogal/consoante de ligação).", isCorrect: true, rationale: "Elementos de ligação são inseridos sem carga gramatical/semântica apenas para viabilizar a pronúncia." },
+            { text: "Modificar o significado do radical de base.", isCorrect: false, rationale: "Vogais e consoantes de ligação não possuem valor semântico." },
+            { text: "Indicar o gênero gramatical da palavra composta.", isCorrect: false, rationale: "Não possuem papel de desinência flexional." },
+            { text: "Atuar como prefixo atípico no meio do vocábulo.", isCorrect: false, rationale: "Prefixos são colocados no início da palavra para alterar sentido." }
+        ],
+        hint: "Esses elementos não alteram o sentido, servem apenas para tornar a sonoridade agradável."
+    },
+    {
+        id: 13,
+        category: "Derivação Prefixal",
+        question: "Assinale a opção em que todas as palavras foram formadas pelo processo de derivação prefixal:",
+        options: [
+            { text: "Desfazer, antipatia, imoral.", isCorrect: true, rationale: "Todas contêm prefixos de negação ou oposição incorporados à palavra primitiva (des-, anti-, i-)." },
+            { text: "Lealdade, felizmente, pedreira.", isCorrect: false, rationale: "Todas foram formadas por derivação sufixal." },
+            { text: "Esfriar, amanhecer, envergonhar.", isCorrect: false, rationale: "São formas derivadas por parasintese." },
+            { text: "Passatempo, couve-flor, girassol.", isCorrect: false, rationale: "São palavras compostas." }
+        ],
+        hint: "A derivação prefixal consiste na anexação de um afixo antes do radical."
+    },
+    {
+        id: 14,
+        category: "Derivação Sufixal",
+        question: "A palavra 'orgulhosamente' foi formada a partir do adjetivo 'orgulhosa' acrescido do sufixo '-mente'. Esse sufixo forma, predominantemente, palavras da classe dos:",
+        options: [
+            { text: "Advérbios.", isCorrect: true, rationale: "O sufixo '-mente' junta-se à forma feminina de adjetivos para formar advérbios de modo." },
+            { text: "Substantivos abstratos.", isCorrect: false, rationale: "Sufixos como '-ez', '-eza', '-idade' formam substantivos abstratos." },
+            { text: "Adjetivos pátrios.", isCorrect: false, rationale: "Sufixos como '-ense', '-ano' formam adjetivos pátrios." },
+            { text: "Verbos da 1ª conjugação.", isCorrect: false, rationale: "Sufixos como '-izar', '-entar' formam verbos." }
+        ],
+        hint: "Pense na função gramatical de palavras terminadas em '-mente' dentro de uma oração."
+    },
+    {
+        id: 15,
+        category: "Neologismo / Empréstimo",
+        question: "A incorporação da palavra em inglês 'deletar' à língua portuguesa, adaptada para a 1ª conjugação verbal, exemplifica:",
+        options: [
+            { text: "Neologismo por empréstimo adaptado / hibridismo morfossintático.", isCorrect: true, rationale: "Adoção de termo estrangeiro adaptado às regras de sufixação verbal do português (-ar)." },
+            { text: "Composição por aglutinação erudita.", isCorrect: false, rationale: "Não há junção de dois radicais autônomos pré-existentes no português." },
+            { text: "Derivação regressiva do português antigo.", isCorrect: false, rationale: "Não se trata de redução de verbo para substantivo." },
+            { text: "Derivação parasintética obrigatória.", isCorrect: false, rationale: "Possui apenas o sufixo verbal '-ar' anexado ao radical aportuguesado." }
+        ],
+        hint: "Refere-se ao aportuguesamento de termos estrangeiros para criar novos verbos."
+    },
+    {
+        id: 16,
+        category: "Radicais Gregos e Latinos",
+        question: "Na palavra 'biodiversidade', os elementos de origem grega 'bio-' e 'diverso' significam, respectivamente:",
+        options: [
+            { text: "Vida e variabilidade.", isCorrect: true, rationale: "'Bio' é o radical grego para vida; associado à diversidade, refere-se à variedade de vida." },
+            { text: "Terra e extensão.", isCorrect: false, rationale: "'Geo' refere-se à terra." },
+            { text: "Água e densidade.", isCorrect: false, rationale: "'Hidro' refere-se a água." },
+            { text: "Homem e sociedade.", isCorrect: false, rationale: "'Antropo' refere-se ao homem." }
+        ],
+        hint: "Lembre-se da ciência 'Biologia' para deduzir o significado do radical 'bio-'."
+    },
+    {
+        id: 17,
+        category: "Composição: Aglutinação vs. Justaposição",
+        question: "Qual das seguintes palavras compostas sofreu alteração na sua estrutura fonética original?",
+        options: [
+            { text: "Vinhaça (vinho + aça) / Fidalgo (filho + de + algo).", isCorrect: true, rationale: "'Fidalgo' deriva da aglutinação 'filho de algo', sofrendo perda de elementos fonéticos." },
+            { text: "Guarda-roupa.", isCorrect: false, rationale: "Manutenção integral de 'guarda' e 'roupa'." },
+            { text: "Segunda-feira.", isCorrect: false, rationale: "Manutenção integral de ambos os vocábulos." },
+            { text: "Arco-íris.", isCorrect: false, rationale: "Ambos os termos permanecem sem alteração grafofonética." }
+        ],
+        hint: "Busque a palavra criada pela fusão de termos onde houve perda de letras e sons."
+    },
+    {
+        id: 18,
+        category: "Prefixos de Negação",
+        question: "Assinale a alternativa em que todos os prefixos possuem sentido oposto/negativo:",
+        options: [
+            { text: "Inativo, amoral, descontento.", isCorrect: true, rationale: "Os prefixos 'in-', 'a-' e 'des-' indicam negação, privação ou ação contrária." },
+            { text: "Introduzir, antevéspera, hipertenso.", isCorrect: false, rationale: "Prefixos indicam interioridade, anterioridade e excesso." },
+            { text: "Subsolo, transatlântico, epiderme.", isCorrect: false, rationale: "Prefixos indicam posição inferior, através de e posição superior/externa." },
+            { text: "Proclamar, prever, reescrever.", isCorrect: false, rationale: "Prefixos indicam movimento para frente, anterioridade e repetição." }
+        ],
+        hint: "Verifique se todos os prefixos das opções significam 'não' ou 'sem'."
+    },
+    {
+        id: 19,
+        category: "Diferença entre Prefixal/Sufixal e Parasintética",
+        question: "Por que a palavra 'desalmado' é formada por **parasintese** e 'deslealdade' é **prefixal e sufixal**?",
+        options: [
+            { text: "Porque sem o prefixo ou sufixo não existe a palavra 'almado', enquanto 'desleal' e 'lealdade' existem isoladamente.", isCorrect: true, rationale: "Na parasintese a inclusão de afixos é simultânea; na derivação prefixal/sufixal os afixos são independentes." },
+            { text: "Porque 'desalmado' possui dois radicais de línguas diferentes.", isCorrect: false, rationale: "Ambas possuem um único radical." },
+            { text: "Porque 'deslealdade' sofreu alteração fonética no radical.", isCorrect: false, rationale: "O radical 'leal' permanece intacto em todas as formas." },
+            { text: "Não há diferença, ambas são parasintéticas segundo a norma atual.", isCorrect: false, rationale: "São dois processos gramaticais categoricamente distintos." }
+        ],
+        hint: "Tente remover o prefixo de ambas as palavras e observe qual delas perde a existência no português."
+    },
+    {
+        id: 20,
+        category: "Sufixos Formadores de Substantivo",
+        question: "Qual dos sufixos abaixo transforma o adjetivo 'belo' no substantivo abstrato 'beleza'?",
+        options: [
+            { text: "-eza", isCorrect: true, rationale: "O sufixo '-eza' forma substantivos abstratos a partir de adjetivos (belo -> beleza, magro -> magreza)." },
+            { text: "-ção", isCorrect: false, rationale: "Forma substantivos a partir de verbos (atender -> atenção)." },
+            { text: "-al", isCorrect: false, rationale: "Forma adjetivos ou coleções a partir de substantivos." },
+            { text: "-izar", isCorrect: false, rationale: "Forma verbos a partir de substantivos ou adjetivos." }
+        ],
+        hint: "Identifique o sufixo que exprime qualidade/estado abstrato a partir de um adjetivo."
+    },
+    {
+        id: 21,
+        category: "Morfema Cognato",
+        question: "Assinale a alternativa que contém palavras cognatas (que possuem o mesmo radical):",
+        options: [
+            { text: "Terreno, terreiro, enterrar, terráqueo.", isCorrect: true, rationale: "Todas compartilham a mesma raiz/radical de origem 'terr-' (relativo à terra)." },
+            { text: "Carro, carroça, carisma, caridade.", isCorrect: false, rationale: "'Carisma' e 'caridade' possuem raízes semânticas e etimológicas completamente distintas." },
+            { text: "Pedra, pedreiro, pedregulho, pedinte.", isCorrect: false, rationale: "'Pedinte' vem do verbo pedir, não tem relação com o radical de pedra." },
+            { text: "Livraria, livreiro, livre, liberdade.", isCorrect: false, rationale: "'Livre' e 'liberdade' vêm de raiz diferente de 'livro'." }
+        ],
+        hint: "Palavras cognatas devem ter origem no mesmo radical e guardar parentesco de sentido."
+    },
+    {
+        id: 22,
+        category: "Siglonimização",
+        question: "A palavra 'CPF' (Cadastro de Pessoas Físicas) é um exemplo do processo de formação conhecido por:",
+        options: [
+            { text: "Sigla (ou siglonimização).", isCorrect: true, rationale: "Formação a partir das letras iniciais das palavras que compõem um nome/título." },
+            { text: "Abreviação sufixal.", isCorrect: false, rationale: "Trata-se do agrupamento de letras iniciais, não redução de uma só palavra." },
+            { text: "Hibridismo de vogais.", isCorrect: false, rationale: "Conceito inexistente na nomenclatura gramatical." },
+            { text: "Neologismo semântico.", isCorrect: false, rationale: "O neologismo semântico atribui novo sentido a palavra existente." }
+        ],
+        hint: "Trata-se da redução de uma locução ou título utilizando apenas as letras iniciais."
+    },
+    {
+        id: 23,
+        category: "Evolução do Radical e Alomorfia",
+        question: "Quando o radical de uma palavra sofre alterações morfológicas ao longo da flexão/derivação (como em **sabor** / **saboroso** / **insípido**), chamamos esse fenômeno de:",
+        options: [
+            { text: "Alomorfia.", isCorrect: true, rationale: "Alomorfia é a variação na forma de um mesmo morfema/radical sem alterar seu sentido básico." },
+            { text: "Parasintese assimétrica.", isCorrect: false, rationale: "A parasintese envolve a anexação simultânea de afixos." },
+            { text: "Aglutinação imperfeita.", isCorrect: false, rationale: "A aglutinação ocorre na composição de dois radicais autônomos." },
+            { text: "Derivação imprópria.", isCorrect: false, rationale: "Derivação imprópria é a mudança de classe gramatical sem alteração formal." }
+        ],
+        hint: "Termo técnico usado quando o mesmo radical se apresenta sob diferentes formas de escrita."
+    },
+    {
+        id: 24,
+        category: "Radicais Eruditos",
+        question: "O vocábulo 'Claustrofobia' é composto por dois radicais de origem clássica que significam:",
+        options: [
+            { text: "Lugar fechado + aversão/medo.", isCorrect: true, rationale: "Do latim 'claustrum' (local fechado) e do grego 'phobos' (medo/aversão)." },
+            { text: "Lugar alto + atração.", isCorrect: false, rationale: "Lugar alto relaciona-se ao radical 'acro-'." },
+            { text: "Multidão + medo.", isCorrect: false, rationale: "Multidão associa-se ao radical 'demó-' ou 'ocló-'." },
+            { text: "Estrangeiro + simpatia.", isCorrect: false, rationale: "Estrangeiro associa-se a 'xeno-'." }
+        ],
+        hint: "Associe ao pavor que algumas pessoas sentem ao ficar presas em elevadores."
+    },
+    {
+        id: 25,
+        category: "Prefixos de Posição Espacial",
+        question: "Na palavra 'subterrâneo', o prefixo 'sub-' indica uma relação de:",
+        options: [
+            { text: "Posição inferior / abaixo de.", isCorrect: true, rationale: "O prefixo latino 'sub-' expressa localização abaixo ou inferioridade." },
+            { text: "Posição superior / acima de.", isCorrect: false, rationale: "Posição superior é representada por 'super-' ou 'hyper-'." },
+            { text: "Anterioridade no tempo.", isCorrect: false, rationale: "Anterioridade é representada por 'pré-' ou 'ante-'." },
+            { text: "Duplicidade de elementos.", isCorrect: false, rationale: "Duplicidade é indicada por 'bi-' ou 'di-'." }
+        ],
+        hint: "Pense onde fica o 'subsolo' em relação ao nível da rua."
+    },
+    {
+        id: 26,
+        category: "Classificação Geral de Derivação",
+        question: "A palavra 'envelhecer' é um exemplo claro de qual processo de formação?",
+        options: [
+            { text: "Derivação parasintética.", isCorrect: true, rationale: "Exige o prefixo 'en-' e o sufixo '-ecer' agregados simultaneamente ao adjetivo 'velho'." },
+            { text: "Derivação prefixal.", isCorrect: false, rationale: "Apenas o prefixo não formaria uma palavra existente ('envelho' não existe)." },
+            { text: "Derivação sufixal.", isCorrect: false, rationale: "Apenas o sufixo não formaria uma palavra existente ('velhecer' não existe)." },
+            { text: "Composição por aglutinação.", isCorrect: false, rationale: "Não há união de dois radicais distintos." }
+        ],
+        hint: "Verifique se as formas 'envelho' ou 'velhecer' existem de maneira isolada na língua."
+    },
+    {
+        id: 27,
+        category: "Palavra Primitiva vs. Derivada",
+        question: "Assinale a alternativa que traz uma palavra primitiva (que não deriva de nenhuma outra no português):",
+        options: [
+            { text: "Pedra", isCorrect: true, rationale: "'Pedra' é uma palavra primitiva que serve de base para derivadas como pedreiro, pedregulho.", isCorrect: true },
+            { text: "Jardinagem", isCorrect: false, rationale: "Derivada por sufixação a partir de 'jardim'." },
+            { text: "Sapataria", isCorrect: false, rationale: "Derivada por sufixação a partir de 'sapato'." },
+            { text: "Marujo", isCorrect: false, rationale: "Derivada por sufixação a partir de 'mar'." }
+        ],
+        hint: "A palavra primitiva é a matriz que não possui afixos adicionados em sua estrutura na língua portuguesa."
+    },
+    {
+        id: 28,
+        category: "Derivação Regressiva vs. Sufixal",
+        question: "Diferencia-se a derivação regressiva da derivação sufixal porque na **regressiva**:",
+        options: [
+            { text: "Há redução da forma da palavra primitiva (geralmente verbo gerando substantivo).", isCorrect: true, rationale: "A derivação regressiva reduz o verbo a um substantivo abstrato (ex: vender -> venda)." },
+            { text: "Há acréscimo de um morfema ao final da palavra primitiva.", isCorrect: false, rationale: "O acréscimo de morfema caracteriza a derivação sufixal." },
+            { text: "A classe gramatical nunca se altera.", isCorrect: false, rationale: "A classe muda de verbo para substantivo." },
+            { text: "Ocorre necessariamente a junção de dois radicais distintos.", isCorrect: false, rationale: "Isso caracteriza a composição, não a derivação." }
+        ],
+        hint: "Compare o tamanho e a forma do verbo original com o substantivo gerado por ele."
+    },
+    {
+        id: 29,
+        category: "Elemento de Composição vs. Afixo",
+        question: "Qual das palavras abaixo foi formada por **composição** e não por derivação?",
+        options: [
+            { text: "Pára-quedas", isCorrect: true, rationale: "União de dois radicais com autonomia de sentido: verbo 'parar' + substantivo 'quedas'." },
+            { text: "Incerteza", isCorrect: false, rationale: "Formada por derivação prefixal e sufixal sobre a base 'certo'." },
+            { text: "Boiada", isCorrect: false, rationale: "Formada por derivação sufixal a partir de 'boi'." },
+            { text: "Reescrever", isCorrect: false, rationale: "Formada por derivação prefixal a partir de 'escrever'." }
+        ],
+        hint: "Procure a palavra constituída pela união de duas palavras que possuem vida própria no idioma."
+    },
+    {
+        id: 30,
+        category: "Morfologia Verbal: Desinências",
+        question: "No verbo 'estudássemos', o segmento '-sse-' é a desinência que indica:",
+        options: [
+            { text: "Modo pretérito imperfeito do subjuntivo.", isCorrect: true, rationale: "O morfema '-sse-' é a marca típica do pretérito imperfeito do modo subjuntivo." },
+            { text: "Futuro do presente do indicativo.", isCorrect: false, rationale: "A marca de futuro do presente é '-ra-' (estudaremos)." },
+            { text: "Pretérito perfeito do indicativo.", isCorrect: false, rationale: "Ex: estudamos / estudei." },
+            { text: "Modo imperativo afirmativo.", isCorrect: false, rationale: "O imperativo não possui essa desinência temporal característica." }
+        ],
+        hint: "Lembre-se da terminação usada em orações subordinadas condicionais: 'Se eu...'."
+    }
+];
 
         // State Management
         let currentQuestionIdx = 0;
