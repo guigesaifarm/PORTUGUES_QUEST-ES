@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Domínio da Crase</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb; /* Ajustado para o azul padrão de português */
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        /* Fontes aumentadas para melhor legibilidade */
+        .card-content {
+            font-size: 1.7rem; 
+            line-height: 1.5;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.25rem; 
+            text-align: left;
+            color: #34495e;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.4rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.15rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Domínio Completo da Crase para Concursos</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Crase</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            {
+                category: "Regra Geral",
+                front: "O que é a crase e qual é a sua regra fundamental de ocorrência?",
+                back: "É a fusão da preposição <b>'a'</b> com o artigo feminino <b>'a'</b> (ou 'as'). Ocorre quando um termo rege a preposição 'a' e a palavra seguinte admite o artigo feminino 'a'."
+            },
+            {
+                category: "Palavras Masculinas",
+                front: "Ocorre crase antes de palavras masculinas? (Ex: a prazo / a cavalo)",
+                back: "<b>Não!</b> Em regra, não se usa crase antes de palavras masculinas, pois elas não admitem artigo feminino 'a'. (Ex: comprei <i>a prazo</i>, andava <i>a cavalo</i>)."
+            },
+            {
+                category: "Pronomes de Tratamento",
+                front: "Usa-se crase antes de pronomes de tratamento? (Ex: Vossa Senhoria)",
+                back: "<b>Em regra, não.</b> Antes dos pronomes de tratamento não se usa artigo, logo não há crase. <i>Exceção:</i> Admite-se crase antes de <b>Senhora</b>, <b>Senhorita</b> e <b>Mãe</b> (ex: Entreguei o documento à senhora)."
+            },
+            {
+                category: "Pronomes Demonstrativos",
+                front: "A crase ocorre antes dos pronomes demonstrativos <b>Aquele, Aquela, Aquilo</b>?",
+                back: "<b>Sim</b>, se o termo regente exigir a preposição 'a'. Para testar, substitua por 'a este/a isto': se formar 'a este', há crase em 'àquele' (Ex: Fui <i>àquele</i> lugar / Fui <i>a este</i> lugar)."
+            },
+            {
+                category: "Pronome Relativo Que/Quem",
+                front: "Usa-se crase antes dos pronomes relativos <b>que</b> e <b>quem</b>?",
+                back: "<b>Nunca!</b> Antes de 'que' e 'quem' não há artigo feminino, podendo ocorrer apenas a preposição 'a' caso o verbo a exija (Ex: A moça <b>a</b> que me referi)."
+            },
+            {
+                category: "Antes de Verbos",
+                front: "É permitido o uso de crase antes de verbos no infinitivo? (Ex: Começou a chorar)",
+                back: "<b>Jamais.</b> Verbos não aceitam artigo. Portanto, antes de verbos no infinitivo há apenas a preposição 'a' (Ex: Começou <i>a</i> cantar, disposição <i>a</i> vencer)."
+            },
+            {
+                category: "Casa Própria",
+                front: "Há crase na expressão 'voltar para <b>casa</b>' ou 'ir a casa'?",
+                back: "<b>Depende da expansão.</b> Se a palavra 'casa' significar o próprio lar e não vier modificada, <i>não há crase</i> (ex: Voltei a casa). Se tiver um modificador restritivo, <i>há crase</i> (ex: Fui à casa de meus pais)."
+            },
+            {
+                category: "Terra (Firme)",
+                front: "Ocorre crase na palavra 'terra' na acepção de 'terra firme', oposta a bordo ou mar?",
+                back: "<b>Depende.</b> Se for no sentido de oposição a bordo/mar e sem modificador, <i>não há crase</i> (ex: Os marinheiros desceram a terra). Se houver modificador, <i>ocorre crase</i> (ex: Desceram à terra dos avós)."
+            },
+            {
+                category: "Distância Determinada",
+                front: "Usa-se crase na indicação de horas exatas? (Ex: Chegou às 14 horas)",
+                back: "<b>Sim!</b> Horas exatas admitem artigo feminino ('as 14 horas'), formando crase com a preposição 'a' exigida por verbos de movimento ou estado (Ex: A aula começa <i>às</i> 8h)."
+            },
+            {
+                category: "Distância Indeterminada",
+                front: "Há crase na expressão de distância quando esta é vaga ou indeterminada? (Ex: Ficou a distância)",
+                back: "<b>Não.</b> Sem determinação explícita, a palavra 'distância' não recebe artigo, logo não há crase (ex: Vi o carro a distância). Com especificador, há crase (ex: Fiquei à distância de 10 metros)."
+            },
+            {
+                category: "Locuções Adverbiais",
+                front: "Qual é a regra de crase para locuções adverbiais femininas de modo, tempo e lugar?",
+                back: "São sempre craseadas se formadas por palavra feminina (Ex: às pressas, à noite, às cegas, à francesa, à tarde). Servem para indicar circunstâncias."
+            },
+            {
+                category: "Locuções Prepositivas",
+                front: "Locuções prepositivas femininas exigem crase? (Ex: à moda de, à custa de, à frente de)",
+                back: "<b>Sim!</b> Todas as locuções prepositivas que terminam com a palavra feminina exigem o acento indicativo de crase (Ex: Comportou-se <i>à altura</i>, ficou <i>à disposição</i>)."
+            },
+            {
+                category: "Locuções Conjuntivas",
+                front: "Ocorre crase em locuções conjuntivas formadas por elementos femininos? (Ex: à proporção que)",
+                back: "<b>Sim.</b> Locuções conjuntivas proporcionais ou temporais femininas levam crase obrigatoriamente (Ex: <i>À proporção que</i> subíamos, o ar rareava. <i>À medida que</i> estudas, evolves)."
+            },
+            {
+                category: "Moda / Maneira Implícita",
+                front: "Ocorre crase na expressão 'escrever a Machado de Assis' ou 'bife a cavalo'?",
+                back: "<b>Depende do sentido.</b> Se estiver implícita a expressão 'à moda de' ou 'à maneira de', <i>há crase</i> (Ex: Escrevia <i>à</i> (moda de) Machado). Em 'bife a cavalo', a palavra cavalo é masculina, logo <i>não há crase</i>."
+            },
+            {
+                category: "Topônimos (Cidades)",
+                front: "Como saber se há crase antes de nomes de cidades? (Ex: Ir a Paris / Ir a Bahia)",
+                back: "Aplique o teste: <i>'Volto de...'</i><br>• Se voltar <b>de</b> (sem 'da'), <b>não craseia</b> (Volto de Paris = Ir a Paris).<br>• Se voltar <b>da</b>, <b>craseia</b> (Volto da Bahia = Ir à Bahia)."
+            },
+            {
+                category: "Topônimos Modificados",
+                front: "O que acontece com a crase em nomes de cidades se eles vêm acompanhados de um modificador restritivo?",
+                back: "O modificador atrai o artigo feminino, exigindo a ocorrência de crase! (Ex: Fui <i>à</i> Bahia de Jorge Amado / Retornei <i>à</i> Paris dos anos 20)."
+            },
+            {
+                category: "Pronome 'Aquele(s)'",
+                front: "Como testar rapidamente a ocorrência de crase antes de <b>Aquele/Aquela</b>?",
+                back: "Substitua a palavra feminina por um termo masculino equivalente (ex: <i>este</i>). Se na troca surgir a contração <b>ao</b> (ao lugar), haverá crase na forma feminina (àquele lugar)."
+            },
+            {
+                category: "Pronomes Possessivos",
+                front: "O uso de crase antes de pronomes possessivos femininos (ex: sua, nossa) é obrigatório ou facultativo?",
+                back: "É <b>facultativo</b>! (Ex: Entreguei o relatório <i>a sua</i> chefe / Entreguei o relatório <i>à sua</i> chefe). Só é obrigatório se o possessivo estiver subentendido ou determinado por contexto."
+            },
+            {
+                category: "Nomes Próprios Pessoas",
+                front: "Ocorre crase antes de nomes próprios femininos de pessoas? (Ex: Falei a Maria)",
+                back: "É <b>facultativo</b> se o nome particular indicar familiaridade ou intimidade (ex: Falei <i>a</i> Maria / <i>à</i> Maria). Se for impessoal, célebre ou histórico sem intimidade, não há artigo (ex: Referi-me a Clarice Lispector)."
+            },
+            {
+                category: "Pronome 'A ' (O-a / A-as)",
+                front: "Há crase quando temos apenas o pronome demonstrativo 'a' (equivalente a 'aquela') antes do pronome relativo 'que'?",
+                back: "<b>Sim!</b> Se a regência do termo anterior pedir preposição 'a', funde-se com o pronome 'a', gerando crase (Ex: Minha nota foi inferior <b>à</b> (aquela) que você tirou)."
+            },
+            {
+                category: "Crases em Horas e Dias",
+                front: "A crase ocorre em indicações de dias da semana? (Ex: A reunião ficou marcada para a sexta-feira)",
+                back: "<b>Depende do sentido.</b> Se indicar um dia específico atual ou passado, <i>há crase</i> (Ex: A prova ocorreu <i>à</i> sexta-feira). Se for sentido geral ou futuro sem apontamento exato, pode não haver ou aceitar artigo puro."
+            },
+            {
+                category: "A partir de / A frente",
+                front: "Existe crase na expressão <b>'a partir de'</b>?",
+                back: "<b>Nunca!</b> A palavra 'partir' é um verbo no infinitivo, e regra absoluta proíbe crase antes de verbos (Ex: O curso funcionará <i>a partir</i> de amanhã)."
+            },
+            {
+                category: "Regência do Verbo Assistir",
+                front: "O verbo 'assistir' no sentido de ver/presenciar exige crase diante de complementos femininos determinados?",
+                back: "<b>Sim!</b> Como 'assistir' (ver) rege a preposição 'a' (quem assiste, assiste a algo) e o objeto for feminino determinado, ocorre crase (Ex: Assistimos <i>à</i> peça de teatro)."
+            },
+            {
+                category: "Regência do Verbo Visar",
+                front: "O verbo 'visar' no sentido de mirar ou ter objetivo exige crase?",
+                back: "<b>Sim</b>, se reger preposição 'a' e o termo seguinte for feminino determinado (Ex: Visou <i>à</i> vaga de emprego). No sentido de assinar documentos, é transitivo direto (sem crase)."
+            },
+            {
+                category: "Regência do Verbo Agradecer",
+                front: "O verbo 'agradecer' pede crase antes de pronomes ou nomes de pessoas?",
+                back: "<b>Não!</b> 'Agradecer' é transitivo direto para coisas e indireto para pessoas (agradeço ao diretor), mas <i>não rege preposição 'a' antes de coisas</i> ou nomes femininos diretos (Agradeço <i>a</i> Vossa Senhoria / Agradeço <i>a</i> ajuda)."
+            },
+            {
+                category: "Casos Facultativos Gerais",
+                front: "Quais são os três principais contextos clássicos onde a crase é opcional?",
+                back: "1. Antes de <b>pronomes possessivos femininos</b> (à sua / a sua).<br>2. Antes de <b>nomes próprios femininos</b> (à Maria / a Maria).<br>3. Depois da preposição <b>até</b> (fui até à praia / fui até a praia)."
+            },
+            {
+                category: "Expressões Repetidas",
+                front: "Ocorre crase em expressões formadas por palavras femininas idênticas repetidas? (Ex: cara a cara / gota a gota)",
+                back: "<b>Não!</b> Expressões formadas por repetição de palavras não levam crase, pois o 'a' intermediário funciona apenas como conector simples sem artigo (Ex: face <i>a</i> face, gota <i>a</i> gota, ponta <i>a</i> ponta)."
+            },
+            {
+                category: "Crase com Palavra Casa",
+                front: "Como avaliar a frase: 'Cheguei <b>à</b> casa dos meus sonhos'?",
+                back: "<b>Correto!</b> Como a palavra 'casa' está especificada pelo adjunto adnominal restritivo ('dos meus sonhos'), ela aceita o artigo feminino, ocorrendo a fusão com a preposição 'a' do verbo chegar."
+            },
+            {
+                category: "Plural com Palavra Subentendida",
+                front: "Existe crase antes de palavras no plural se o 'a' estiver no singular? (Ex: Prefiro esta blusa àquela)",
+                back: "Se a palavra regida for plural e não houver artigo (apenas preposição), usa-se apenas 'a' (Ex: Cheirei a flores). Se houver artigo plural, usa-se 'às' (Ex: Refiro-me <b>às</b> alunas)."
+            },
+            {
+                category: "Macete Geral de Prova",
+                front: "Qual é o macete infalível de substituição para tirar a dúvida sobre crase na hora da prova?",
+                back: "Substitua a palavra feminina por uma palavra <b>masculina</b> equivalente. Se na troca surgir a contração <b>ao</b> ou <b>aos</b>, haverá crase na expressão feminina original (Ex: Ir a praça = Ir ao parque -> <b>Ir à praça</b>)."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
