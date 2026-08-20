@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Interativos: Ortografia Oficial da Língua Portuguesa</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #2563eb; /* Azul padrão */
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .tracker {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        /* Flashcard Container */
+        .scene {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            perspective: 1000px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .card-face-front {
+            background: #ffffff;
+        }
+
+        .card-face-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .card-category {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .card-content {
+            font-size: 1.6rem; 
+            line-height: 1.4;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.15rem; 
+            text-align: left;
+            color: #34495e;
+        }
+
+        .card-hint {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid #dcdfe6;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .scene {
+                height: 400px;
+            }
+            .card-content {
+                font-size: 1.3rem;
+            }
+            .card-face-back .card-content {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Flashcards Interativos</h1>
+        <p>Ortografia Oficial da Língua Portuguesa</p>
+    </header>
+
+    <div class="tracker" id="card-tracker">Card 1 de 30</div>
+
+    <div class="scene" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-face-front">
+                <div class="card-category" id="card-category">Ortografia</div>
+                <div class="card-content" id="card-front">Carregando...</div>
+                <div class="card-hint">💡 Clique para ver a resposta</div>
+            </div>
+            <div class="card-face card-face-back">
+                <div class="card-category">Resposta Explicada</div>
+                <div class="card-content" id="card-back">Carregando...</div>
+                <div class="card-hint">💡 Clique para virar novamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="flipCard()">Virar Card</button>
+        <button onclick="nextCard()">Próximo</button>
+    </div>
+
+    <script>
+        const cardsData = [
+            {
+                category: "Novo Acordo - Ditongos Abertos",
+                front: "As palavras paroxítonas com ditongos abertos <b>-ei</b> e <b>-oi</b> (ex: ideia, assembleia, jiboia) continuam com acento?",
+                back: "<b>Não!</b> O Novo Acordo Ortográfico aboliu o acento gráfico de todas as palavras <i>paroxítonas</i> que possuem ditongos abertos 'ei' e 'oi' (Ex: <i>ideia</i>, <i>plateia</i>, <i>jiboia</i>, <i>paranoico</i>)."
+            },
+            {
+                category: "Novo Acordo - Ditongos Abertos",
+                front: "O acento nos ditongos abertos <b>-éu</b>, <b>-ói</b> e <b>-éi</b> em palavras <b>oxítonas</b> foi mantido?",
+                back: "<b>Sim!</b> Nas palavras oxítonas (e monossílabas tónicas) terminadas em ditongos abertos, o acento gráfico permanece obrigatório (Ex: <i>chapéu</i>, <i>herói</i>, <i>anéis</i>, <i>corrói</i>)."
+            },
+            {
+                category: "Novo Acordo - Hiatos (OO)",
+                front: "O acento nas palavras com hiato <b>'oo'</b> (ex: voo, enjoo, creem, leem) foi mantido ou eliminado?",
+                back: "<b>Foi eliminado!</b> O Novo Acordo extinguiu o acento gráfico em todas as vogais duplicadas 'oo' e 'ee' de formas verbais ou substantivos (Ex: <i>voo</i>, <i>enjoo</i>, <i>perdoo</i>, <i>creem</i>, <i>leem</i>, <i>veem</i>)."
+            },
+            {
+                category: "Novo Acordo - Hiatos (I e U tônicos)",
+                front: "As palavras paroxítonas com <b>'i'</b> ou <b>'u'</b> tônicos precedidos de ditongo (ex: feiura, boca-de-sapo) perdem o acento?",
+                back: "<b>Sim!</b> Perdem o acento nas paroxítonas o 'i' ou 'u' tônicos que vêm precedidos de ditongo (Ex: <i>feiura</i>, <i>bocaiuva</i>). <i>Atenção:</i> nas oxítonas antes de ditongo, continua (ex: tuiuiú)."
+            },
+            {
+                category: "Novo Acordo - Acento Diferencial",
+                front: "O acento diferencial em palavras homógrafas (como para/para, pelo/pelo) foi totalmente extinto?",
+                back: "<b>Quase todo.</b> A regra geral aboliu o acento diferencial de timbre, mas manteve obrigatoriamente em poucos casos, como <b>pôde</b> (pretérito) / <b>pode</b> (presente) e <b>pôr</b> (verbo) / <b>por</b> (preposição)."
+            },
+            {
+                category: "Novo Acordo - Trema",
+                front: "O uso do trema (¨) sobre a letra <b>'u'</b> foi totalmente eliminado na língua portuguesa?",
+                back: "<b>Sim, nas palavras comuns da língua portuguesa.</b> O trema foi extinto em palavras como <i>linguiça</i>, <i>frequente</i> e <i>tranquilo</i>. Ele sobrevive apenas em nomes próprios estrangeiros e seus derivados (ex: <i>Bündchen</i>)."
+            },
+            {
+                category: "Emprego de Letras (S, Z, X)",
+                front: "Qual é a terminação correta para verbos derivados de palavras cujo radical contém <b>'s'</b> (ex: paralisar, pesquisar)?",
+                back: "Mantém-se a letra <b>'s'</b> nos verbos cujas palavras de origem já possuem 's' na base ou cujo sufixo formador exija (Ex: <i>análise -> analisar</i>, <i>pesquisa -> pesquisar</i>, <i>riso -> sorrir</i>)."
+            },
+            {
+                category: "Emprego de Letras (S, Z, X)",
+                front: "Quando se emprega o sufixo formador de substantivos abstratos <b>'-ez' / '-eza'</b> em adjetivos (ex: belo -> beleza)?",
+                back: "Usa-se <b>'-ez' / '-eza'</b> para formar substantivos abstratos derivados de adjetivos (Ex: <i>belo -> beleza</i>, <span>pobre -> pobreza</span>, <i>esparso -> esparsez</i>, <i>acurado -> acureza</i>)."
+            },
+            {
+                category: "Emprego de Letras (G e J)",
+                front: "Usa-se <b>'g'</b> ou <b>'j'</b> nas palavras terminadas em <b>'-agem'</b>, <b>'-igem'</b> e <b>'-ugem'</b>?",
+                back: "Usa-se sempre a letra <b>'g'</b> nessas terminações, com raríssimas exceções (Ex: <i>agem</i>, <i>viagem</i>, <i>origem</i>, <i>ferrugem</i>, <i>garagem</i>). A principal exceção é a palavra <i>pajem</i> (com 'j')."
+            },
+            {
+                category: "Emprego de Letras (G e J)",
+                front: "Qual letra emprega-se em palavras de origem indígena, africana ou árabe (ex: jiboia, pajé, jerimum)?",
+                back: "Emprega-se preferencialmente a letra <b>'j'</b> em palavras de origem tupi, africana, árabe ou termos populares brasileiros (Ex: <i>jiboia</i>, <i>pajé</i>, <i>mogno</i> exceto em algumas origens específicas)."
+            },
+            {
+                category: "Emprego de Letras (C, Ç, SS, SC)",
+                front: "Como saber se escrevemos com <b>'ç'</b> ou <b>'ss'</b> em substantivos derivados de verbos (ex: exceder, admitir, regredir)?",
+                back: "• Verbos com radical em <i>-ced</i>, <i>-gred</i>, <i>-mit</i> geram substantivos com <b>-ss-</b> ou <b>-ç-</b> conforme a raiz (Ex: <i>exceder -> excesso</i>, <i>admitir -> admissão</i>, <i>progredir -> progresso</i>)."
+            },
+            {
+                category: "Emprego de Letras (X ou CH)",
+                front: "Emprega-se a letra <b>'x'</b> após os poulemas (ditongos) ou encontros vocálicos? (Ex: caixa, eixo, peixe)",
+                back: "<b>Sim!</b> Escreve-se com <b>'x'</b> após qualquer ditongo (encontro de duas vogais na mesma sílaba) (Ex: <i>caixa</i>, <i>peixe</i>, <i>frouxo</i>, <i>ameixa</i>)."
+            },
+            {
+                category: "Hífen - Regra Geral de Vogais",
+                front: "Usa-se hífen quando um prefixo termina com uma vogal e a palavra seguinte começa com a <b>mesma vogal</b>? (Ex: micro-ondas)",
+                back: "<b>Sim!</b> Se o prefixo terminar com vogal e o segundo elemento começar com a <i>mesma</i> vogal, usa-se o hífen para evitar cacofonia e dupla leitura (Ex: <i>micro-ondas</i>, <i>anti-ibérico</i>, <i>contra-ataque</i>)."
+            },
+            {
+                category: "Hífen - Vogais Diferentes",
+                front: "Usa-se hífen se o prefixo termina em vogal e a palavra seguinte começa com <b>vogal diferente</b>? (Ex: autodefesa / autoescola)",
+                back: "<b>Não!</b> Vogais diferentes juntam-se sem hífen, aglutinando as palavras (Ex: <i>antiaéreo</i>, <i>coeducação</i>, <i>autoescola</i>, <i>infraestrutura</i>)."
+            },
+            {
+                category: "Hífen - Consoantes R e S",
+                front: "O que acontece com o hífen quando um prefixo se junta a palavras iniciadas por <b>'r'</b> ou <b>'s'</b>? (Ex: mini-saia / contra-regra)",
+                back: "O hífen é eliminado e as consoantes <b>'r'</b> ou <b>'s'</b> são dobradas para preservar o som forte (Ex: <i>minissaia</i>, <i>contrarregra</i>, <i>ultrassom</i>, <i>rESSignificar</i>)."
+            },
+            {
+                category: "Hífen - Consoantes Diferentes",
+                front: "Usa-se hífen quando um prefixo termina em vogal e a palavra seguinte começa com consoante <b>diferente</b> de 'r' ou 's'? (Ex: anteprojetar)",
+                back: "<b>Não se usa hífen.</b> Junta-se diretamente, sem dobrar letras (Ex: <i>anteprojeto</i>, <i>seminovo</i>, <i>telecomunicação</i>, <i>intermunicipal</i>)."
+            },
+            {
+                category: "Hífen - Substantivos Compostos",
+                front: "Como se escrevem substantivos compostos unidos por elementos de ligação (ex: pé de moleque, água de colônia)?",
+                back: "Substantivos compostos formados com preposição ou elementos de ligação intermediários <b>não levam hífen</b> na norma-padrão atual (Ex: <i>pé de moleque</i>, <i>copo de leite</i>, <i>fim de semana</i>)."
+            },
+            {
+                category: "Uso de 'Por que'",
+                front: "Em que contexto se utiliza a forma separada e sem acento <b>'por que'</b>?",
+                back: "Usa-se em dois casos principais: 1. Como pronome interrogativo em perguntas diretas ou indiretas (<i>Por que você faltou?</i>). 2. Equivalente a 'pelo qual', 'pela qual' (<i>Os caminhos por que passei</i>)."
+            },
+            {
+                category: "Uso de 'Porquê'",
+                front: "Quando se emprega o substantivo <b>'porquê'</b> (junto e com acento circunflexo)?",
+                back: "Usa-se quando tem valor de substantivo (equivalente a 'o motivo', 'a razão'). Vem sempre precedido de determinante (artigo, pronome ou numeral) (Ex: <i>Não entendi o porquê de tanta confusão</i>)."
+            },
+            {
+                category: "Uso de 'Por quê'",
+                front: "Em que situação a forma <b>'por quê'</b> (separada e com acento) deve ser empregada?",
+                back: "Usa-se exclusivamente no <b>fim de frases</b> ou isolada antes de pontuação (ponto, interrogação, vírgula), pois a pausa acentua tonicamente a partícula (Ex: <i>Vocês não comeram nada. Por quê?</i>)."
+            },
+            {
+                category: "Uso de 'Porque'",
+                front: "Qual é a função da conjunção <b>'porque'</b> (junta e sem acento)?",
+                back: "É uma conjunção coordenativa explicativa ou subordinativa causal, usada em respostas, justificativas e explicações (Ex: <i>Não fui à aula porque estava doente</i>)."
+            },
+            {
+                category: "Parônimos - Descriminar / Discriminar",
+                front: "Qual é a diferença de significado entre os verbos <b>descriminar</b> e <b>discriminar</b>?",
+                back: "• <b>Descriminar:</b> absolver de crime, desculpar, inocentar (Ex: <i>O juiz resolveu descriminar o réu</i>).<br>• <b>Discriminar:</b> diferenciar, distinguir, separar (Ex: <i>Discriminar os produtos na nota</i>)."
+            },
+            {
+                category: "Parônimos - Emigrar / Imigrar",
+                front: "Qual é a distinção ortográfica e semântica entre <b>emigrar</b> e <b>imigrar</b>?",
+                back: "• <b>Emigrar:</b> sair do seu país de origem para morar em outro (olhar de quem sai).<br>• <b>Imigrar:</b> entrar em um país estrangeiro para fixar residência (olhar de quem chega)."
+            },
+            {
+                category: "Parônimos - Mandado / Mandato",
+                front: "Qual é a diferença entre os termos <b>mandado</b> e <b>mandato</b>?",
+                back: "• <b>Mandado:</b> ordem judicial escrita (Ex: <i>Mandado de prisão</i> ou de busca e apreensão).<br>• <b>Mandato:</b> período de exercício de um cargo político ou eletivo (Ex: <i>Mandato presidencial</i>)."
+            },
+            {
+                category: "Parônimos - Flagrante / Fragrante",
+                front: "Qual é o sentido correto de <b>flagrante</b> e <b>fragrante</b>?",
+                back: "• <b>Flagrante:</b> que ocorre no exato momento, evidente (Ex: <i>Pego em flagrante</i>).<br>• <b>Fragrante:</b> aromático, perfumado, que exala bom cheiro (Ex: <i>Flores fragrantes</i>)."
+            },
+            {
+                category: "Expressões Dúbias - A Intervir / Intervir",
+                front: "O verbo <b>intervir</b> (derivado de vir) aceita a forma do particípio regular ou sofre alteração ortográfica?",
+                back: "O particípio de intervir é <b>intervindo</b> (seguindo o modelo do verbo vir). Erros comuns como *intervido* são inaceitáveis na norma-padrão."
+            },
+            {
+                category: "Emprego de Letras - X ou CH",
+                front: "Qual é a grafia correta da palavra: <b>chuchu</b> ou <b>xuxu</b>?",
+                back: "A grafia oficial na ortografia da língua portuguesa é com <b>'ch'</b> (<b>chuchu</b>)."
+            },
+            {
+                category: "Grafias Especiais",
+                front: "Como se escrevem corretamente as palavras derivadas de 'anexar': <b>anseio</b> ou <b>ancio</b>? E <b>chover</b>?",
+                back: "• <b>Anseio</b> escreve-se com 's'.<br>• <b>Ancião</b> escreve-se com 'ç'.<br>• <b>Xampu</b> escreve-se com 'x'.<br>• <b>Encharcar</b> escreve-se com 'ch' (pois deriva de charco)."
+            },
+            {
+                category: "Ortografia - Acento em Paroxítonas",
+                front: "Palavras paroxítonas terminadas em ditongo oral crescente ou decrescente (ex: série, mágoa, história) são acentuadas?",
+                back: "<b>Sim!</b> Todas as paroxítonas terminadas em ditongo oral (seguido ou não de 's') recebem acento gráfico obrigatório (Ex: <i>história</i>, <i>férias</i>, <i>pântano</i>, <i>lírio</i>)."
+            },
+            {
+                category: "Macete Geral de Prova",
+                front: "Qual é a recomendação essencial para treinar a ortografia oficial para bancas de concurso?",
+                back: "Fazer muitas questões focadas nas regras do <b>Novo Acordo Ortográfico</b> (hífen, acentuação de ditongos e hiatos) e memorizar a grafia dos principais pares de homônimos e parônimos recorrentes."
+            }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const categoryElement = document.getElementById('card-category');
+        const frontElement = document.getElementById('card-front');
+        const backElement = document.getElementById('card-back');
+        const trackerElement = document.getElementById('card-tracker');
+
+        function updateCard() {
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                const currentData = cardsData[currentIndex];
+                categoryElement.innerText = currentData.category;
+                frontElement.innerHTML = currentData.front;
+                backElement.innerHTML = currentData.back;
+                trackerElement.innerText = `Card ${currentIndex + 1} de ${cardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('is-flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Inicializar
+        updateCard();
+
+        // Suporte a teclas do teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>
